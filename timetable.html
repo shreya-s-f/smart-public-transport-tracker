@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Transport Tracker - Timetable</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-bus"></i> TrackerPro
+        </div>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="routes.html">Routes</a>
+            <a href="tracking.html">Live Tracking</a>
+            <a href="timetable.html" class="active">Timetable</a>
+            <a href="notifications.html">Alerts</a>
+            <a href="profile.html">Profile</a>
+        </div>
+        
+        <div class="nav-actions">
+            <button id="theme-toggle" class="theme-toggle">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <button id="mobile-menu-btn" class="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="glass-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <h2>Weekly Schedule</h2>
+                <select class="search-input" style="max-width: 200px; padding: 0.5rem 1rem;">
+                    <option>Route 10A</option>
+                    <option>Route 42</option>
+                    <option>Route 15B</option>
+                    <option>Route 8</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stop Name</th>
+                            <th>First Bus</th>
+                            <th>Last Bus</th>
+                            <th>Frequency</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Downtown Terminal</td>
+                            <td>06:00 AM</td>
+                            <td>11:30 PM</td>
+                            <td>Every 15 mins</td>
+                            <td><span class="route-status status-ontime">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>City Center</td>
+                            <td>06:10 AM</td>
+                            <td>11:40 PM</td>
+                            <td>Every 15 mins</td>
+                            <td><span class="route-status status-ontime">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>University Campus</td>
+                            <td>06:25 AM</td>
+                            <td>11:55 PM</td>
+                            <td>Every 15 mins</td>
+                            <td><span class="route-status status-ontime">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tech Park</td>
+                            <td>06:40 AM</td>
+                            <td>12:10 AM</td>
+                            <td>Every 15 mins</td>
+                            <td><span class="route-status status-delayed">Minor Delays</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
