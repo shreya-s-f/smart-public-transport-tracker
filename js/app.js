@@ -62,6 +62,24 @@ document.addEventListener('DOMContentLoaded', () => {
             a.classList.remove('active');
         }
     });
+
+    // 4. City Selection Logic (Pan-India)
+    const citySelectors = document.querySelectorAll('.city-selector');
+    const savedCity = localStorage.getItem('spt-city') || 'Delhi';
+    
+    citySelectors.forEach(selector => {
+        // Set initial value
+        selector.value = savedCity;
+        
+        // Listen for changes
+        selector.addEventListener('change', (e) => {
+            const newCity = e.target.value;
+            localStorage.setItem('spt-city', newCity);
+            
+            // Reload page to fetch new city data in specific scripts (routes.js, tracking.js, etc.)
+            window.location.reload();
+        });
+    });
 });
 
 // Utility to get random ETA for demo purposes

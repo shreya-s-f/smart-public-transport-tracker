@@ -23,10 +23,16 @@
             <a href="tracking.html">Live Tracking</a>
             <a href="timetable.html">Timetable</a>
             <a href="notifications.html">Alerts</a>
+            <a href="booking.html" style="color: var(--accent-color); font-weight: 700;"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
             <a href="profile.html" class="active">Profile</a>
         </div>
         
         <div class="nav-actions">
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+            </select>
             <button id="theme-toggle" class="theme-toggle">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
@@ -40,25 +46,35 @@
         <div class="dashboard-grid" style="grid-template-columns: 1fr 2fr;">
             
             <!-- Profile Sidebar -->
-            <div class="glass-card" style="text-align: center;">
+            <div class="glass-card animate-fade-in-up" style="text-align: center; height: fit-content;">
                 <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--accent-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 1rem;">
                     <i class="fa-regular fa-user"></i>
                 </div>
-                <h3>Alex Passenger</h3>
+                <h3 id="user-name">Passenger</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Commuter</p>
                 <button class="btn-primary" style="width: 100%; margin-bottom: 1rem; padding: 0.8rem;">Edit Profile</button>
             </div>
 
-            <!-- Settings & Favorites -->
+            <!-- Settings & Data -->
             <div>
-                <div class="glass-card" style="margin-bottom: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-heart" style="color: var(--danger-color); margin-right: 0.5rem;"></i> My Favorite Routes</h3>
-                    <div id="favorites-list" class="route-list">
-                        <!-- Favorites will be loaded here dynamically from localStorage by js/profile.js -->
+                <!-- My Tickets -->
+                <div class="glass-card animate-fade-in-up delay-1" style="margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent-color);"><i class="fa-solid fa-ticket"></i> My Booked Tickets</h3>
+                    <div id="tickets-list" class="route-list">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
 
-                <div class="glass-card">
+                <!-- Favorites -->
+                <div class="glass-card animate-fade-in-up delay-2" style="margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-heart" style="color: var(--danger-color); margin-right: 0.5rem;"></i> My Favorite Routes</h3>
+                    <div id="favorites-list" class="route-list">
+                        <!-- Favorites will be loaded here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="glass-card animate-fade-in-up delay-3">
                     <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-gear" style="color: var(--text-secondary); margin-right: 0.5rem;"></i> App Settings</h3>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--card-border);">
@@ -69,7 +85,7 @@
                         <input type="checkbox" checked style="width: 1.2rem; height: 1.2rem;">
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--card-border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
                         <div>
                             <strong>Location Services</strong>
                             <p style="font-size: 0.85rem; color: var(--text-secondary);">Allow app to find nearest stops</p>
@@ -84,22 +100,55 @@
 
     <script src="js/app.js"></script>
     <script>
-        // Inline script to handle loading favorites for the profile page
         document.addEventListener('DOMContentLoaded', () => {
             const favoritesList = document.getElementById('favorites-list');
+            const ticketsList = document.getElementById('tickets-list');
             
+            // 1. Load Tickets
+            let tickets = [];
+            try { tickets = JSON.parse(localStorage.getItem('spt-tickets')) || []; } catch(e) {}
+            
+            if (tickets.length === 0) {
+                ticketsList.innerHTML = '<p style="color: var(--text-secondary);">No active bookings found. Go to <a href="booking.html" style="color: var(--accent-color);">Book Ticket</a> to book your first ride!</p>';
+            } else {
+                ticketsList.innerHTML = ''; // clear loading
+                // Just use the name from the most recent ticket as the profile name for fun
+                document.getElementById('user-name').textContent = tickets[tickets.length - 1].name;
+                
+                // Show latest tickets first
+                tickets.slice().reverse().forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-card route-item';
+                    card.style.borderLeft = '4px solid var(--success-color)';
+                    card.innerHTML = `
+                        <div class="route-details" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span class="route-number"><i class="fa-solid fa-ticket"></i> ${t.id}</span>
+                                <span class="route-status" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${t.status}</span>
+                            </div>
+                            <span class="route-path" style="font-weight: 600;">${t.city} • Route ${t.route}</span>
+                            <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                                <span><i class="fa-regular fa-calendar"></i> ${t.date}</span>
+                                <span><i class="fa-solid fa-users"></i> ${t.passengers} pax</span>
+                                <span><i class="fa-solid fa-indian-rupee-sign"></i> ${t.total.replace('₹','')}</span>
+                            </div>
+                        </div>
+                    `;
+                    ticketsList.appendChild(card);
+                });
+            }
+
+            // 2. Load Favorites
             let favorites = [];
-            try {
-                favorites = JSON.parse(localStorage.getItem('spt-favorites')) || [];
-            } catch(e) {}
+            try { favorites = JSON.parse(localStorage.getItem('spt-favorites')) || []; } catch(e) {}
 
             if (favorites.length === 0) {
                 favoritesList.innerHTML = '<p style="color: var(--text-secondary);">You have no favorite routes saved. Go to <a href="routes.html" style="color: var(--accent-color);">Routes</a> to add some!</p>';
             } else {
+                favoritesList.innerHTML = '';
                 favorites.forEach(routeId => {
                     const card = document.createElement('div');
                     card.className = 'glass-card route-item';
-                    card.style.padding = '1rem';
                     card.innerHTML = `
                         <div class="route-details">
                             <span class="route-number">Route ${routeId}</span>

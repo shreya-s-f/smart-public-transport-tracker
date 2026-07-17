@@ -1,84 +1,89 @@
-// Live Tracking Map and Simulation Logic
+// Live Tracking Map and Simulation Logic - Pan India
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Check URL parameters for specific route (e.g., tracking.html?route=10A)
     const urlParams = new URLSearchParams(window.location.search);
-    const routeId = urlParams.get('route') || '10A';
+    const routeId = urlParams.get('route') || 'Default';
+    
+    const currentCity = localStorage.getItem('spt-city') || 'Delhi';
     
     const titleEl = document.getElementById('tracking-route-title');
+    const pathEl = document.getElementById('tracking-route-path');
+    
     if(titleEl) titleEl.textContent = `Route ${routeId} Tracking`;
+    if(pathEl) pathEl.textContent = `Operating in ${currentCity}`;
 
-    // 2. Initialize Leaflet Map
-    const map = L.map('map-container').setView([40.7128, -74.0060], 13); // Default to NYC coordinates
+    // Define Base Coordinates for Indian Cities
+    const cityCoords = {
+        'Delhi': [28.6304, 77.2177], // Connaught Place
+        'Mumbai': [18.9400, 72.8353], // CSMT / South Mumbai
+        'Bangalore': [12.9716, 77.5946] // MG Road
+    };
+    
+    const baseLatLng = cityCoords[currentCity] || cityCoords['Delhi'];
 
-    // Add OpenStreetMap tiles
+    // Initialize Leaflet Map
+    const map = L.map('map-container').setView(baseLatLng, 14);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
         maxZoom: 18,
     }).addTo(map);
 
-    // 3. Define a mock route (array of lat/lng coordinates)
-    const routeCoordinates = [
-        [40.7128, -74.0060], // Start
-        [40.7135, -74.0050],
-        [40.7145, -74.0045],
-        [40.7158, -74.0035],
-        [40.7168, -74.0020],
-        [40.7180, -74.0010],
-        [40.7195, -74.0005],
-        [40.7205, -73.9990],
-        [40.7220, -73.9975], // End
-    ];
+    // Generate a simulated route starting from the base coordinate
+    // Moving roughly 0.002 degrees per step
+    const routeCoordinates = [];
+    let curLat = baseLatLng[0];
+    let curLng = baseLatLng[1];
+    
+    for(let i=0; i<10; i++) {
+        routeCoordinates.push([curLat, curLng]);
+        curLat += (Math.random() * 0.004) - 0.001;
+        curLng += (Math.random() * 0.004) - 0.001;
+    }
 
     // Draw the route line on the map
     const routeLine = L.polyline(routeCoordinates, {
-        color: '#3b82f6', // var(--accent-color)
+        color: '#3b82f6',
         weight: 5,
         opacity: 0.7
     }).addTo(map);
 
-    // Fit map bounds to the route
     map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
 
-    // 4. Create custom bus icon
+    // Custom bus icon with Pulse effect
     const busIcon = L.divIcon({
         className: 'custom-bus-icon',
-        html: '<div style="background-color: #3b82f6; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-size: 14px;"><i class="fa-solid fa-bus"></i></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
+        html: '<div style="background-color: #3b82f6; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.5); font-size: 16px; animation: pulseEffect 2s infinite;"><i class="fa-solid fa-bus"></i></div>',
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
     });
 
-    // Add Stop Markers
-    L.circleMarker(routeCoordinates[0], { color: 'green', radius: 6 }).addTo(map).bindPopup("Start Stop");
-    L.circleMarker(routeCoordinates[routeCoordinates.length - 1], { color: 'red', radius: 6 }).addTo(map).bindPopup("End Stop");
+    L.circleMarker(routeCoordinates[0], { color: 'green', radius: 8, fillOpacity: 0.8 }).addTo(map).bindPopup("Start Stop");
+    L.circleMarker(routeCoordinates[routeCoordinates.length - 1], { color: 'red', radius: 8, fillOpacity: 0.8 }).addTo(map).bindPopup("End Stop");
 
-    // Initialize bus marker at starting position
     let currentPointIndex = 0;
     const busMarker = L.marker(routeCoordinates[currentPointIndex], { icon: busIcon }).addTo(map);
 
-    // 5. Simulation Logic using setInterval
     const etaDisplay = document.getElementById('eta-display');
-    let baseEtaSeconds = 300; // 5 minutes
+    let baseEtaSeconds = 300; 
 
     const simulationInterval = setInterval(() => {
-        // Move to next point
         currentPointIndex++;
-        
-        // Loop back to start if end is reached
         if (currentPointIndex >= routeCoordinates.length) {
             currentPointIndex = 0;
-            baseEtaSeconds = 300; // Reset ETA
+            baseEtaSeconds = 300; 
         }
 
-        // Update marker position
         const nextPos = routeCoordinates[currentPointIndex];
+        
+        // Smoothly pan map to follow bus if it gets near edges
+        if(currentPointIndex % 3 === 0) {
+            map.panTo(nextPos, {animate: true, duration: 1});
+        }
+        
         busMarker.setLatLng(nextPos);
         
-        // Optionally pan map to follow bus
-        // map.panTo(nextPos);
-
-        // Update ETA Display
-        baseEtaSeconds -= 15; // simulate time passing faster between points
+        baseEtaSeconds -= 15; 
         if(baseEtaSeconds < 0) baseEtaSeconds = 0;
         
         const minutes = Math.floor(baseEtaSeconds / 60);
@@ -87,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (etaDisplay) {
             etaDisplay.innerHTML = `<i class="fa-solid fa-clock"></i> ETA: ${minutes}m ${seconds}s`;
             
-            // Change color if getting close
             if (minutes === 0) {
                 etaDisplay.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
                 etaDisplay.style.color = 'var(--warning-color)';
@@ -97,9 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 etaDisplay.style.color = 'var(--success-color)';
             }
         }
-    }, 2000); // Update every 2 seconds for visibility
+    }, 2000); 
 
-    // Clean up interval if navigating away (handled by browser on full reload, but good practice if making it SPA later)
     window.addEventListener('unload', () => {
         clearInterval(simulationInterval);
     });

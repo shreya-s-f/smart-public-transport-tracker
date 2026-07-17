@@ -23,10 +23,16 @@
             <a href="tracking.html">Live Tracking</a>
             <a href="timetable.html">Timetable</a>
             <a href="notifications.html" class="active">Alerts</a>
+            <a href="booking.html" style="color: var(--accent-color); font-weight: 700;"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
             <a href="profile.html">Profile</a>
         </div>
         
         <div class="nav-actions">
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+            </select>
             <button id="theme-toggle" class="theme-toggle">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
@@ -37,9 +43,9 @@
     </nav>
 
     <main>
-        <h2 style="margin-bottom: 1.5rem;">System Alerts & Updates</h2>
+        <h2 id="alerts-heading" style="margin-bottom: 1.5rem;">System Alerts & Updates</h2>
         
-        <div class="glass-card">
+        <div class="glass-card animate-fade-in-up">
             <div id="notifications-container">
                 <!-- Populated by JS -->
             </div>

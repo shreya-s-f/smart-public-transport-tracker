@@ -30,10 +30,18 @@
             <a href="tracking.html">Live Tracking</a>
             <a href="timetable.html">Timetable</a>
             <a href="notifications.html">Alerts</a>
+            <a href="booking.html" style="color: var(--accent-color); font-weight: 700;"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
             <a href="profile.html">Profile</a>
         </div>
         
         <div class="nav-actions">
+            <!-- City Selector -->
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+            </select>
+
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
@@ -46,9 +54,9 @@
     <!-- Main Content -->
     <main>
         <!-- Hero Search Section -->
-        <div class="glass-card" style="margin-bottom: 2rem; text-align: center; padding: 3rem 1.5rem;">
+        <div class="glass-card animate-fade-in-up" style="margin-bottom: 2rem; text-align: center; padding: 3rem 1.5rem;">
             <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-color);">Find Your Bus Instantly</h1>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">Track real-time locations, check ETAs, and never miss a ride.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">Track real-time locations across India, book tickets, and never miss a ride.</p>
             
             <div class="search-container" style="max-width: 600px; margin: 0 auto;">
                 <input type="text" id="global-search" class="search-input" placeholder="Search by bus number or destination...">
@@ -59,61 +67,60 @@
         </div>
 
         <!-- Dashboard Stats -->
-        <h2 style="margin-bottom: 1.5rem;">System Overview</h2>
+        <h2 class="animate-fade-in-up" style="margin-bottom: 1.5rem; animation-delay: 0.1s;">System Overview</h2>
         <div class="dashboard-grid">
-            <div class="glass-card stat-card">
+            <div class="glass-card stat-card animate-fade-in-up delay-1">
                 <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-color);">
                     <i class="fa-solid fa-bus-simple"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>124</h3>
-                    <p>Total Active Buses</p>
+                    <h3 id="stat-active">124</h3>
+                    <p>Active Buses</p>
                 </div>
             </div>
             
-            <div class="glass-card stat-card">
+            <div class="glass-card stat-card animate-fade-in-up delay-2">
                 <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
                     <i class="fa-solid fa-route"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>48</h3>
+                    <h3 id="stat-routes">48</h3>
                     <p>Routes Operating</p>
                 </div>
             </div>
             
-            <div class="glass-card stat-card">
+            <div class="glass-card stat-card animate-fade-in-up delay-3">
                 <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>3</h3>
+                    <h3 id="stat-delayed">3</h3>
                     <p>Delayed Services</p>
                 </div>
             </div>
         </div>
 
         <!-- Quick Access / Favorites Preview -->
-        <h2 style="margin-bottom: 1.5rem; margin-top: 3rem;">Quick Access</h2>
+        <h2 class="animate-fade-in-up delay-4" style="margin-bottom: 1.5rem; margin-top: 3rem;">Quick Access</h2>
         <div class="dashboard-grid">
-            <div class="glass-card" style="cursor: pointer;" onclick="window.location.href='tracking.html'">
+            <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer;" onclick="window.location.href='booking.html'">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span class="route-number">Route 10A</span>
-                    <span class="route-status status-ontime">On Time</span>
+                    <span class="route-number"><i class="fa-solid fa-ticket"></i> Book a Ticket</span>
+                    <span class="route-status status-ontime">New</span>
                 </div>
-                <p class="route-path">Downtown ➔ Tech Park</p>
-                <div style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
-                    <i class="fa-solid fa-clock"></i> Next bus in <strong>5 mins</strong>
+                <p class="route-path">Instant booking & e-ticket generation.</p>
+                <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                    <strong>Book Now ➔</strong>
                 </div>
             </div>
             
-            <div class="glass-card" style="cursor: pointer;" onclick="window.location.href='tracking.html'">
+            <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer;" onclick="window.location.href='routes.html'">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span class="route-number">Route 42</span>
-                    <span class="route-status status-delayed">5m Delay</span>
+                    <span class="route-number"><i class="fa-solid fa-map-location-dot"></i> View All Routes</span>
                 </div>
-                <p class="route-path">Central Station ➔ Airport</p>
-                <div style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
-                    <i class="fa-solid fa-clock"></i> Next bus in <strong>12 mins</strong>
+                <p class="route-path">Explore schedules and stops for your city.</p>
+                <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
+                    <strong>Explore ➔</strong>
                 </div>
             </div>
         </div>
@@ -121,5 +128,17 @@
 
     <!-- Global JS -->
     <script src="js/app.js"></script>
+    <script>
+        // Update stats slightly based on city selection
+        document.addEventListener('DOMContentLoaded', () => {
+            const city = localStorage.getItem('spt-city') || 'Delhi';
+            const routesSpan = document.getElementById('stat-routes');
+            const activeSpan = document.getElementById('stat-active');
+            
+            if (city === 'Delhi') { routesSpan.textContent = '84'; activeSpan.textContent = '420'; }
+            if (city === 'Mumbai') { routesSpan.textContent = '112'; activeSpan.textContent = '650'; }
+            if (city === 'Bangalore') { routesSpan.textContent = '65'; activeSpan.textContent = '280'; }
+        });
+    </script>
 </body>
 </html>
