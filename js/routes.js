@@ -27,7 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get city from global storage
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
-    const routesData = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
+    let defaultRoutes = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
+    
+    // Merge custom routes from Admin panel
+    let customRoutes = [];
+    try {
+        const allCustom = JSON.parse(localStorage.getItem('spt-custom-routes')) || [];
+        customRoutes = allCustom.filter(r => r.city === currentCity).map(r => ({
+            id: r.id,
+            path: r.path,
+            status: r.status,
+            stops: Math.floor(Math.random() * 10) + 5
+        }));
+    } catch(e) {}
+    
+    const routesData = [...customRoutes, ...defaultRoutes];
     
     // Handle Auto-Search from Dashboard
     const urlParams = new URLSearchParams(window.location.search);

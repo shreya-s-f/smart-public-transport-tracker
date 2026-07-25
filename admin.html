@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit.IN - Admin Panel</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <script src="js/auth.js"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-bus"></i> Transit.IN
+        </div>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="routes.html">Routes</a>
+            <a href="tracking.html">Live Tracking</a>
+            <a href="timetable.html">Timetable</a>
+            <a href="notifications.html">Alerts</a>
+            <a href="booking.html"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
+            <a href="profile.html">Profile</a>
+            <a href="admin.html" class="active" style="color: var(--warning-color); font-weight: 700;"><i class="fa-solid fa-user-shield"></i> Admin</a>
+        </div>
+        
+        <div class="nav-actions">
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+            </select>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2rem; color: var(--accent-color);"><i class="fa-solid fa-user-shield"></i> Admin Management Panel</h1>
+                <p style="color: var(--text-secondary);">Add, update, or delete bus routes and schedules across cities.</p>
+            </div>
+            <button class="btn-primary" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Add New Route</button>
+        </div>
+
+        <!-- Admin Overview Stats -->
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 2rem;">
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-color);">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="admin-total-custom">0</h3>
+                    <p>Custom Admin Routes</p>
+                </div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
+                    <i class="fa-solid fa-city"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>3</h3>
+                    <p>Active Cities</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route Management List -->
+        <div class="glass-card">
+            <h2 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-list-check"></i> Managed Bus Routes</h2>
+            <div id="admin-routes-container" class="route-list">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Route Modal -->
+    <div id="route-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center;">
+        <div class="glass-card" style="width: 100%; max-width: 500px; padding: 2rem; background: var(--bg-color); border: 1px solid var(--card-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="modal-title" style="color: var(--accent-color);">Add Bus Route</h3>
+                <button onclick="closeRouteModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="route-form">
+                <input type="hidden" id="route-index" value="-1">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">City</label>
+                    <select id="form-city" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bangalore">Bangalore</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Route / Bus Number</label>
+                    <input type="text" id="form-id" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. 507-X or AC-100" required>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Route Path (Origin ➔ Destination)</label>
+                    <input type="text" id="form-path" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Connaught Place ➔ Airport T3" required>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Fare (₹)</label>
+                        <input type="text" id="form-fare" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="₹35" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Status</label>
+                        <select id="form-status" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="Active">Active</option>
+                            <option value="Delayed">Delayed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary);">First Bus</label>
+                        <input type="text" id="form-first" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="06:00 AM">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Last Bus</label>
+                        <input type="text" id="form-last" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="10:30 PM">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-floppy-disk"></i> Save Route</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Professional Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
+        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker</p>
+        <div style="display: flex; justify-content: center; gap: 1.5rem; font-size: 1.2rem;">
+            <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 1.5rem;">Developed by Shreya &copy; 2026</p>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="city-loader" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+        <div class="spinner"></div>
+        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
+    </div>
+
+    <script src="js/app.js?v=2"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
+
+
