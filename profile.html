@@ -202,25 +202,29 @@
             }
 
             if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    if (editBtn.textContent === 'Edit Profile') {
+                let isEditing = false;
+                editBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!isEditing) {
                         // Switch to edit mode
+                        isEditing = true;
                         userNameEl.style.display = 'none';
                         editInput.style.display = 'block';
-                        editInput.value = userNameEl.textContent;
+                        editInput.value = userNameEl.textContent.trim();
                         editInput.focus();
-                        editBtn.textContent = 'Save Profile';
+                        editBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Profile';
                         editBtn.classList.remove('btn-primary');
                         editBtn.classList.add('btn-success');
                     } else {
                         // Save changes
+                        isEditing = false;
                         const newName = editInput.value.trim() || 'Passenger';
                         userNameEl.textContent = newName;
                         localStorage.setItem('spt-profile-name', newName);
                         
                         editInput.style.display = 'none';
                         userNameEl.style.display = 'block';
-                        editBtn.textContent = 'Edit Profile';
+                        editBtn.innerHTML = 'Edit Profile';
                         editBtn.classList.remove('btn-success');
                         editBtn.classList.add('btn-primary');
                     }
