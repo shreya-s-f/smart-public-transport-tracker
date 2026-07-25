@@ -36,6 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const navLinks = document.getElementById('nav-links');
 
+    // Auth: Inject Logout Button
+    const navActions = document.querySelector('.nav-actions');
+    if (navActions && !window.location.pathname.endsWith('login.html')) {
+        const logoutBtn = document.createElement('button');
+        logoutBtn.className = 'theme-toggle';
+        logoutBtn.style.color = 'var(--danger-color)';
+        logoutBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i>';
+        logoutBtn.title = 'Logout';
+        
+        logoutBtn.addEventListener('click', () => {
+            if(confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem('spt-authenticated');
+                window.location.href = 'login.html';
+            }
+        });
+        
+        navActions.insertBefore(logoutBtn, navActions.firstChild);
+    }
+
     if (mobileBtn && navLinks) {
         mobileBtn.addEventListener('click', () => {
             navLinks.classList.toggle('show');

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit.IN - Login</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth.js"></script>
+
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 0;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        
+        .login-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="login-card animate-fade-in-up">
+        <div style="font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;" class="animate-float">
+            <i class="fa-solid fa-bus"></i>
+        </div>
+        <h2 style="margin-bottom: 0.5rem; color: white;">Welcome to Transit.IN</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">Sign in to track buses and book tickets</p>
+        
+        <form id="login-form">
+            <div style="text-align: left; margin-bottom: 0.5rem;">
+                <label style="font-size: 0.85rem; color: var(--text-secondary);">Email Address</label>
+                <input type="email" id="email" class="login-input" placeholder="Enter your email" required>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 1rem;">
+                <label style="font-size: 0.85rem; color: var(--text-secondary);">Password</label>
+                <input type="password" id="password" class="login-input" placeholder="Enter your password" required>
+            </div>
+            
+            <button type="submit" class="btn-primary btn-pulse">Sign In <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i></button>
+        </form>
+        
+        <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-secondary);">
+            Don't have an account? <a href="#" style="color: var(--accent-color);" onclick="alert('Demo Mode: Just click Sign In to continue!')">Sign up</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get email name as profile name
+            const email = document.getElementById('email').value;
+            const name = email.split('@')[0];
+            
+            // Save mock authentication state
+            localStorage.setItem('spt-authenticated', 'true');
+            localStorage.setItem('spt-profile-name', name.charAt(0).toUpperCase() + name.slice(1));
+            
+            // Add a cool transition effect before redirecting
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
