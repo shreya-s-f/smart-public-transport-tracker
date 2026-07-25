@@ -10,8 +10,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="css/style.css?v=4">
-    <script src="js/auth.js?v=4"></script>
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <script src="js/auth.js?v=5"></script>
+
+    <style>
+        .admin-tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0,0,0,0.02);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .admin-tab-btn.active {
+            background: var(--warning-color);
+            color: white;
+            border-color: var(--warning-color);
+        }
+    </style>
 </head>
 <body>
 
@@ -51,21 +69,23 @@
     <main>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <div>
-                <h1 style="font-size: 2rem; color: var(--accent-color);"><i class="fa-solid fa-user-shield"></i> Admin Management Panel</h1>
-                <p style="color: var(--text-secondary);">Add, update, or delete bus routes and schedules across cities.</p>
+                <h1 style="font-size: 2rem; color: var(--accent-color);"><i class="fa-solid fa-user-shield"></i> Admin Management System</h1>
+                <p style="color: var(--text-secondary);">Manage buses, operating cities, and passenger accounts across India.</p>
             </div>
-            <button class="btn-primary" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Add New Route</button>
+            <button id="admin-logout-btn" style="padding: 0.7rem 1.2rem; background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); border-radius: 8px; font-weight: 600; cursor: pointer;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout Admin
+            </button>
         </div>
 
         <!-- Admin Overview Stats -->
-        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 2rem;">
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
             <div class="glass-card stat-card">
                 <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-color);">
                     <i class="fa-solid fa-route"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 id="admin-total-custom">0</h3>
-                    <p>Custom Admin Routes</p>
+                    <h3 id="stat-admin-buses">0</h3>
+                    <p>Custom Bus Routes</p>
                 </div>
             </div>
             <div class="glass-card stat-card">
@@ -73,22 +93,63 @@
                     <i class="fa-solid fa-city"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>3</h3>
-                    <p>Active Cities</p>
+                    <h3 id="stat-admin-cities">3</h3>
+                    <p>Operating Cities</p>
+                </div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stat-admin-passengers">1</h3>
+                    <p>Passenger Accounts</p>
                 </div>
             </div>
         </div>
 
-        <!-- Route Management List -->
-        <div class="glass-card">
-            <h2 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-list-check"></i> Managed Bus Routes</h2>
+        <!-- Admin Control Tabs -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button id="tab-buses" class="admin-tab-btn active" onclick="switchAdminTab('buses')"><i class="fa-solid fa-bus"></i> Bus & Route Management</button>
+            <button id="tab-cities" class="admin-tab-btn" onclick="switchAdminTab('cities')"><i class="fa-solid fa-city"></i> Operating City Management</button>
+            <button id="tab-passengers" class="admin-tab-btn" onclick="switchAdminTab('passengers')"><i class="fa-solid fa-users-gear"></i> Passenger Accounts</button>
+        </div>
+
+        <!-- Section 1: Bus & Route Management -->
+        <div id="section-buses" class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2><i class="fa-solid fa-route"></i> Managed Bus Routes</h2>
+                <button class="btn-primary" onclick="openAddRouteModal()"><i class="fa-solid fa-plus"></i> Add New Route</button>
+            </div>
             <div id="admin-routes-container" class="route-list">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Section 2: City Management -->
+        <div id="section-cities" class="glass-card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2><i class="fa-solid fa-city"></i> Operating Cities</h2>
+                <button class="btn-primary" onclick="openAddCityModal()"><i class="fa-solid fa-plus"></i> Add Operating City</button>
+            </div>
+            <div id="admin-cities-container" class="route-list">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Section 3: Passenger Accounts -->
+        <div id="section-passengers" class="glass-card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2><i class="fa-solid fa-users"></i> Passenger Accounts & Details</h2>
+                <button class="btn-primary" onclick="openAddPassengerModal()"><i class="fa-solid fa-user-plus"></i> Add New Passenger</button>
+            </div>
+            <div id="admin-passengers-container" class="route-list">
                 <!-- Dynamically populated -->
             </div>
         </div>
     </main>
 
-    <!-- Add/Edit Route Modal -->
+    <!-- Modal 1: Add/Edit Bus Route Modal -->
     <div id="route-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center;">
         <div class="glass-card" style="width: 100%; max-width: 500px; padding: 2rem; background: var(--bg-color); border: 1px solid var(--card-border);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -102,9 +163,7 @@
                 <div style="margin-bottom: 1rem;">
                     <label style="font-size: 0.85rem; color: var(--text-secondary);">City</label>
                     <select id="form-city" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
-                        <option value="Delhi">Delhi</option>
-                        <option value="Mumbai">Mumbai</option>
-                        <option value="Bangalore">Bangalore</option>
+                        <!-- Dynamic City Options -->
                     </select>
                 </div>
 
@@ -132,18 +191,57 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.85rem; color: var(--text-secondary);">First Bus</label>
-                        <input type="text" id="form-first" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="06:00 AM">
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Last Bus</label>
-                        <input type="text" id="form-last" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="10:30 PM">
-                    </div>
-                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-floppy-disk"></i> Save Bus Route</button>
+            </form>
+        </div>
+    </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-floppy-disk"></i> Save Route</button>
+    <!-- Modal 2: Add City Modal -->
+    <div id="city-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center;">
+        <div class="glass-card" style="width: 100%; max-width: 420px; padding: 2rem; background: var(--bg-color); border: 1px solid var(--card-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--accent-color);"><i class="fa-solid fa-city"></i> Add Operating City</h3>
+                <button onclick="closeCityModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="city-form">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">City Name</label>
+                    <input type="text" id="city-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Hyderabad or Chennai" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-check"></i> Add City</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Add Passenger Modal -->
+    <div id="passenger-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center;">
+        <div class="glass-card" style="width: 100%; max-width: 450px; padding: 2rem; background: var(--bg-color); border: 1px solid var(--card-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--accent-color);"><i class="fa-solid fa-user-plus"></i> Add Passenger Account</h3>
+                <button onclick="closePassengerModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="passenger-form">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Full Name</label>
+                    <input type="text" id="pass-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Rahul Sharma" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Email Address</label>
+                    <input type="email" id="pass-email-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="rahul@gmail.com" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Phone Number</label>
+                    <input type="text" id="pass-phone-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="+91 98765 00000" required>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">City</label>
+                    <select id="pass-city-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                        <!-- Populated -->
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;"><i class="fa-solid fa-check"></i> Add Passenger</button>
             </form>
         </div>
     </div>
@@ -152,7 +250,7 @@
     <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
         <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
         <p style="font-size: 0.9rem; margin-bottom: 1.2rem;">Smart Public Transport Tracker</p>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 1rem; flex-wrap: wrap;">
             <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="GitHub Repository"><i class="fa-brands fa-github"></i> GitHub</a>
             <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="LinkedIn"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
             <a href="admin.html" style="color: var(--warning-color); font-weight: 600; transition: color 0.2s;" title="Admin Portal"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
@@ -166,8 +264,8 @@
         <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
     </div>
 
-    <script src="js/app.js?v=4"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/app.js?v=5"></script>
+    <script src="js/admin.js?v=5"></script>
 </body>
 </html>
 

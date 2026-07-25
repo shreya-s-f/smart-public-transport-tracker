@@ -103,18 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. City Selection Logic (Pan-India)
     const citySelectors = document.querySelectorAll('.city-selector');
     const savedCity = localStorage.getItem('spt-city') || 'Delhi';
-    
-    // Set City Background in Hero
-    const heroSection = document.getElementById('hero-section');
-    if(heroSection) {
-        if(savedCity === 'Delhi') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1000&auto=format&fit=crop')";
-        if(savedCity === 'Mumbai') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1522262590532-a991489a0253?q=80&w=1000&auto=format&fit=crop')";
-        if(savedCity === 'Bangalore') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1000&auto=format&fit=crop')";
-    }
-    
+
+    // Load custom cities added by Admin
+    let customCities = [];
+    try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
+    const allCities = [...new Set(['Delhi', 'Mumbai', 'Bangalore', ...customCities])];
+
     citySelectors.forEach(selector => {
-        // Set initial value
-        selector.value = savedCity;
+        // Populate options
+        const currentVal = selector.value || savedCity;
+        selector.innerHTML = allCities.map(c => `<option value="${c}">${c}</option>`).join('');
+        selector.value = allCities.includes(currentVal) ? currentVal : allCities[0];
         
         // Listen for changes
         selector.addEventListener('change', (e) => {
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 800);
             } else {
                 window.location.reload();
             }

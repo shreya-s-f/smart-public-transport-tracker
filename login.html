@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="css/style.css?v=4">
-    <script src="js/auth.js?v=4"></script>
+    <link rel="stylesheet" href="css/style.css?v=5">
+    <script src="js/auth.js?v=5"></script>
 
     <style>
         body {
@@ -109,17 +109,13 @@
             <input type="hidden" id="selected-role" value="passenger">
 
             <div style="text-align: left; margin-bottom: 0.5rem;">
-                <label style="font-size: 0.85rem; color: var(--text-secondary);" id="email-label">Passenger Email / Name</label>
+                <label style="font-size: 0.85rem; color: var(--text-secondary);" id="email-label">Passenger Email / ID</label>
                 <input type="text" id="email" class="login-input" placeholder="e.g. shreya@gmail.com" required>
             </div>
             
             <div style="text-align: left; margin-bottom: 1rem;">
                 <label style="font-size: 0.85rem; color: var(--text-secondary);" id="password-label">Password</label>
                 <input type="password" id="password" class="login-input" placeholder="Enter password" required>
-            </div>
-
-            <div id="admin-note" style="display: none; font-size: 0.8rem; background: rgba(245, 158, 11, 0.15); color: var(--warning-color); padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem; text-align: left;">
-                <i class="fa-solid fa-shield"></i> Admin Key: Password set to <strong>admin@transit</strong>
             </div>
 
             <button type="submit" id="submit-btn" class="btn-primary btn-pulse">Sign In as Passenger <i class="fa-solid fa-arrow-right"></i></button>
@@ -134,16 +130,14 @@
             const submitBtn = document.getElementById('submit-btn');
             const emailInput = document.getElementById('email');
             const passInput = document.getElementById('password');
-            const adminNote = document.getElementById('admin-note');
 
             if (role === 'admin') {
                 passengerTab.classList.remove('active');
                 adminTab.classList.add('active');
-                emailInput.placeholder = "admin@transit";
-                passInput.placeholder = "admin@transit";
+                emailInput.placeholder = "Admin Username / Email";
+                passInput.placeholder = "••••••••";
                 submitBtn.innerHTML = 'Sign In as Admin <i class="fa-solid fa-shield-halved"></i>';
                 submitBtn.style.background = 'var(--warning-color)';
-                adminNote.style.display = 'block';
             } else {
                 adminTab.classList.remove('active');
                 passengerTab.classList.add('active');
@@ -151,7 +145,6 @@
                 passInput.placeholder = "Enter password";
                 submitBtn.innerHTML = 'Sign In as Passenger <i class="fa-solid fa-arrow-right"></i>';
                 submitBtn.style.background = 'var(--accent-color)';
-                adminNote.style.display = 'none';
             }
         }
 
@@ -161,20 +154,19 @@
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value.trim();
 
-            // Auto detect admin credentials
             const isAdminCreds = (email === 'admin@transit' || pass === 'admin@transit' || pass === 'admin123' || role === 'admin');
 
             if (role === 'admin' || isAdminCreds) {
                 if (pass === 'admin@transit' || pass === 'admin123' || email === 'admin@transit' || role === 'admin') {
                     localStorage.setItem('spt-authenticated', 'true');
                     localStorage.setItem('spt-user-role', 'admin');
-                    localStorage.setItem('spt-profile-name', 'Admin User');
+                    localStorage.setItem('spt-profile-name', 'System Admin');
                     
                     document.body.style.opacity = '0';
                     document.body.style.transition = 'opacity 0.4s ease';
                     setTimeout(() => window.location.href = 'admin.html', 400);
                 } else {
-                    alert('Invalid Admin Credentials! Use password: admin@transit');
+                    alert('Invalid Admin Credentials! Please enter valid admin credentials.');
                 }
             } else {
                 // Passenger Login
@@ -185,7 +177,6 @@
                 localStorage.setItem('spt-user-role', 'passenger');
                 localStorage.setItem('spt-profile-name', formattedName);
                 
-                // Initialize default profile object if missing
                 if(!localStorage.getItem('spt-user-profile-data')) {
                     localStorage.setItem('spt-user-profile-data', JSON.stringify({
                         name: formattedName,
@@ -203,5 +194,4 @@
     </script>
 </body>
 </html>
-
 
