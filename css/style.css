@@ -619,3 +619,6 @@ th {
     justify-content: flex-end;
   }
 }
+
+.btn-success { background: var(--success-color); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; } .btn-success:hover { opacity: 0.9; }
+

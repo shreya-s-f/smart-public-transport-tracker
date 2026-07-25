@@ -53,8 +53,9 @@
                     <i class="fa-regular fa-user"></i>
                 </div>
                 <h3 id="user-name">Passenger</h3>
+                <input type="text" id="edit-name-input" class="search-input" style="display: none; margin: 0 auto 1rem; width: 90%; text-align: center;" placeholder="Enter your name">
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Commuter</p>
-                <button class="btn-primary" style="width: 100%; margin-bottom: 1rem; padding: 0.8rem;">Edit Profile</button>
+                <button id="edit-profile-btn" class="btn-primary" style="width: 100%; margin-bottom: 1rem; padding: 0.8rem;">Edit Profile</button>
             </div>
 
             <!-- Settings & Data -->
@@ -186,6 +187,45 @@
                 };
                 html2pdf().set(opt).from(element).save();
             };
+
+            // 3. Edit Profile Logic
+            const editBtn = document.getElementById('edit-profile-btn');
+            const userNameEl = document.getElementById('user-name');
+            const editInput = document.getElementById('edit-name-input');
+            
+            // Load saved name or default to the last ticket name
+            let savedName = localStorage.getItem('spt-profile-name');
+            if (savedName) {
+                userNameEl.textContent = savedName;
+            } else if (tickets.length > 0) {
+                userNameEl.textContent = tickets[tickets.length - 1].name;
+            }
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    if (editBtn.textContent === 'Edit Profile') {
+                        // Switch to edit mode
+                        userNameEl.style.display = 'none';
+                        editInput.style.display = 'block';
+                        editInput.value = userNameEl.textContent;
+                        editInput.focus();
+                        editBtn.textContent = 'Save Profile';
+                        editBtn.classList.remove('btn-primary');
+                        editBtn.classList.add('btn-success');
+                    } else {
+                        // Save changes
+                        const newName = editInput.value.trim() || 'Passenger';
+                        userNameEl.textContent = newName;
+                        localStorage.setItem('spt-profile-name', newName);
+                        
+                        editInput.style.display = 'none';
+                        userNameEl.style.display = 'block';
+                        editBtn.textContent = 'Edit Profile';
+                        editBtn.classList.remove('btn-success');
+                        editBtn.classList.add('btn-primary');
+                    }
+                });
+            }
 
             // 2. Load Favorites
             let favorites = [];
