@@ -184,6 +184,38 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = `routes.html?search=${encodeURIComponent(term)}`;
         }
     }
+
+    // 6. Intersection Observer for Scroll Animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Apply reveal to all glass cards that don't already have fade-in-up
+    document.querySelectorAll('.glass-card:not(.animate-fade-in-up)').forEach(el => {
+        el.classList.add('reveal');
+        observer.observe(el);
+    });
+    // Also observe all route items if they exist
+    setTimeout(() => {
+        document.querySelectorAll('.route-item').forEach(el => {
+            if(!el.classList.contains('animate-fade-in-up')){
+                el.classList.add('reveal');
+                observer.observe(el);
+            }
+        });
+    }, 500);
+
 });
 
 // Utility to get random ETA for demo purposes
