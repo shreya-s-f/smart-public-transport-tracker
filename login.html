@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit.IN - Login</title>
+    <title>Transit.IN - Authentication</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/auth.js"></script>
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <script src="js/auth.js?v=3"></script>
 
     <style>
         body {
@@ -29,7 +29,7 @@
         .overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(8px);
             z-index: 0;
         }
@@ -37,15 +37,31 @@
         .login-card {
             position: relative;
             z-index: 1;
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem;
+            padding: 2.5rem;
             border-radius: 16px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.7rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
         }
 
         .login-input {
@@ -66,9 +82,9 @@
 
         .btn-primary {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             font-size: 1rem;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
@@ -77,50 +93,112 @@
     <div class="overlay"></div>
 
     <div class="login-card animate-fade-in-up">
-        <div style="font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;" class="animate-float">
+        <div style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 0.8rem;" class="animate-float">
             <i class="fa-solid fa-bus"></i>
         </div>
-        <h2 style="margin-bottom: 0.5rem; color: white;">Welcome to Transit.IN</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">Sign in to track buses and book tickets</p>
-        
-        <form id="login-form">
+        <h2 style="margin-bottom: 0.3rem; color: white;">Transit.IN Portal</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Sign in to access transport services</p>
+
+        <!-- Role Tabs -->
+        <div style="display: flex; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem;">
+            <button id="tab-passenger" class="tab-btn active" onclick="switchRole('passenger')"><i class="fa-solid fa-user"></i> Passenger</button>
+            <button id="tab-admin" class="tab-btn" onclick="switchRole('admin')"><i class="fa-solid fa-user-shield"></i> Admin Portal</button>
+        </div>
+
+        <form id="auth-form">
+            <input type="hidden" id="selected-role" value="passenger">
+
             <div style="text-align: left; margin-bottom: 0.5rem;">
-                <label style="font-size: 0.85rem; color: var(--text-secondary);">Email Address</label>
-                <input type="email" id="email" class="login-input" placeholder="Enter your email" required>
+                <label style="font-size: 0.85rem; color: var(--text-secondary);" id="email-label">Passenger Email / Name</label>
+                <input type="text" id="email" class="login-input" placeholder="e.g. shreya@gmail.com" required>
             </div>
             
             <div style="text-align: left; margin-bottom: 1rem;">
-                <label style="font-size: 0.85rem; color: var(--text-secondary);">Password</label>
-                <input type="password" id="password" class="login-input" placeholder="Enter your password" required>
+                <label style="font-size: 0.85rem; color: var(--text-secondary);" id="password-label">Password</label>
+                <input type="password" id="password" class="login-input" placeholder="Enter password" required>
             </div>
-            
-            <button type="submit" class="btn-primary btn-pulse">Sign In <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i></button>
+
+            <div id="admin-note" style="display: none; font-size: 0.8rem; background: rgba(245, 158, 11, 0.15); color: var(--warning-color); padding: 0.5rem; border-radius: 6px; margin-bottom: 1rem; text-align: left;">
+                <i class="fa-solid fa-shield"></i> Admin Key: Password set to <strong>admin@transit</strong>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-primary btn-pulse">Sign In as Passenger <i class="fa-solid fa-arrow-right"></i></button>
         </form>
-        
-        <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-secondary);">
-            Don't have an account? <a href="#" style="color: var(--accent-color);" onclick="alert('Demo Mode: Just click Sign In to continue!')">Sign up</a>
-        </p>
     </div>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', (e) => {
+        function switchRole(role) {
+            document.getElementById('selected-role').value = role;
+            const passengerTab = document.getElementById('tab-passenger');
+            const adminTab = document.getElementById('tab-admin');
+            const submitBtn = document.getElementById('submit-btn');
+            const emailInput = document.getElementById('email');
+            const passInput = document.getElementById('password');
+            const adminNote = document.getElementById('admin-note');
+
+            if (role === 'admin') {
+                passengerTab.classList.remove('active');
+                adminTab.classList.add('active');
+                emailInput.placeholder = "admin@transit";
+                passInput.placeholder = "admin@transit";
+                submitBtn.innerHTML = 'Sign In as Admin <i class="fa-solid fa-shield-halved"></i>';
+                submitBtn.style.background = 'var(--warning-color)';
+                adminNote.style.display = 'block';
+            } else {
+                adminTab.classList.remove('active');
+                passengerTab.classList.add('active');
+                emailInput.placeholder = "e.g. shreya@gmail.com";
+                passInput.placeholder = "Enter password";
+                submitBtn.innerHTML = 'Sign In as Passenger <i class="fa-solid fa-arrow-right"></i>';
+                submitBtn.style.background = 'var(--accent-color)';
+                adminNote.style.display = 'none';
+            }
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Get email name as profile name
-            const email = document.getElementById('email').value;
-            const name = email.split('@')[0];
-            
-            // Save mock authentication state
-            localStorage.setItem('spt-authenticated', 'true');
-            localStorage.setItem('spt-profile-name', name.charAt(0).toUpperCase() + name.slice(1));
-            
-            // Add a cool transition effect before redirecting
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease';
-            
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 500);
+            const role = document.getElementById('selected-role').value;
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            // Auto detect admin credentials
+            const isAdminCreds = (email === 'admin@transit' || pass === 'admin@transit' || pass === 'admin123' || role === 'admin');
+
+            if (role === 'admin' || isAdminCreds) {
+                if (pass === 'admin@transit' || pass === 'admin123' || email === 'admin@transit' || role === 'admin') {
+                    localStorage.setItem('spt-authenticated', 'true');
+                    localStorage.setItem('spt-user-role', 'admin');
+                    localStorage.setItem('spt-profile-name', 'Admin User');
+                    
+                    document.body.style.opacity = '0';
+                    document.body.style.transition = 'opacity 0.4s ease';
+                    setTimeout(() => window.location.href = 'admin.html', 400);
+                } else {
+                    alert('Invalid Admin Credentials! Use password: admin@transit');
+                }
+            } else {
+                // Passenger Login
+                const name = email.includes('@') ? email.split('@')[0] : email;
+                const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+                
+                localStorage.setItem('spt-authenticated', 'true');
+                localStorage.setItem('spt-user-role', 'passenger');
+                localStorage.setItem('spt-profile-name', formattedName);
+                
+                // Initialize default profile object if missing
+                if(!localStorage.getItem('spt-user-profile-data')) {
+                    localStorage.setItem('spt-user-profile-data', JSON.stringify({
+                        name: formattedName,
+                        email: email.includes('@') ? email : `${email}@gmail.com`,
+                        phone: '+91 98765 43210',
+                        city: 'Delhi'
+                    }));
+                }
+                
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.4s ease';
+                setTimeout(() => window.location.href = 'index.html', 400);
+            }
         });
     </script>
 </body>

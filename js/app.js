@@ -36,23 +36,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const navLinks = document.getElementById('nav-links');
 
-    // Auth: Inject Logout Button
+    // Auth: Inject Logout Button & Admin Nav Link
     const navActions = document.querySelector('.nav-actions');
+    const userRole = localStorage.getItem('spt-user-role') || 'passenger';
+    const navLinksContainer = document.getElementById('nav-links');
+
+    if (navLinksContainer && userRole === 'admin' && !document.getElementById('admin-nav-item')) {
+        const adminLink = document.createElement('a');
+        adminLink.id = 'admin-nav-item';
+        adminLink.href = 'admin.html';
+        adminLink.style.color = 'var(--warning-color)';
+        adminLink.style.fontWeight = '700';
+        if (window.location.pathname.endsWith('admin.html')) adminLink.className = 'active';
+        adminLink.innerHTML = '<i class="fa-solid fa-user-shield"></i> Admin Panel';
+        navLinksContainer.appendChild(adminLink);
+    }
+
     if (navActions && !window.location.pathname.endsWith('login.html')) {
-        const logoutBtn = document.createElement('button');
-        logoutBtn.className = 'theme-toggle';
-        logoutBtn.style.color = 'var(--danger-color)';
-        logoutBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i>';
-        logoutBtn.title = 'Logout';
-        
-        logoutBtn.addEventListener('click', () => {
-            if(confirm("Are you sure you want to log out?")) {
-                localStorage.removeItem('spt-authenticated');
-                window.location.href = 'login.html';
-            }
-        });
-        
-        navActions.insertBefore(logoutBtn, navActions.firstChild);
+        if (!document.getElementById('header-logout-btn')) {
+            const logoutBtn = document.createElement('button');
+            logoutBtn.id = 'header-logout-btn';
+            logoutBtn.className = 'theme-toggle';
+            logoutBtn.style.color = 'var(--danger-color)';
+            logoutBtn.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket"></i>';
+            logoutBtn.title = 'Logout';
+            
+            logoutBtn.addEventListener('click', () => {
+                if(confirm("Are you sure you want to log out?")) {
+                    localStorage.removeItem('spt-authenticated');
+                    localStorage.removeItem('spt-user-role');
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            navActions.insertBefore(logoutBtn, navActions.firstChild);
+        }
     }
 
     if (mobileBtn && navLinks) {
