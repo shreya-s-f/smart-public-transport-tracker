@@ -9,12 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- html2pdf for downloading tickets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fa-solid fa-bus"></i> TrackerPro
+            <i class="fa-solid fa-bus"></i> Transit.IN
         </div>
         
         <div class="nav-links" id="nav-links">
@@ -96,7 +98,24 @@
             </div>
 
         </div>
-    </main>
+        </main>
+
+    <!-- Professional Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
+        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker</p>
+        <div style="display: flex; justify-content: center; gap: 1.5rem; font-size: 1.2rem;">
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-github"></i></a>
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 1.5rem;">Developed by Shreya &copy; 2026</p>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="city-loader" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+        <div class="spinner"></div>
+        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
+    </div>
 
     <script src="js/app.js"></script>
     <script>
@@ -116,27 +135,57 @@
                 document.getElementById('user-name').textContent = tickets[tickets.length - 1].name;
                 
                 // Show latest tickets first
-                tickets.slice().reverse().forEach(t => {
+                tickets.slice().reverse().forEach((t, i) => {
                     const card = document.createElement('div');
-                    card.className = 'glass-card route-item';
+                    card.className = 'glass-card route-item ticket-card';
                     card.style.borderLeft = '4px solid var(--success-color)';
+                    card.style.position = 'relative';
                     card.innerHTML = `
-                        <div class="route-details" style="width: 100%;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <div class="route-details" style="width: 100%;" id="ticket-content-${i}">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; align-items: center;">
                                 <span class="route-number"><i class="fa-solid fa-ticket"></i> ${t.id}</span>
                                 <span class="route-status" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${t.status}</span>
                             </div>
-                            <span class="route-path" style="font-weight: 600;">${t.city} • Route ${t.route}</span>
+                            <span class="route-path" style="font-weight: 600; display:block; margin-bottom: 0.5rem;">Transit.IN • ${t.city} • Route ${t.route}</span>
+                            
+                            <div style="background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px dashed var(--card-border);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span><strong>Passenger:</strong> ${t.name}</span>
+                                    <span><strong>Seat:</strong> ${t.seat || '22A'}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-secondary);">
+                                    <span><i class="fa-solid fa-map-pin"></i> ${t.boarding || 'Origin'}</span>
+                                    <span><i class="fa-solid fa-arrow-right"></i></span>
+                                    <span><i class="fa-solid fa-location-dot"></i> ${t.drop || 'Destination'}</span>
+                                </div>
+                            </div>
+
                             <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
                                 <span><i class="fa-regular fa-calendar"></i> ${t.date}</span>
                                 <span><i class="fa-solid fa-users"></i> ${t.passengers} pax</span>
                                 <span><i class="fa-solid fa-indian-rupee-sign"></i> ${t.total.replace('₹','')}</span>
                             </div>
                         </div>
+                        <button class="btn-primary" style="position: absolute; right: 1rem; bottom: 1rem; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="downloadTicket('ticket-content-${i}', '${t.id}')">
+                            <i class="fa-solid fa-download"></i> PDF
+                        </button>
                     `;
                     ticketsList.appendChild(card);
                 });
             }
+
+            // Global Download Function
+            window.downloadTicket = function(elementId, ticketId) {
+                const element = document.getElementById(elementId);
+                const opt = {
+                    margin:       0.5,
+                    filename:     `TransitIN_${ticketId}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2 },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+                };
+                html2pdf().set(opt).from(element).save();
+            };
 
             // 2. Load Favorites
             let favorites = [];
@@ -166,3 +215,4 @@
     </script>
 </body>
 </html>
+

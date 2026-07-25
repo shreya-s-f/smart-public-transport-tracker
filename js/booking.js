@@ -120,11 +120,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const count = passCount.value;
         const total = document.getElementById('summary-total').textContent;
 
+        const selectedRouteText = routeSelect.options[routeSelect.selectedIndex].text;
+        const [routeNum, pathDesc] = selectedRouteText.split(' (');
+        const [boarding, drop] = pathDesc ? pathDesc.replace(')','').split(' ➔ ') : ['Station', 'Destination'];
+
         // Save Ticket to LocalStorage
         const ticket = {
             id: 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
             city: currentCity,
             route: route,
+            boarding: boarding.trim(),
+            drop: drop.trim(),
+            seat: Math.floor(Math.random() * 40) + 1 + 'A',
             date: date,
             passengers: count,
             name: name,

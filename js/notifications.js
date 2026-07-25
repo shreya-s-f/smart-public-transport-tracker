@@ -52,17 +52,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const statusClass = row.status === 'Active' ? 'status-ontime' : 'status-delayed';
             const animDelay = (index * 0.1);
             
-            const tr = document.createElement('tr');
-            tr.className = 'animate-fade-in-up';
-            tr.style.animationDelay = `${animDelay}s`;
-            tr.innerHTML = `
-                <td style="font-weight: 500;">${row.stop}</td>
-                <td>${row.first}</td>
-                <td>${row.last}</td>
-                <td>${row.freq}</td>
-                <td><span class="route-status ${statusClass}">${row.status}</span></td>
+            const card = document.createElement('div');
+            card.className = 'glass-card route-item animate-fade-in-up';
+            card.style.animationDelay = `${animDelay}s`;
+            card.innerHTML = `
+                <div class="route-details" style="flex: 1;">
+                    <span class="route-number" style="display: block; margin-bottom: 0.5rem;"><i class="fa-solid fa-map-pin"></i> ${row.stop}</span>
+                    <span style="font-size: 0.9rem; color: var(--text-secondary); display: flex; gap: 1rem; align-items: center;">
+                        <span><i class="fa-solid fa-hourglass-start"></i> First: ${row.first}</span>
+                        <span><i class="fa-solid fa-hourglass-end"></i> Last: ${row.last}</span>
+                        <span><i class="fa-solid fa-clock-rotate-left"></i> ${row.freq}</span>
+                    </span>
+                </div>
+                <div class="route-actions" style="margin-left: 1rem;">
+                    <span class="route-status ${statusClass}">${row.status}</span>
+                </div>
             `;
-            tbody.appendChild(tr);
+            tbody.appendChild(card);
         });
     }
 

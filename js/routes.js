@@ -29,16 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
     const routesData = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
     
+    // Handle Auto-Search from Dashboard
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSearch = urlParams.get('search') || '';
+    
     // Update heading
     const heading = document.getElementById('routes-heading');
     if (heading) heading.innerHTML = `Available Routes in <span style="color: var(--accent-color);">${currentCity}</span>`;
 
     if (container) {
-        renderRoutes(routesData);
-
-        // Search functionality
         if (searchInput) {
             searchInput.placeholder = `Search routes in ${currentCity} (e.g. ${routesData[0].id})`;
+            if (initialSearch) {
+                searchInput.value = initialSearch;
+            }
+            
             searchInput.addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
                 const filtered = routesData.filter(r => 
@@ -47,6 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
                 renderRoutes(filtered);
             });
+            
+            // Initial render
+            const term = initialSearch.toLowerCase();
+            const filtered = routesData.filter(r => 
+                r.id.toLowerCase().includes(term) || 
+                r.path.toLowerCase().includes(term)
+            );
+            renderRoutes(filtered);
+        } else {
+            renderRoutes(routesData);
         }
     }
 
@@ -54,7 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         
         if (routes.length === 0) {
-            container.innerHTML = '<p style="color: var(--text-secondary);">No routes found matching your search.</p>';
+            container.innerHTML = `
+            <div class="empty-state animate-fade-in-up">
+                <i class="fa-solid fa-bus-slash"></i>
+                <h3>No routes found</h3>
+                <p>We couldn't find any active buses for your search.</p>
+            </div>`;
             return;
         }
 

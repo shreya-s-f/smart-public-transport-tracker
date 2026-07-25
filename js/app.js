@@ -67,6 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const citySelectors = document.querySelectorAll('.city-selector');
     const savedCity = localStorage.getItem('spt-city') || 'Delhi';
     
+    // Set City Background in Hero
+    const heroSection = document.getElementById('hero-section');
+    if(heroSection) {
+        if(savedCity === 'Delhi') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1000&auto=format&fit=crop')";
+        if(savedCity === 'Mumbai') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1522262590532-a991489a0253?q=80&w=1000&auto=format&fit=crop')";
+        if(savedCity === 'Bangalore') heroSection.style.backgroundImage = "url('https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1000&auto=format&fit=crop')";
+    }
+    
     citySelectors.forEach(selector => {
         // Set initial value
         selector.value = savedCity;
@@ -76,10 +84,106 @@ document.addEventListener('DOMContentLoaded', () => {
             const newCity = e.target.value;
             localStorage.setItem('spt-city', newCity);
             
-            // Reload page to fetch new city data in specific scripts (routes.js, tracking.js, etc.)
-            window.location.reload();
+            // Show Loading Skeleton Overlay
+            const loader = document.getElementById('city-loader');
+            const loaderText = document.getElementById('loader-text');
+            if (loader && loaderText) {
+                loaderText.textContent = `Loading ${newCity}...`;
+                loader.style.opacity = '1';
+                loader.style.pointerEvents = 'auto';
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                window.location.reload();
+            }
         });
     });
+
+    // 5. Smart Search Autocomplete
+    const globalSearch = document.getElementById('global-search');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    if (globalSearch && searchSuggestions) {
+        let recentSearches = JSON.parse(localStorage.getItem('spt-recent-searches')) || [];
+        
+        const popularRoutes = {
+            'Delhi': ['507', 'GL-23', '390', 'Airport Express'],
+            'Mumbai': ['BEST 301', 'AC-10', 'C-71', 'Bandra Local'],
+            'Bangalore': ['V-500D', 'KIA-9', '335E', 'Silk Board']
+        };
+
+        globalSearch.addEventListener('focus', () => {
+            renderSuggestions();
+            searchSuggestions.style.display = 'block';
+        });
+
+        // Hide when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!globalSearch.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.style.display = 'none';
+            }
+        });
+
+        globalSearch.addEventListener('input', (e) => {
+            renderSuggestions(e.target.value);
+        });
+
+        function renderSuggestions(filter = '') {
+            searchSuggestions.innerHTML = '';
+            const cityRoutes = popularRoutes[savedCity] || popularRoutes['Delhi'];
+            
+            // Add Recent Searches
+            if (recentSearches.length > 0 && !filter) {
+                const title = document.createElement('div');
+                title.style = 'padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase;';
+                title.textContent = 'Recent Searches';
+                searchSuggestions.appendChild(title);
+
+                recentSearches.slice(0, 3).forEach(term => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> ${term}`;
+                    item.onclick = () => selectSearch(term);
+                    searchSuggestions.appendChild(item);
+                });
+            }
+
+            // Add Popular/Filtered Routes
+            const title = document.createElement('div');
+            title.style = 'padding: 0.5rem 1rem; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-top: 0.5rem;';
+            title.textContent = filter ? 'Matching Routes' : 'Popular in ' + savedCity;
+            searchSuggestions.appendChild(title);
+
+            const matches = cityRoutes.filter(r => r.toLowerCase().includes(filter.toLowerCase()));
+            
+            if(matches.length === 0) {
+                const item = document.createElement('div');
+                item.style = 'padding: 0.5rem 1rem; color: var(--text-secondary);';
+                item.textContent = 'No matches found';
+                searchSuggestions.appendChild(item);
+            } else {
+                matches.forEach(term => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `<i class="fa-solid fa-bus"></i> ${term}`;
+                    item.onclick = () => selectSearch(term);
+                    searchSuggestions.appendChild(item);
+                });
+            }
+        }
+
+        function selectSearch(term) {
+            globalSearch.value = term;
+            searchSuggestions.style.display = 'none';
+            
+            // Save to recent
+            recentSearches = [term, ...recentSearches.filter(t => t !== term)].slice(0, 5);
+            localStorage.setItem('spt-recent-searches', JSON.stringify(recentSearches));
+            
+            window.location.href = `routes.html?search=${encodeURIComponent(term)}`;
+        }
+    }
 });
 
 // Utility to get random ETA for demo purposes

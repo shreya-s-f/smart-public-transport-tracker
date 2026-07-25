@@ -1,44 +1,46 @@
-# 🚌 Smart Public Transport Tracker
+# Transit.IN (Smart Public Transport Tracker)
 
-Welcome to the **Smart Public Transport Tracker**! This is a modern, responsive front-end web application designed to solve common commuting problems by providing a centralized dashboard for tracking buses, checking schedules, and receiving live alerts.
+Transit.IN is a responsive, modern web application designed to track public transport across India's major cities (Delhi, Mumbai, and Bangalore). It features live departure boards, route analytics dashboards, and a complete e-ticket booking system.
 
-## ✨ Features
+## 🚀 Features
 
-- **📍 Live Simulated Tracking:** Interactive map powered by Leaflet.js that simulates real-time bus movement with active ETA countdowns.
-- **🔍 Route Search & Filtering:** Instantly search through available bus routes and check their operating status.
-- **⭐ Favorites System:** Save your most frequently used routes to your profile for quick access (uses browser `localStorage`).
-- **🌙 Dark/Light Mode:** Premium glassmorphism UI with a built-in theme toggle to suit your viewing preference.
-- **🔔 Real-time Alerts:** A simulated notification feed for traffic delays, stop relocations, and schedule changes.
-- **📱 Fully Responsive:** Works perfectly on desktops, tablets, and mobile phones.
+*   **Pan-India Tracking:** Toggle instantly between Delhi, Mumbai, and Bangalore. Route data, timetables, and alerts switch dynamically.
+*   **Live Map Tracking:** Built with Leaflet.js, featuring a pulsing bus icon simulating real-time movement across actual city coordinates.
+*   **Dashboard & Analytics:** A modern dashboard utilizing `Chart.js` for ridership trends, along with a counting animation for live stats.
+*   **Smart Booking System:** Seamless e-ticket booking with dynamic fare calculation, a simulated payment gateway, and integration with EmailJS for real email receipts.
+*   **Digital Tickets:** View generated tickets in your profile and download them directly as a PDF via `html2pdf.js`.
+*   **Modern UI:** Glassmorphism design, dark mode toggle, smooth CSS animations, and autocomplete smart search.
 
-## 🛠️ Technology Stack
+## 📁 Project Structure
 
-- **HTML5:** Semantic structuring
-- **CSS3:** Custom properties, Flexbox/Grid, Glassmorphism design, and animations.
-- **JavaScript (Vanilla):** DOM manipulation, `setInterval` loops for simulation, and state management.
-- **Leaflet.js:** Open-source interactive mapping.
-- **FontAwesome:** Scalable vector icons.
+```text
+Transit.IN/
+├── css/
+│   └── style.css            # Custom CSS properties, animations, and responsive layouts
+├── js/
+│   ├── app.js               # Global logic, city selection, dark mode, animations, smart search
+│   ├── booking.js           # Ticket generation, fake payment modal, EmailJS integration
+│   ├── notifications.js     # Pan-India dynamic timetables and system alerts
+│   ├── routes.js            # Pan-India route listing, smart search filtering, and favorites
+│   └── tracking.js          # Leaflet map logic, coordinate rendering, and ETA calculation
+├── index.html               # Main Dashboard & Analytics
+├── booking.html             # E-Ticket Booking Page
+├── notifications.html       # System Alerts Page
+├── profile.html             # User Profile & Downloadable E-Tickets
+├── routes.html              # Route Discovery Page
+├── timetable.html           # Weekly Schedules
+└── README.md                # Project Documentation
+```
 
-## 🚀 How to Run Locally
+## 🛠️ Built With
 
-Because this project uses vanilla web technologies, there are no complicated build steps or backend servers required.
+*   HTML5 / CSS3 / Vanilla JavaScript
+*   [Leaflet.js](https://leafletjs.com/) (Maps & Tracking)
+*   [Chart.js](https://www.chartjs.org/) (Analytics)
+*   [EmailJS](https://www.emailjs.com/) (Real Email Notifications)
+*   [html2pdf.js](https://ekoopmans.github.io/html2pdf.js/) (PDF Ticket Downloads)
+*   [FontAwesome](https://fontawesome.com/) (Icons)
 
-### Option 1: Direct File Open (Quickest)
-1. Clone or download this repository to your computer.
-2. Double-click the `index.html` file to open it in your default web browser.
+## 💡 Resume Summary
 
-### Option 2: Live Server (Recommended for Developers)
-1. Open the project folder in **VS Code**.
-2. Install the **Live Server** extension.
-3. Right-click on `index.html` and select **"Open with Live Server"**.
-
-## 🔮 Future Enhancements
-- Integration with real-world transit APIs (e.g., GTFS real-time data) to replace the simulation.
-- Backend database integration (Node.js/Python) to sync user favorites across devices.
-- Admin dashboard for transit authorities to manually broadcast alerts.
-
-## 🤝 Contributing
-Contributions are welcome! If you have ideas for new features or improvements, feel free to fork the repository and submit a pull request.
-
----
-*Developed as a showcase project demonstrating modern UI design and vanilla JavaScript functionality.*
+> **Developed a responsive Smart Public Transport Tracker covering major Indian cities, featuring live departure boards, route analytics dashboards, and a multi-step e-ticket booking system using HTML, CSS, JavaScript, and Chart.js.**

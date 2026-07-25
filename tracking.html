@@ -42,7 +42,7 @@
 
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fa-solid fa-bus"></i> TrackerPro
+            <i class="fa-solid fa-bus"></i> Transit.IN
         </div>
         
         <div class="nav-links" id="nav-links">
@@ -82,7 +82,24 @@
                 <i class="fa-solid fa-circle-info"></i> Simulation Mode: Bus movement is updated every second.
             </div>
         </div>
-    </main>
+        </main>
+
+    <!-- Professional Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
+        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker</p>
+        <div style="display: flex; justify-content: center; gap: 1.5rem; font-size: 1.2rem;">
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-github"></i></a>
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 1.5rem;">Developed by Shreya &copy; 2026</p>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="city-loader" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+        <div class="spinner"></div>
+        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
+    </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -90,3 +107,4 @@
     <script src="js/tracking.js"></script>
 </body>
 </html>
+

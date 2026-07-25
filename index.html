@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Transport Tracker - Home</title>
+    <title>Transit.IN - Smart Transport Tracker</title>
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +21,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fa-solid fa-bus"></i> TrackerPro
+            <i class="fa-solid fa-bus"></i> Transit.IN
         </div>
         
         <div class="nav-links" id="nav-links">
@@ -54,49 +54,82 @@
     <!-- Main Content -->
     <main>
         <!-- Hero Search Section -->
-        <div class="glass-card animate-fade-in-up" style="margin-bottom: 2rem; text-align: center; padding: 3rem 1.5rem;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--accent-color);">Find Your Bus Instantly</h1>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">Track real-time locations across India, book tickets, and never miss a ride.</p>
-            
-            <div class="search-container" style="max-width: 600px; margin: 0 auto;">
-                <input type="text" id="global-search" class="search-input" placeholder="Search by bus number or destination...">
-                <button class="btn-primary" onclick="window.location.href='routes.html'">
-                    <i class="fa-solid fa-magnifying-glass"></i> Search
-                </button>
+        <div id="hero-section" class="glass-card animate-fade-in-up" style="margin-bottom: 2rem; text-align: center; padding: 4rem 1.5rem; background-size: cover; background-position: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--bg-color-rgb), 0.85); z-index: 0;"></div>
+            <div style="position: relative; z-index: 1;">
+                <h1 style="font-size: 2.8rem; margin-bottom: 1rem; color: var(--accent-color);">Track Public Transport Across India's Major Cities</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.2rem;">Live departures &bull; Route Analytics &bull; Smart Ticket Booking</p>
+                
+                <div class="search-container" style="max-width: 600px; margin: 0 auto; position: relative;">
+                    <input type="text" id="global-search" class="search-input" placeholder="Search routes (e.g. 500D, Airport)..." autocomplete="off">
+                    <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; margin-top: 0.5rem; text-align: left; padding: 0.5rem 0; box-shadow: var(--shadow-lg); z-index: 10;">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="btn-primary" onclick="window.location.href='routes.html'">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Dashboard Stats -->
-        <h2 class="animate-fade-in-up" style="margin-bottom: 1.5rem; animation-delay: 0.1s;">System Overview</h2>
-        <div class="dashboard-grid">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+            <h2 class="animate-fade-in-up" style="animation-delay: 0.1s;">System Overview</h2>
+            <span id="last-updated" style="font-size: 0.9rem; color: var(--text-secondary);"><i class="fa-solid fa-clock-rotate-left"></i> Last Updated: --:--</span>
+        </div>
+        
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
             <div class="glass-card stat-card animate-fade-in-up delay-1">
                 <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-color);">
                     <i class="fa-solid fa-bus-simple"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 id="stat-active">124</h3>
+                    <h3 class="counter" data-target="124">0</h3>
                     <p>Active Buses</p>
                 </div>
             </div>
             
             <div class="glass-card stat-card animate-fade-in-up delay-2">
                 <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color);">
-                    <i class="fa-solid fa-route"></i>
+                    <i class="fa-solid fa-check-double"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 id="stat-routes">48</h3>
-                    <p>Routes Operating</p>
+                    <h3 class="counter" data-target="92" data-suffix="%">0%</h3>
+                    <p>On-Time Rate</p>
                 </div>
             </div>
             
+            <div class="glass-card stat-card animate-fade-in-up delay-3">
+                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 class="counter" data-target="15420">0</h3>
+                    <p>Today's Riders</p>
+                </div>
+            </div>
+
             <div class="glass-card stat-card animate-fade-in-up delay-3">
                 <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 id="stat-delayed">3</h3>
-                    <p>Delayed Services</p>
+                    <h3 class="counter" data-target="3">0</h3>
+                    <p>Delayed Routes</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <h2 class="animate-fade-in-up delay-4" style="margin-bottom: 1.5rem; margin-top: 3rem;">Analytics & Trends</h2>
+        <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+            <div class="glass-card animate-fade-in-up delay-4">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary);">Weekly Ridership</h3>
+                <canvas id="ridershipChart" height="200"></canvas>
+            </div>
+            <div class="glass-card animate-fade-in-up delay-4">
+                <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary);">Peak Hours (Avg Delay)</h3>
+                <canvas id="delayChart" height="250"></canvas>
             </div>
         </div>
 
@@ -126,18 +159,96 @@
         </div>
     </main>
 
+    <!-- Professional Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
+        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker</p>
+        <div style="display: flex; justify-content: center; gap: 1.5rem; font-size: 1.2rem;">
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-github"></i></a>
+            <a href="#" style="color: var(--text-secondary); transition: color 0.2s;"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 1.5rem;">Developed by Shreya &copy; 2026</p>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="city-loader" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+        <div class="spinner"></div>
+        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
+    </div>
+
     <!-- Global JS -->
     <script src="js/app.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Update stats slightly based on city selection
         document.addEventListener('DOMContentLoaded', () => {
             const city = localStorage.getItem('spt-city') || 'Delhi';
-            const routesSpan = document.getElementById('stat-routes');
-            const activeSpan = document.getElementById('stat-active');
+            const counters = document.querySelectorAll('.counter');
             
-            if (city === 'Delhi') { routesSpan.textContent = '84'; activeSpan.textContent = '420'; }
-            if (city === 'Mumbai') { routesSpan.textContent = '112'; activeSpan.textContent = '650'; }
-            if (city === 'Bangalore') { routesSpan.textContent = '65'; activeSpan.textContent = '280'; }
+            // Adjust stats based on city
+            if (city === 'Delhi') { counters[0].dataset.target = '420'; counters[2].dataset.target = '54200'; }
+            if (city === 'Mumbai') { counters[0].dataset.target = '650'; counters[2].dataset.target = '89100'; }
+            if (city === 'Bangalore') { counters[0].dataset.target = '280'; counters[2].dataset.target = '32000'; }
+
+            // Number Counter Animation
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.dataset.target;
+                    const suffix = counter.dataset.suffix || '';
+                    const count = +counter.innerText.replace(/\D/g, '');
+                    const inc = target / 50; // Speed
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc) + suffix;
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target.toLocaleString() + suffix;
+                    }
+                };
+                updateCount();
+            });
+
+            // Last Updated Time
+            const timeSpan = document.getElementById('last-updated');
+            const now = new Date();
+            timeSpan.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> Last Updated: ${now.toLocaleTimeString()}`;
+
+            // Initialize Charts
+            const ctx1 = document.getElementById('ridershipChart');
+            if(ctx1) {
+                new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Passengers',
+                            data: [12000, 19000, 15000, 17000, 22000, 30000, 25000],
+                            borderColor: '#3b82f6',
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } } }
+                });
+            }
+
+            const ctx2 = document.getElementById('delayChart');
+            if(ctx2) {
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['8 AM', '1 PM', '6 PM'],
+                        datasets: [{
+                            label: 'Avg Delay (mins)',
+                            data: [15, 5, 25],
+                            backgroundColor: ['#ef4444', '#10b981', '#ef4444'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } } }
+                });
+            }
         });
     </script>
 </body>
