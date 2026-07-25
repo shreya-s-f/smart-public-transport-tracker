@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit.IN - Admin Panel</title>
+    <title>Transit.IN - Admin Management Panel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="css/style.css?v=5">
-    <script src="js/auth.js?v=5"></script>
+    <link rel="stylesheet" href="css/style.css?v=6">
+    <script src="js/auth.js?v=6"></script>
 
     <style>
         .admin-tab-btn {
@@ -36,7 +36,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fa-solid fa-bus"></i> Transit.IN
+            <i class="fa-solid fa-bus"></i> Transit.IN Admin
         </div>
         
         <div class="nav-links" id="nav-links">
@@ -69,8 +69,8 @@
     <main>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <div>
-                <h1 style="font-size: 2rem; color: var(--accent-color);"><i class="fa-solid fa-user-shield"></i> Admin Management System</h1>
-                <p style="color: var(--text-secondary);">Manage buses, operating cities, and passenger accounts across India.</p>
+                <h1 style="font-size: 2rem; color: var(--accent-color);"><i class="fa-solid fa-user-shield"></i> Admin Management Portal</h1>
+                <p style="color: var(--text-secondary);">Direct control to Add, Modify, and Delete buses, routes, operating cities, and passenger accounts.</p>
             </div>
             <button id="admin-logout-btn" style="padding: 0.7rem 1.2rem; background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); border-radius: 8px; font-weight: 600; cursor: pointer;">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout Admin
@@ -111,25 +111,25 @@
         <!-- Admin Control Tabs -->
         <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
             <button id="tab-buses" class="admin-tab-btn active" onclick="switchAdminTab('buses')"><i class="fa-solid fa-bus"></i> Bus & Route Management</button>
-            <button id="tab-cities" class="admin-tab-btn" onclick="switchAdminTab('cities')"><i class="fa-solid fa-city"></i> Operating City Management</button>
+            <button id="tab-cities" class="admin-tab-btn" onclick="switchAdminTab('cities')"><i class="fa-solid fa-city"></i> City Management</button>
             <button id="tab-passengers" class="admin-tab-btn" onclick="switchAdminTab('passengers')"><i class="fa-solid fa-users-gear"></i> Passenger Accounts</button>
         </div>
 
-        <!-- Section 1: Bus & Route Management -->
+        <!-- Tab 1: Bus & Route Management -->
         <div id="section-buses" class="glass-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2><i class="fa-solid fa-route"></i> Managed Bus Routes</h2>
-                <button class="btn-primary" onclick="openAddRouteModal()"><i class="fa-solid fa-plus"></i> Add New Route</button>
+                <h2><i class="fa-solid fa-route"></i> Buses & Routes Control</h2>
+                <button class="btn-primary" onclick="openAddRouteModal()"><i class="fa-solid fa-plus"></i> Add New Bus Route</button>
             </div>
             <div id="admin-routes-container" class="route-list">
                 <!-- Dynamically populated -->
             </div>
         </div>
 
-        <!-- Section 2: City Management -->
+        <!-- Tab 2: City Management -->
         <div id="section-cities" class="glass-card" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2><i class="fa-solid fa-city"></i> Operating Cities</h2>
+                <h2><i class="fa-solid fa-city"></i> Operating Cities Control</h2>
                 <button class="btn-primary" onclick="openAddCityModal()"><i class="fa-solid fa-plus"></i> Add Operating City</button>
             </div>
             <div id="admin-cities-container" class="route-list">
@@ -137,10 +137,10 @@
             </div>
         </div>
 
-        <!-- Section 3: Passenger Accounts -->
+        <!-- Tab 3: Passenger Accounts -->
         <div id="section-passengers" class="glass-card" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2><i class="fa-solid fa-users"></i> Passenger Accounts & Details</h2>
+                <h2><i class="fa-solid fa-users"></i> Passenger Accounts Control</h2>
                 <button class="btn-primary" onclick="openAddPassengerModal()"><i class="fa-solid fa-user-plus"></i> Add New Passenger</button>
             </div>
             <div id="admin-passengers-container" class="route-list">
@@ -163,7 +163,7 @@
                 <div style="margin-bottom: 1rem;">
                     <label style="font-size: 0.85rem; color: var(--text-secondary);">City</label>
                     <select id="form-city" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
-                        <!-- Dynamic City Options -->
+                        <!-- Dynamic Options -->
                     </select>
                 </div>
 
@@ -264,8 +264,8 @@
         <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
     </div>
 
-    <script src="js/app.js?v=5"></script>
-    <script src="js/admin.js?v=5"></script>
+    <script src="js/app.js?v=6"></script>
+    <script src="js/admin.js?v=6"></script>
 </body>
 </html>
 
