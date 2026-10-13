@@ -2,12 +2,13 @@
 // Provides comprehensive data for Delhi, Mumbai, Bangalore, Hyderabad, Chennai, and Pune
 
 const TransitData = {
-    cities: ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune'],
+    cities: ['Delhi', 'Mumbai', 'Bangalore', 'Bagalkot', 'Hyderabad', 'Chennai', 'Pune'],
 
     cityCoordinates: {
         'Delhi': [28.6304, 77.2177],         // Connaught Place
         'Mumbai': [18.9400, 72.8353],        // CSMT / South Mumbai
         'Bangalore': [12.9716, 77.5946],     // MG Road / Majestic
+        'Bagalkot': [16.1793, 75.6999],      // Bagalkot City Hub
         'Hyderabad': [17.3850, 78.4867],     // Hitec City / Abids
         'Chennai': [13.0827, 80.2707],       // Central / Marina
         'Pune': [18.5204, 73.8567]           // Shivajinagar / Swargate
@@ -269,6 +270,65 @@ const TransitData = {
                     [12.9220, 77.6200],
                     [12.9080, 77.6240],
                     [12.8450, 77.6600]
+                ]
+            }
+        ],
+
+        'Bagalkot': [
+            {
+                id: 'BGK-01',
+                name: 'Navanagar to College Cross (Vidyagiri)',
+                type: 'Electric',
+                category: 'Green City Bus',
+                fare: 15,
+                status: 'On Time',
+                frequency: 'Every 8 min',
+                firstBus: '06:00 AM',
+                lastBus: '10:30 PM',
+                stops: ['Navanagar Bus Stand', 'DC Office Navanagar', 'Gaddanakeri Cross', 'Vidyagiri (BEC College)', 'College Cross'],
+                coordinates: [
+                    [16.1620, 75.6580], // Navanagar Bus Stand
+                    [16.1670, 75.6635], // DC Office Complex Navanagar
+                    [16.1720, 75.6720], // Gaddanakeri Cross
+                    [16.1785, 75.6830], // Vidyagiri (Basaveshwar Engineering College)
+                    [16.1835, 75.6905]  // College Cross / Kaveri Nagar
+                ]
+            },
+            {
+                id: 'BGK-02',
+                name: 'Old Bagalkot Bus Stand to Navanagar Sector 60',
+                type: 'Non-AC',
+                category: 'Town Feeder',
+                fare: 12,
+                status: 'On Time',
+                frequency: 'Every 12 min',
+                firstBus: '06:30 AM',
+                lastBus: '10:00 PM',
+                stops: ['Old Bus Stand', 'Railway Station Road', 'Gaddanakeri', 'Navanagar APMC', 'Navanagar Sector 60'],
+                coordinates: [
+                    [16.1793, 75.6999],
+                    [16.1810, 75.6940],
+                    [16.1720, 75.6720],
+                    [16.1680, 75.6650],
+                    [16.1590, 75.6520]
+                ]
+            },
+            {
+                id: 'BGK-03',
+                name: 'College Cross to Badami Cave Temples',
+                type: 'AC',
+                category: 'Heritage Express',
+                fare: 45,
+                status: 'On Time',
+                frequency: 'Every 20 min',
+                firstBus: '07:00 AM',
+                lastBus: '08:30 PM',
+                stops: ['College Cross', 'Navanagar', 'Kerur Cross', 'Badami Caves'],
+                coordinates: [
+                    [16.1835, 75.6905],
+                    [16.1620, 75.6580],
+                    [16.0300, 75.6100],
+                    [15.9180, 75.6760]
                 ]
             }
         ],

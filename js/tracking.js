@@ -1,4 +1,30 @@
-// Live Tracking Map, Realistic Multi-Stop Simulation & Controls
+// Live Tracking Map, Realistic Multi-Stop Simulation, Controls & Smart Geocoder
+
+const landmarkCoordinates = {
+    'navanagar': [16.1620, 75.6580],
+    'college cross': [16.1835, 75.6905],
+    'vidyagiri': [16.1785, 75.6830],
+    'gaddanakeri': [16.1720, 75.6720],
+    'bagalkot': [16.1793, 75.6999],
+    'badami': [15.9180, 75.6760],
+    'ilkal': [15.9610, 76.1180],
+    'mudhol': [16.3400, 75.2800],
+    'jamkhandi': [16.5000, 75.3000],
+    'hubli': [15.3647, 75.1240],
+    'hubballi': [15.3647, 75.1240],
+    'dharwad': [15.4589, 75.0078],
+    'belgaum': [15.8497, 74.4977],
+    'belagavi': [15.8497, 74.4977],
+    'mysore': [12.2958, 76.6394],
+    'mysuru': [12.2958, 76.6394],
+    'mangalore': [12.9141, 74.8560],
+    'delhi': [28.6304, 77.2177],
+    'mumbai': [18.9400, 72.8353],
+    'bangalore': [12.9716, 77.5946],
+    'hyderabad': [17.3850, 78.4867],
+    'chennai': [13.0827, 80.2707],
+    'pune': [18.5204, 73.8567]
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof L === 'undefined') {
@@ -63,9 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize Map
+    // Initialize Map with clean initial view
     const cityBaseCoords = (window.TransitData && window.TransitData.cityCoordinates[currentCity]) 
-        || [28.6304, 77.2177];
+        || landmarkCoordinates[currentCity.toLowerCase()]
+        || [16.1793, 75.6999];
         
     const map = L.map('map-container').setView(cityBaseCoords, 13);
 
@@ -88,7 +115,59 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentWaypointIdx = 0;
     let totalDistanceKm = 8.4;
 
-    function initRouteTracking(route) {
+    function resolveSmartRouteCoordinates(route, city) {
+        // 1. If explicit coordinates exist in data, use them
+        if (route.coordinates && route.coordinates.length >= 2) {
+            return route.coordinates;
+        }
+
+        // 2. Check route name and stops against landmark dictionary
+        const combinedText = `${route.name} ${(route.stops || []).join(' ')} ${city}`.toLowerCase();
+        
+        let startPoint = null;
+        let endPoint = null;
+
+        // Check if Navanagar and College Cross are mentioned
+        if (combinedText.includes('navanagar') && combinedText.includes('college cross')) {
+            startPoint = landmarkCoordinates['navanagar'];
+            endPoint = landmarkCoordinates['college cross'];
+        } else {
+            // Find any matched landmarks in order
+            for (const [name, pt] of Object.entries(landmarkCoordinates)) {
+                if (combinedText.includes(name)) {
+                    if (!startPoint) {
+                        startPoint = pt;
+                    } else if (!endPoint && (Math.abs(startPoint[0] - pt[0]) > 0.003 || Math.abs(startPoint[1] - pt[1]) > 0.003)) {
+                        endPoint = pt;
+                    }
+                }
+            }
+        }
+
+        const cityBase = (window.TransitData && window.TransitData.cityCoordinates[city])
+            || landmarkCoordinates[city.toLowerCase()]
+            || [16.1793, 75.6999];
+
+        if (!startPoint) startPoint = cityBase;
+        if (!endPoint) {
+            endPoint = [startPoint[0] + 0.018, startPoint[1] + 0.024];
+        }
+
+        // Build 5 intermediate points between start and end
+        const pts = [startPoint];
+        const count = 5;
+        for (let i = 1; i <= count; i++) {
+            const frac = i / (count + 1);
+            pts.push([
+                startPoint[0] + ((endPoint[0] - startPoint[0]) * frac) + (Math.sin(i * 1.3) * 0.0012),
+                startPoint[1] + ((endPoint[1] - startPoint[1]) * frac) + (Math.cos(i * 1.3) * 0.0012)
+            ]);
+        }
+        pts.push(endPoint);
+        return pts;
+    }
+
+    async function initRouteTracking(route) {
         // Clear previous layers & timer
         if (simulationTimer) clearInterval(simulationTimer);
         if (routeLine) map.removeLayer(routeLine);
@@ -104,35 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeEl.innerHTML = `<i class="fa-solid ${route.type === 'Electric' ? 'fa-bolt' : 'fa-snowflake'}"></i> ${route.type || 'Standard'} • ${route.category || 'Transit'}`;
         }
 
-        // Determine Waypoints from Route Data or Generate Smooth Geographic Line
-        if (route.coordinates && route.coordinates.length >= 2) {
-            waypoints = [];
-            // Interpolate coordinates between major stops for smooth movement
-            for (let i = 0; i < route.coordinates.length - 1; i++) {
-                const p1 = route.coordinates[i];
-                const p2 = route.coordinates[i + 1];
-                const steps = 4;
-                for (let s = 0; s < steps; s++) {
-                    const lat = p1[0] + ((p2[0] - p1[0]) * (s / steps));
-                    const lng = p1[1] + ((p2[1] - p1[1]) * (s / steps));
-                    waypoints.push([lat, lng]);
-                }
-            }
-            waypoints.push(route.coordinates[route.coordinates.length - 1]);
-        } else {
-            // Generate clean linear waypoints near city base
-            const base = (window.TransitData && window.TransitData.cityCoordinates[currentCity]) || [28.6304, 77.2177];
-            waypoints = [];
-            for (let i = 0; i < 18; i++) {
-                waypoints.push([
-                    base[0] - 0.015 + (i * 0.0022) + (Math.sin(i * 0.6) * 0.0008),
-                    base[1] - 0.020 + (i * 0.0026) + (Math.cos(i * 0.6) * 0.0008)
-                ]);
+        // Resolve Coordinates using Smart Resolver
+        const rawCoords = resolveSmartRouteCoordinates(route, currentCity);
+
+        // Interpolate smooth step-by-step waypoints
+        waypoints = [];
+        for (let i = 0; i < rawCoords.length - 1; i++) {
+            const p1 = rawCoords[i];
+            const p2 = rawCoords[i + 1];
+            const steps = 4;
+            for (let s = 0; s < steps; s++) {
+                const lat = p1[0] + ((p2[0] - p1[0]) * (s / steps));
+                const lng = p1[1] + ((p2[1] - p1[1]) * (s / steps));
+                waypoints.push([lat, lng]);
             }
         }
+        waypoints.push(rawCoords[rawCoords.length - 1]);
 
         currentWaypointIdx = 0;
-        totalDistanceKm = (waypoints.length * 0.45).toFixed(1);
+        totalDistanceKm = (waypoints.length * 0.42).toFixed(1);
 
         // Draw Route Line
         routeLine = L.polyline(waypoints, {
@@ -143,7 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
             lineJoin: 'round'
         }).addTo(map);
 
-        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+        // Center map directly on the real bounds
+        map.fitBounds(routeLine.getBounds(), { padding: [60, 60], maxZoom: 15 });
 
         // Place Stop Markers
         const stopsList = route.stops || ['Origin', 'Intermediate', 'Destination'];
