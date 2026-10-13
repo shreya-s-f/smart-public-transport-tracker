@@ -1,4 +1,4 @@
-// Live Tracking Map, Realistic Multi-Stop Simulation, Controls & Smart Geocoder
+// Live Tracking Map - Real Pan-India Geocoding, Real OSRM Road Routing & Simulation
 
 const landmarkCoordinates = {
     'navanagar': [16.1620, 75.6580],
@@ -18,12 +18,19 @@ const landmarkCoordinates = {
     'mysore': [12.2958, 76.6394],
     'mysuru': [12.2958, 76.6394],
     'mangalore': [12.9141, 74.8560],
+    'mangaluru': [12.9141, 74.8560],
     'delhi': [28.6304, 77.2177],
     'mumbai': [18.9400, 72.8353],
     'bangalore': [12.9716, 77.5946],
     'hyderabad': [17.3850, 78.4867],
     'chennai': [13.0827, 80.2707],
-    'pune': [18.5204, 73.8567]
+    'pune': [18.5204, 73.8567],
+    'kolkata': [22.5726, 88.3639],
+    'lucknow': [26.8467, 80.9462],
+    'jaipur': [26.9124, 75.7873],
+    'ahmedabad': [23.0225, 72.5714],
+    'chandigarh': [30.7333, 76.7794],
+    'kochi': [9.9312, 76.2673]
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -68,10 +75,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const speedVal = document.getElementById('sim-speed-val');
     const distVal = document.getElementById('sim-dist-val');
 
-    // Populate In-Page Route Switcher Dropdown
+    // Pan-India Custom Route Form
+    const panIndiaForm = document.getElementById('pan-india-search-form');
+    const originInput = document.getElementById('custom-origin-input');
+    const destInput = document.getElementById('custom-dest-input');
+
+    // Populate In-Page Presets Dropdown
     if (routeSwitcher) {
         routeSwitcher.innerHTML = allRoutes.map(r => 
-            `<option value="${r.id}" ${r.id.toLowerCase() === currentRoute.id.toLowerCase() ? 'selected' : ''}>${r.id} (${r.name.length > 28 ? r.name.substring(0, 28) + '...' : r.name})</option>`
+            `<option value="${r.id}" ${r.id.toLowerCase() === currentRoute.id.toLowerCase() ? 'selected' : ''}>${r.id} (${r.name.length > 25 ? r.name.substring(0, 25) + '...' : r.name})</option>`
         ).join('');
 
         routeSwitcher.addEventListener('change', (e) => {
@@ -89,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize Map with clean initial view
+    // Initialize Leaflet Map
     const cityBaseCoords = (window.TransitData && window.TransitData.cityCoordinates[currentCity]) 
         || landmarkCoordinates[currentCity.toLowerCase()]
         || [16.1793, 75.6999];
@@ -115,58 +127,66 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentWaypointIdx = 0;
     let totalDistanceKm = 8.4;
 
-    function resolveSmartRouteCoordinates(route, city) {
-        // 1. If explicit coordinates exist in data, use them
-        if (route.coordinates && route.coordinates.length >= 2) {
-            return route.coordinates;
-        }
-
-        // 2. Check route name and stops against landmark dictionary
-        const combinedText = `${route.name} ${(route.stops || []).join(' ')} ${city}`.toLowerCase();
+    // --- Geocoding Function (Local dictionary + OpenStreetMap Nominatim API) ---
+    async function geocodeLocation(query, fallbackCity = '') {
+        const clean = query.toLowerCase().trim();
         
-        let startPoint = null;
-        let endPoint = null;
-
-        // Check if Navanagar and College Cross are mentioned
-        if (combinedText.includes('navanagar') && combinedText.includes('college cross')) {
-            startPoint = landmarkCoordinates['navanagar'];
-            endPoint = landmarkCoordinates['college cross'];
-        } else {
-            // Find any matched landmarks in order
-            for (const [name, pt] of Object.entries(landmarkCoordinates)) {
-                if (combinedText.includes(name)) {
-                    if (!startPoint) {
-                        startPoint = pt;
-                    } else if (!endPoint && (Math.abs(startPoint[0] - pt[0]) > 0.003 || Math.abs(startPoint[1] - pt[1]) > 0.003)) {
-                        endPoint = pt;
-                    }
-                }
+        // 1. Check local landmark dictionary
+        for (const [name, coord] of Object.entries(landmarkCoordinates)) {
+            if (clean.includes(name)) {
+                return coord;
             }
         }
 
-        const cityBase = (window.TransitData && window.TransitData.cityCoordinates[city])
-            || landmarkCoordinates[city.toLowerCase()]
+        // 2. Query OpenStreetMap Nominatim Live Geocoding API (Restricted to India)
+        try {
+            const fullQuery = clean.includes('india') ? clean : `${clean}, ${fallbackCity || currentCity}, India`;
+            const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=in&limit=1&q=${encodeURIComponent(fullQuery)}`, {
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await resp.json();
+            if (data && data.length > 0) {
+                return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+            }
+        } catch (e) {
+            console.log('Online geocoder request failed, falling back.');
+        }
+
+        // Fallback to city base
+        return (window.TransitData && window.TransitData.cityCoordinates[currentCity]) 
+            || landmarkCoordinates[currentCity.toLowerCase()] 
             || [16.1793, 75.6999];
-
-        if (!startPoint) startPoint = cityBase;
-        if (!endPoint) {
-            endPoint = [startPoint[0] + 0.018, startPoint[1] + 0.024];
-        }
-
-        // Build 5 intermediate points between start and end
-        const pts = [startPoint];
-        const count = 5;
-        for (let i = 1; i <= count; i++) {
-            const frac = i / (count + 1);
-            pts.push([
-                startPoint[0] + ((endPoint[0] - startPoint[0]) * frac) + (Math.sin(i * 1.3) * 0.0012),
-                startPoint[1] + ((endPoint[1] - startPoint[1]) * frac) + (Math.cos(i * 1.3) * 0.0012)
-            ]);
-        }
-        pts.push(endPoint);
-        return pts;
     }
 
+    // --- OSRM Real Road Routing Engine ---
+    async function fetchRealRoadRoute(p1, p2) {
+        try {
+            const url = `https://router.project-osrm.org/route/v1/driving/${p1[1]},${p1[0]};${p2[1]},${p2[0]}?overview=full&geometries=geojson`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data && data.routes && data.routes.length > 0) {
+                const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                const distKm = (data.routes[0].distance / 1000).toFixed(1);
+                return { coordinates: coords, distanceKm: distKm };
+            }
+        } catch(e) {
+            console.log('OSRM routing unavailable, generating road curve fallback.');
+        }
+
+        // Fallback smooth road trajectory
+        const pts = [];
+        const count = 20;
+        for (let i = 0; i <= count; i++) {
+            const frac = i / count;
+            pts.push([
+                p1[0] + ((p2[0] - p1[0]) * frac) + (Math.sin(i * 0.5) * 0.0012),
+                p1[1] + ((p2[1] - p1[1]) * frac) + (Math.cos(i * 0.5) * 0.0012)
+            ]);
+        }
+        return { coordinates: pts, distanceKm: (count * 0.35).toFixed(1) };
+    }
+
+    // --- Route Tracking Initialization ---
     async function initRouteTracking(route) {
         // Clear previous layers & timer
         if (simulationTimer) clearInterval(simulationTimer);
@@ -183,40 +203,44 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeEl.innerHTML = `<i class="fa-solid ${route.type === 'Electric' ? 'fa-bolt' : 'fa-snowflake'}"></i> ${route.type || 'Standard'} • ${route.category || 'Transit'}`;
         }
 
-        // Resolve Coordinates using Smart Resolver
-        const rawCoords = resolveSmartRouteCoordinates(route, currentCity);
+        let rawPoints = [];
+        let fetchedDistance = 0;
 
-        // Interpolate smooth step-by-step waypoints
-        waypoints = [];
-        for (let i = 0; i < rawCoords.length - 1; i++) {
-            const p1 = rawCoords[i];
-            const p2 = rawCoords[i + 1];
-            const steps = 4;
-            for (let s = 0; s < steps; s++) {
-                const lat = p1[0] + ((p2[0] - p1[0]) * (s / steps));
-                const lng = p1[1] + ((p2[1] - p1[1]) * (s / steps));
-                waypoints.push([lat, lng]);
-            }
+        // If coordinates already provided (e.g. Navanagar to College Cross), attempt real OSRM turn-by-turn road route
+        if (route.coordinates && route.coordinates.length >= 2) {
+            const startPt = route.coordinates[0];
+            const endPt = route.coordinates[route.coordinates.length - 1];
+            const osrmResult = await fetchRealRoadRoute(startPt, endPt);
+            rawPoints = osrmResult.coordinates.length > 5 ? osrmResult.coordinates : route.coordinates;
+            fetchedDistance = osrmResult.distanceKm;
+        } else {
+            // Geocode start & end stops
+            const stops = route.stops || (route.name ? route.name.split(/\s*➔\s*|\s*->\s*/) : ['Origin', 'Destination']);
+            const p1 = await geocodeLocation(stops[0], currentCity);
+            const p2 = await geocodeLocation(stops[stops.length - 1], currentCity);
+            const osrmResult = await fetchRealRoadRoute(p1, p2);
+            rawPoints = osrmResult.coordinates;
+            fetchedDistance = osrmResult.distanceKm;
         }
-        waypoints.push(rawCoords[rawCoords.length - 1]);
 
+        waypoints = rawPoints;
         currentWaypointIdx = 0;
-        totalDistanceKm = (waypoints.length * 0.42).toFixed(1);
+        totalDistanceKm = fetchedDistance || (waypoints.length * 0.15).toFixed(1);
 
-        // Draw Route Line
+        // Draw Real Turn-by-Turn Road Line on OpenStreetMap
         routeLine = L.polyline(waypoints, {
             color: '#2563eb',
             weight: 6,
-            opacity: 0.85,
+            opacity: 0.9,
             lineCap: 'round',
             lineJoin: 'round'
         }).addTo(map);
 
-        // Center map directly on the real bounds
-        map.fitBounds(routeLine.getBounds(), { padding: [60, 60], maxZoom: 15 });
+        // Zoom map smoothly to encompass the exact real road
+        map.fitBounds(routeLine.getBounds(), { padding: [50, 50], maxZoom: 16 });
 
         // Place Stop Markers
-        const stopsList = route.stops || ['Origin', 'Intermediate', 'Destination'];
+        const stopsList = route.stops || (route.name ? route.name.split(/\s*➔\s*|\s*->\s*/) : ['Origin', 'Destination']);
         const numStops = stopsList.length;
 
         stopsList.forEach((stopName, idx) => {
@@ -239,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stopMarkers.push(marker);
         });
 
-        // Bus Icon
+        // Custom Pulsing Bus Marker
         const busIcon = L.divIcon({
             className: 'custom-bus-icon',
             html: '<div style="background-color: #2563eb; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.7); font-size: 17px; animation: pulseEffect 1.8s infinite;"><i class="fa-solid fa-bus"></i></div>',
@@ -248,18 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         busMarker = L.marker(waypoints[0], { icon: busIcon }).addTo(map);
-        busMarker.bindPopup(`<strong>Bus ${route.id} (${route.type})</strong><br>Status: In Service`);
+        busMarker.bindPopup(`<strong>Bus ${route.id}</strong><br>Live GPS Signal: Connected`);
 
         // Render Stop Timeline Sidebar
         renderTimeline(route, 0);
 
-        // Start Simulation Loop
+        // Start Live Movement
         startSimulationTimer();
     }
 
+    // --- Timeline Renderer ---
     function renderTimeline(route, activeIdx) {
         if (!stopsContainer) return;
-        const stopsList = route.stops || ['Origin', 'Destination'];
+        const stopsList = route.stops || (route.name ? route.name.split(/\s*➔\s*|\s*->\s*/) : ['Origin', 'Destination']);
         const totalWaypoints = waypoints.length;
         const currentProgress = activeIdx / (totalWaypoints - 1 || 1);
         const approxStopIdx = Math.min(Math.floor(currentProgress * stopsList.length), stopsList.length - 1);
@@ -268,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         stopsList.forEach((stop, i) => {
             const isPassed = i < approxStopIdx;
             const isActive = i === approxStopIdx;
-            const isUpcoming = i > approxStopIdx;
 
             const nodeClass = isPassed ? 'passed' : isActive ? 'active' : 'upcoming';
             const etaMins = Math.max(1, (i - approxStopIdx) * 3);
@@ -291,9 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Simulation Timer ---
     function startSimulationTimer() {
         if (simulationTimer) clearInterval(simulationTimer);
-        const interval = Math.max(500, Math.floor(1800 / simSpeedMultiplier));
+        const interval = Math.max(300, Math.floor(1200 / simSpeedMultiplier));
 
         simulationTimer = setInterval(() => {
             if (!isPlaying) return;
@@ -311,17 +336,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const remKm = (totalDistanceKm * remainingRatio).toFixed(1);
             if (distVal) distVal.textContent = `${remKm} km`;
 
-            const speed = (32 + Math.floor(Math.sin(currentWaypointIdx) * 8) + (simSpeedMultiplier * 4));
+            const speed = (32 + Math.floor(Math.sin(currentWaypointIdx * 0.4) * 8) + (simSpeedMultiplier * 3));
             if (speedVal) speedVal.textContent = `${speed} km/h`;
 
-            // Update ETA Display
-            const totalRemainingSecs = Math.round(remainingRatio * 600);
+            // Update Dynamic ETA
+            const totalRemainingSecs = Math.round(remainingRatio * (totalDistanceKm * 80));
             const m = Math.floor(totalRemainingSecs / 60);
             const s = totalRemainingSecs % 60;
 
             if (etaDisplay) {
-                if (m === 0 && s < 25) {
-                    etaDisplay.innerHTML = `<i class="fa-solid fa-bell"></i> Arriving at Final Stop`;
+                if (m === 0 && s < 20) {
+                    etaDisplay.innerHTML = `<i class="fa-solid fa-bell"></i> Arriving at Destination`;
                     etaDisplay.style.background = 'rgba(245, 158, 11, 0.15)';
                     etaDisplay.style.color = 'var(--warning-color)';
                 } else {
@@ -335,6 +360,39 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTimeline(currentRoute, currentWaypointIdx);
 
         }, interval);
+    }
+
+    // --- Pan-India Custom Route Submission Handler ---
+    if (panIndiaForm) {
+        panIndiaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originText = originInput.value.trim();
+            const destText = destInput.value.trim();
+            if (!originText || !destText) return;
+
+            const submitBtn = panIndiaForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Geocoding & Routing...';
+
+            const p1 = await geocodeLocation(originText);
+            const p2 = await geocodeLocation(destText);
+
+            const osrmResult = await fetchRealRoadRoute(p1, p2);
+
+            const customRouteObj = {
+                id: 'CUSTOM-LIVE',
+                name: `${originText} to ${destText}`,
+                type: 'Electric',
+                category: 'On-Demand Route',
+                stops: [originText, 'Midway Junction', destText],
+                coordinates: osrmResult.coordinates,
+                fare: Math.max(15, Math.round(osrmResult.distanceKm * 4.5))
+            };
+
+            currentRoute = customRouteObj;
+            await initRouteTracking(customRouteObj);
+
+            if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-diamond-turn-right"></i> Plot Real Road';
+        });
     }
 
     // Play/Pause Listener
@@ -365,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize first load
+    // Initial load
     initRouteTracking(currentRoute);
 
     window.addEventListener('beforeunload', () => {

@@ -74,7 +74,7 @@
 
     <main>
         <!-- Tracker Top Bar -->
-        <div class="glass-card animate-fade-in-up" style="margin-bottom: 1.5rem; padding: 1.25rem 1.5rem;">
+        <div class="glass-card animate-fade-in-up" style="margin-bottom: 1rem; padding: 1.25rem 1.5rem;">
             <div class="tracker-header" style="margin-bottom: 0;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
@@ -87,7 +87,7 @@
                 <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                     <!-- In-page Route Switcher -->
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <label for="route-switcher" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Switch Route:</label>
+                        <label for="route-switcher" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Presets:</label>
                         <select id="route-switcher" class="city-selector" style="font-size: 0.9rem; padding: 0.4rem 0.8rem;">
                             <!-- Populated dynamically by tracking.js -->
                         </select>
@@ -102,6 +102,29 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Pan-India Live Custom Route Finder -->
+        <div class="glass-card animate-fade-in-up" style="margin-bottom: 1rem; padding: 1rem 1.5rem; background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
+                <span style="font-weight: 700; font-size: 0.95rem; color: var(--accent-color);">
+                    <i class="fa-solid fa-earth-asia"></i> Track ANY Place & Road in India
+                </span>
+                <span style="font-size: 0.8rem; color: var(--text-secondary);">
+                    Turn-by-turn road navigation via OpenStreetMap & OSRM
+                </span>
+            </div>
+            <form id="pan-india-search-form" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 180px;">
+                    <input type="text" id="custom-origin-input" class="search-input" style="padding: 0.6rem 0.9rem; font-size: 0.9rem;" placeholder="Start Point (e.g. Navanagar Bagalkot, Connaught Place)..." required>
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                    <input type="text" id="custom-dest-input" class="search-input" style="padding: 0.6rem 0.9rem; font-size: 0.9rem;" placeholder="End Point (e.g. College Cross Bagalkot, Airport)..." required>
+                </div>
+                <button type="submit" class="btn-primary" style="padding: 0.6rem 1.3rem; font-size: 0.9rem; border-radius: 8px; white-space: nowrap;">
+                    <i class="fa-solid fa-diamond-turn-right"></i> Plot Real Road
+                </button>
+            </form>
         </div>
 
         <!-- Simulation Controls Bar -->
