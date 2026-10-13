@@ -119,10 +119,31 @@
             </div>
 
             <button type="submit" id="submit-btn" class="btn-primary btn-pulse">Sign In as Passenger <i class="fa-solid fa-arrow-right"></i></button>
+
+            <!-- Quick Demo Fill Buttons for Interview/Testing -->
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 0.5rem; justify-content: center;">
+                <button type="button" onclick="fillDemo('passenger')" style="flex: 1; padding: 0.4rem 0.6rem; font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 6px; cursor: pointer;">
+                    <i class="fa-solid fa-user"></i> Demo Passenger
+                </button>
+                <button type="button" onclick="fillDemo('admin')" style="flex: 1; padding: 0.4rem 0.6rem; font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 6px; cursor: pointer;">
+                    <i class="fa-solid fa-shield-halved"></i> Demo Admin
+                </button>
+            </div>
         </form>
     </div>
 
     <script>
+        function fillDemo(type) {
+            if (type === 'admin') {
+                switchRole('admin');
+                document.getElementById('email').value = 'admin@transit';
+                document.getElementById('password').value = 'admin123';
+            } else {
+                switchRole('passenger');
+                document.getElementById('email').value = 'shreya@gmail.com';
+                document.getElementById('password').value = '123456';
+            }
+        }
         function switchRole(role) {
             document.getElementById('selected-role').value = role;
             const passengerTab = document.getElementById('tab-passenger');

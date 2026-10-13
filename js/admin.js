@@ -157,20 +157,28 @@ function editRoute(index) {
     document.getElementById('form-path').value = route.path;
     document.getElementById('form-fare').value = route.fare || '₹30';
     document.getElementById('form-status').value = route.status || 'Active';
+    const firstInput = document.getElementById('form-first');
+    const lastInput = document.getElementById('form-last');
+    if (firstInput) firstInput.value = route.first || '06:00 AM';
+    if (lastInput) lastInput.value = route.last || '10:00 PM';
 
     document.getElementById('route-modal').style.display = 'flex';
 }
 
 function saveRoute() {
     const index = parseInt(document.getElementById('route-index').value);
+    const firstVal = document.getElementById('form-first') ? document.getElementById('form-first').value.trim() : '06:00 AM';
+    const lastVal = document.getElementById('form-last') ? document.getElementById('form-last').value.trim() : '10:00 PM';
+    const fareVal = document.getElementById('form-fare').value.trim();
+
     const newRoute = {
         city: document.getElementById('form-city').value,
         id: document.getElementById('form-id').value.trim(),
         path: document.getElementById('form-path').value.trim(),
-        fare: document.getElementById('form-fare').value.trim(),
+        fare: fareVal.startsWith('₹') ? fareVal : `₹${fareVal.replace(/\D/g, '') || '30'}`,
         status: document.getElementById('form-status').value,
-        first: document.getElementById('form-first').value.trim() || '06:00 AM',
-        last: document.getElementById('form-last').value.trim() || '10:00 PM'
+        first: firstVal || '06:00 AM',
+        last: lastVal || '10:00 PM'
     };
 
     let customRoutes = getCustomRoutes();

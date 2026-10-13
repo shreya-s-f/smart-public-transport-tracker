@@ -294,7 +294,7 @@
                         <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
                             <span><i class="fa-regular fa-calendar"></i> ${t.date}</span>
                             <span><i class="fa-solid fa-users"></i> ${t.passengers} pax</span>
-                            <span><i class="fa-solid fa-indian-rupee-sign"></i> ${t.total.replace('₹','')}</span>
+                            <span><i class="fa-solid fa-indian-rupee-sign"></i> ${t.total ? String(t.total).replace('₹','') : '40.00'}</span>
                         </div>
                     </div>
                     <button class="btn-primary" style="position: absolute; right: 1rem; bottom: 1rem; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="downloadTicket('ticket-content-${i}', '${t.id}')">

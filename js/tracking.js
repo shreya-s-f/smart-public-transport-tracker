@@ -2,15 +2,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const routeId = urlParams.get('route') || 'Default';
-    
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+
+    const cityDefaultRoutes = {
+        'Delhi': { id: '507', path: 'Okhla ➔ Connaught Place' },
+        'Mumbai': { id: 'BEST 301', path: 'Bandra Station ➔ Juhu Beach' },
+        'Bangalore': { id: 'V-500D', path: 'Silk Board ➔ Hebbal' }
+    };
+    const defaultInfo = cityDefaultRoutes[currentCity] || cityDefaultRoutes['Delhi'];
+    const activeRouteId = (routeId && routeId !== 'Default') ? routeId : defaultInfo.id;
     
     const titleEl = document.getElementById('tracking-route-title');
     const pathEl = document.getElementById('tracking-route-path');
     
-    if(titleEl) titleEl.textContent = `Route ${routeId} Tracking`;
-    if(pathEl) pathEl.textContent = `Operating in ${currentCity}`;
+    if(titleEl) titleEl.textContent = `Route ${activeRouteId} Tracking`;
+    if(pathEl) pathEl.textContent = `${defaultInfo.path} (${currentCity})`;
 
     // Define Base Coordinates for Indian Cities
     const cityCoords = {

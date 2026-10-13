@@ -39,7 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const preselectedRoute = urlParams.get('route');
 
     // Populate routes dropdown
-    const cityRoutes = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
+    let customRoutes = [];
+    try {
+        const allCustom = JSON.parse(localStorage.getItem('spt-custom-routes')) || [];
+        customRoutes = allCustom.filter(r => r.city === currentCity).map(r => ({
+            id: r.id,
+            path: r.path,
+            fare: parseInt(String(r.fare).replace(/\D/g, '')) || 35
+        }));
+    } catch(e) {}
+
+    const defaultRoutes = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
+    const cityRoutes = [...customRoutes, ...defaultRoutes];
+
     cityRoutes.forEach(r => {
         const option = document.createElement('option');
         option.value = r.id;
@@ -58,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedOption = routeSelect.options[routeSelect.selectedIndex];
         if(!selectedOption) return;
         
-        const baseFare = parseInt(selectedOption.getAttribute('data-fare'));
+        const rawFare = selectedOption.getAttribute('data-fare');
+        const baseFare = parseInt(String(rawFare).replace(/\D/g, '')) || 30;
         const count = parseInt(passCount.value) || 1;
         
         const totalBase = baseFare * count;
@@ -122,15 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedRouteText = routeSelect.options[routeSelect.selectedIndex].text;
         const [routeNum, pathDesc] = selectedRouteText.split(' (');
-        const [boarding, drop] = pathDesc ? pathDesc.replace(')','').split(' ➔ ') : ['Station', 'Destination'];
+        const [boarding, drop] = pathDesc ? pathDesc.replace(')','').split(/\s*➔\s*|\s*->\s*/) : ['Station', 'Destination'];
 
         // Save Ticket to LocalStorage
         const ticket = {
             id: 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
             city: currentCity,
             route: route,
-            boarding: boarding.trim(),
-            drop: drop.trim(),
+            boarding: boarding ? boarding.trim() : 'Origin',
+            drop: drop ? drop.trim() : 'Destination',
             seat: Math.floor(Math.random() * 40) + 1 + 'A',
             date: date,
             passengers: count,
