@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit.IN - Smart Transport Tracker</title>
+    <title>Transit.IN - Smart Transport Tracker & Live Commute Platform</title>
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Main CSS -->
-    <link rel="stylesheet" href="css/style.css?v=6">
-    <script src="js/auth.js?v=6"></script>
+    <link rel="stylesheet" href="css/style.css?v=7">
+    <script src="js/auth.js?v=7"></script>
 </head>
 <body>
 
@@ -33,7 +33,6 @@
             <a href="notifications.html">Alerts</a>
             <a href="booking.html"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
             <a href="profile.html">Profile</a>
-            
         </div>
         
         <div class="nav-actions">
@@ -42,6 +41,10 @@
                 <option value="Delhi">Delhi</option>
                 <option value="Mumbai">Mumbai</option>
                 <option value="Bangalore">Bangalore</option>
+                <option value="Bagalkot">Bagalkot</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Pune">Pune</option>
             </select>
 
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
@@ -55,216 +58,575 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Hero Search Section -->
-        <div id="hero-section" class="glass-card animate-fade-in-up" style="margin-bottom: 2rem; text-align: center; padding: 4rem 1.5rem; background-size: cover; background-position: center; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--bg-color-rgb), 0.85); z-index: 0;"></div>
+        <!-- Real-Time Network Status Ticker -->
+        <div class="transit-ticker animate-fade-in-up">
+            <span class="ticker-badge"><span class="live-pulse-dot"></span> LIVE NETWORK</span>
+            <div class="ticker-content" id="live-network-ticker">
+                Monitoring 7 major Indian transit grids &bull; 1,840+ GPS-equipped transit units active &bull; Low congestion on express corridors &bull; Real-time sync interval: 3s
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;" id="current-city-label">
+                <i class="fa-solid fa-location-dot" style="color: var(--accent-color);"></i> <span id="label-city-name">Delhi</span> Hub
+            </span>
+        </div>
+
+        <!-- Hero Section with Transparent Glass Bus Backdrop -->
+        <div id="hero-section" class="glass-card animate-fade-in-up" style="margin-bottom: 2.5rem; text-align: center; padding: 3.5rem 1.8rem; background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.84) 0%, rgba(30, 58, 138, 0.80) 50%, rgba(15, 23, 42, 0.88) 100%), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
             <div style="position: relative; z-index: 1;">
-                <h1 style="font-size: 2.8rem; margin-bottom: 1rem; color: var(--accent-color);">Track Public Transport Across India's Major Cities</h1>
-                <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.2rem;">Live departures &bull; Route Analytics &bull; Smart Ticket Booking</p>
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-satellite-dish"></i> Live GPS Telemetry & Pan-India Routing
+                </div>
                 
-                <div class="search-container" style="max-width: 600px; margin: 0 auto; position: relative;">
-                    <input type="text" id="global-search" class="search-input" placeholder="Search routes (e.g. 500D, Airport)..." autocomplete="off">
-                    <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; margin-top: 0.5rem; text-align: left; padding: 0.5rem 0; box-shadow: var(--shadow-lg); z-index: 10;">
+                <h1 style="font-size: 2.8rem; font-weight: 800; margin-bottom: 0.8rem; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                    Smart Public Transit Tracker & Live Commute
+                </h1>
+                
+                <p style="color: #cbd5e1; margin-bottom: 2rem; font-size: 1.15rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                    Track live city buses, view real-time countdown departures, explore road-mapped routes, and book paperless digital tickets with instant QR passes.
+                </p>
+                
+                <!-- Quick Route Search -->
+                <div class="search-container" style="max-width: 680px; margin: 0 auto; position: relative;">
+                    <input type="text" id="global-search" class="search-input" placeholder="Search by route code, stop name (e.g. 507, Navanagar, Airport)..." autocomplete="off" style="box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                    <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; margin-top: 0.5rem; text-align: left; padding: 0.5rem 0; box-shadow: var(--shadow-lg); z-index: 100;">
                         <!-- Populated by JS -->
                     </div>
-                    <button class="btn-primary btn-pulse" onclick="window.location.href='routes.html'">
-                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    <button class="btn-primary btn-pulse" onclick="handleHeroSearch()" style="white-space: nowrap;">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find Routes
                     </button>
+                </div>
+
+                <!-- Pan-India Quick City Switcher Pills -->
+                <div class="city-chips-bar" id="city-chips-container">
+                    <span style="font-size: 0.8rem; color: #94a3b8; align-self: center; margin-right: 0.3rem;"><i class="fa-solid fa-city"></i> Switch Metro:</span>
+                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Stats -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
-            <h2 class="animate-fade-in-up" style="animation-delay: 0.1s;">System Overview</h2>
-            <span id="last-updated" style="font-size: 0.9rem; color: var(--text-secondary);"><i class="fa-solid fa-clock-rotate-left"></i> Last Updated: --:--</span>
+        <!-- Dashboard Stats Overview -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h2 class="animate-fade-in-up" style="animation-delay: 0.1s; margin-bottom: 0.2rem;">
+                    <i class="fa-solid fa-chart-line" style="color: var(--accent-color);"></i> Transit System Telemetry
+                </h2>
+                <p style="color: var(--text-secondary); font-size: 0.92rem;">Real-time operational metrics for <strong id="stats-city-name" style="color: var(--accent-color);">Delhi</strong></p>
+            </div>
+            <span id="last-updated" style="font-size: 0.88rem; color: var(--text-secondary); background: var(--card-bg); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                <i class="fa-solid fa-clock-rotate-left"></i> Last Synced: --:--
+            </span>
         </div>
         
-        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin-bottom: 2.5rem;">
+            <!-- Active Buses -->
             <div class="glass-card stat-card animate-fade-in-up delay-1">
-                <div class="stat-icon animate-float" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-color);">
+                <div class="stat-icon animate-float" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-color);">
                     <i class="fa-solid fa-bus-simple"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 class="counter" data-target="124">0</h3>
-                    <p>Active Buses</p>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <h3 class="counter" id="stat-active-buses" data-target="420">0</h3>
+                        <span class="live-pulse-dot" title="Live tracking"></span>
+                    </div>
+                    <p>Active Live Fleet</p>
                 </div>
             </div>
             
+            <!-- On-Time Rate -->
             <div class="glass-card stat-card animate-fade-in-up delay-2">
-                <div class="stat-icon animate-float" style="background: rgba(16, 185, 129, 0.1); color: var(--success-color); animation-delay: 0.5s;">
+                <div class="stat-icon animate-float" style="background: rgba(16, 185, 129, 0.15); color: var(--success-color); animation-delay: 0.4s;">
                     <i class="fa-solid fa-check-double"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 class="counter" data-target="92" data-suffix="%">0%</h3>
-                    <p>On-Time Rate</p>
+                    <h3 class="counter" id="stat-ontime-rate" data-target="94" data-suffix="%">0%</h3>
+                    <p>On-Time Reliability</p>
                 </div>
             </div>
             
+            <!-- Daily Riders -->
             <div class="glass-card stat-card animate-fade-in-up delay-3">
-                <div class="stat-icon animate-float" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color); animation-delay: 1s;">
+                <div class="stat-icon animate-float" style="background: rgba(245, 158, 11, 0.15); color: var(--warning-color); animation-delay: 0.8s;">
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 class="counter" data-target="15420">0</h3>
-                    <p>Today's Riders</p>
+                    <h3 class="counter" id="stat-riders" data-target="54200">0</h3>
+                    <p>Today's Passengers</p>
                 </div>
             </div>
 
-            <div class="glass-card stat-card animate-fade-in-up delay-3">
-                <div class="stat-icon animate-float" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color); animation-delay: 1.5s;">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+            <!-- Eco Impact / CO2 Saved -->
+            <div class="glass-card stat-card animate-fade-in-up delay-4">
+                <div class="stat-icon animate-float" style="background: rgba(14, 165, 233, 0.15); color: #0284c7; animation-delay: 1.2s;">
+                    <i class="fa-solid fa-leaf"></i>
                 </div>
                 <div class="stat-info">
-                    <h3 class="counter" data-target="3">0</h3>
-                    <p>Delayed Routes</p>
+                    <h3 class="counter" id="stat-co2" data-target="18" data-suffix=" Tons">0</h3>
+                    <p>CO₂ Saved Today</p>
                 </div>
             </div>
         </div>
 
-        <!-- Analytics Charts -->
-        <h2 class="animate-fade-in-up delay-4" style="margin-bottom: 1.5rem; margin-top: 3rem;">Analytics & Trends</h2>
-        <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
-            <div class="glass-card animate-fade-in-up delay-4">
-                <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary);">Weekly Ridership</h3>
-                <canvas id="ridershipChart" height="200"></canvas>
+        <!-- Live Departure Board Section -->
+        <div class="glass-card animate-fade-in-up delay-2" style="margin-bottom: 3rem; padding: 1.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem;">
+                <div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-table-list" style="color: var(--accent-color);"></i> Live Departure Board
+                        <span class="route-badge badge-express" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;"><span class="live-pulse-dot"></span> LIVE FEED</span>
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: 0.88rem;">Upcoming departures & estimated arrival timings from key city terminals</p>
+                </div>
+                <div style="display: flex; gap: 0.8rem; align-items: center;">
+                    <input type="text" id="departure-filter" placeholder="Filter routes..." style="padding: 0.45rem 0.8rem; border-radius: 8px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-primary); font-size: 0.85rem;" oninput="filterDepartureBoard(this.value)">
+                    <button class="sim-btn" onclick="refreshDepartureBoard()" title="Force Refresh">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                </div>
             </div>
-            <div class="glass-card animate-fade-in-up delay-4">
-                <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary);">Peak Hours (Avg Delay)</h3>
-                <canvas id="delayChart" height="250"></canvas>
+
+            <div style="overflow-x: auto;">
+                <table class="departure-board-table">
+                    <thead>
+                        <tr>
+                            <th>Route</th>
+                            <th>Destination Corridor</th>
+                            <th>Terminal / Bay</th>
+                            <th>Departure ETA</th>
+                            <th>Occupancy</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="departure-board-tbody">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Quick Access / Favorites Preview -->
-        <h2 class="animate-fade-in-up delay-4" style="margin-bottom: 1.5rem; margin-top: 3rem;">Quick Access</h2>
-        <div class="dashboard-grid">
+        <!-- Analytics & Trends Section -->
+        <h2 class="animate-fade-in-up delay-3" style="margin-bottom: 1.2rem;">
+            <i class="fa-solid fa-chart-column" style="color: var(--accent-color);"></i> Passenger Traffic & Peak Performance
+        </h2>
+        <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 3rem;">
+            <div class="glass-card animate-fade-in-up delay-3">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--text-secondary);"><i class="fa-solid fa-chart-area"></i> Weekly Transit Ridership</h3>
+                    <span style="font-size: 0.8rem; color: var(--success-color); font-weight: 600;"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% vs last week</span>
+                </div>
+                <canvas id="ridershipChart" height="180"></canvas>
+            </div>
+            
+            <div class="glass-card animate-fade-in-up delay-3">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--text-secondary);"><i class="fa-solid fa-stopwatch"></i> Peak Hours Delay (mins)</h3>
+                </div>
+                <canvas id="delayChart" height="220"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Access Ecosystem Services -->
+        <h2 class="animate-fade-in-up delay-4" style="margin-bottom: 1.2rem;">
+            <i class="fa-solid fa-compass" style="color: var(--accent-color);"></i> Essential Commuter Services
+        </h2>
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 2rem;">
+            <!-- Live GPS Map Tracking -->
+            <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer; position: relative; overflow: hidden;" onclick="window.location.href='tracking.html'">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span class="route-number" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-color);"><i class="fa-solid fa-satellite-dish"></i> GPS Tracking</span>
+                    <span class="route-status status-ontime">Live Map</span>
+                </div>
+                <h4 style="margin-bottom: 0.4rem; font-size: 1.1rem;">Interactive Bus Radar</h4>
+                <p class="route-path" style="font-size: 0.9rem; margin-bottom: 1rem;">Track fleet positions in real time with turn-by-turn road waypoints and simulator.</p>
+                <div style="color: var(--accent-color); font-weight: 600; font-size: 0.9rem;">
+                    Open Live Map ➔
+                </div>
+            </div>
+
+            <!-- Instant Ticket Booking -->
             <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer;" onclick="window.location.href='booking.html'">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span class="route-number"><i class="fa-solid fa-ticket"></i> Book a Ticket</span>
-                    <span class="route-status status-ontime">New</span>
+                    <span class="route-number" style="background: rgba(16, 185, 129, 0.15); color: var(--success-color);"><i class="fa-solid fa-ticket"></i> E-Ticketing</span>
+                    <span class="route-status status-ontime">Instant Pass</span>
                 </div>
-                <p class="route-path">Instant booking & e-ticket generation.</p>
-                <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
-                    <strong>Book Now ➔</strong>
+                <h4 style="margin-bottom: 0.4rem; font-size: 1.1rem;">Paperless QR Booking</h4>
+                <p class="route-path" style="font-size: 0.9rem; margin-bottom: 1rem;">Book contactless single-journey or daily transit passes with automated fare calculation.</p>
+                <div style="color: var(--success-color); font-weight: 600; font-size: 0.9rem;">
+                    Book Ticket Now ➔
                 </div>
             </div>
             
+            <!-- Route Directory -->
             <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer;" onclick="window.location.href='routes.html'">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span class="route-number"><i class="fa-solid fa-map-location-dot"></i> View All Routes</span>
+                    <span class="route-number" style="background: rgba(245, 158, 11, 0.15); color: var(--warning-color);"><i class="fa-solid fa-map-location-dot"></i> Routes</span>
+                    <span class="route-status" style="background: rgba(245, 158, 11, 0.2); color: var(--warning-color);">All Metros</span>
                 </div>
-                <p class="route-path">Explore schedules and stops for your city.</p>
-                <div style="margin-top: 1rem; color: var(--accent-color); font-size: 0.9rem;">
-                    <strong>Explore ➔</strong>
+                <h4 style="margin-bottom: 0.4rem; font-size: 1.1rem;">Pan-India Network Directory</h4>
+                <p class="route-path" style="font-size: 0.9rem; margin-bottom: 1rem;">Explore detailed stop sequences, frequencies, and express bus services.</p>
+                <div style="color: var(--warning-color); font-weight: 600; font-size: 0.9rem;">
+                    Explore Routes ➔
+                </div>
+            </div>
+
+            <!-- Service Alerts & Notifications -->
+            <div class="glass-card animate-fade-in-up delay-4" style="cursor: pointer;" onclick="window.location.href='notifications.html'">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span class="route-number" style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color);"><i class="fa-solid fa-triangle-exclamation"></i> Alerts</span>
+                    <span class="route-status status-delayed">Real-Time</span>
+                </div>
+                <h4 style="margin-bottom: 0.4rem; font-size: 1.1rem;">Transit Disruption Feed</h4>
+                <p class="route-path" style="font-size: 0.9rem; margin-bottom: 1rem;">Stay updated on route diversions, congestion spikes, and scheduled transit maintenance.</p>
+                <div style="color: var(--danger-color); font-weight: 600; font-size: 0.9rem;">
+                    Check Alerts ➔
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Professional Footer -->
-    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
-        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
-        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker</p>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 1rem; flex-wrap: wrap;">
-            <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="GitHub Repository"><i class="fa-brands fa-github"></i> GitHub</a>
-            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="LinkedIn"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-            <a href="admin.html" style="color: var(--warning-color); font-weight: 600; transition: color 0.2s;" title="Admin Portal"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
+    <footer style="margin-top: 4rem; padding: 2.5rem 1.5rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary); background: rgba(15, 23, 42, 0.4);">
+        <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.2rem;">
+            <i class="fa-solid fa-bus" style="color: var(--accent-color);"></i> Transit.IN
+        </p>
+        <p style="font-size: 0.92rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Intelligent Public Transport Platform &bull; Real-Time Telemetry &bull; Leaflet & OSRM Routing
+        </p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1.8rem; font-size: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="GitHub Repository">
+                <i class="fa-brands fa-github"></i> GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/shreya-fakirapur-557388324" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color); transition: color 0.2s; font-weight: 600;" title="LinkedIn Profile">
+                <i class="fa-brands fa-linkedin"></i> LinkedIn Profile
+            </a>
+            <a href="admin.html" style="color: var(--warning-color); font-weight: 600; transition: color 0.2s;" title="Admin Portal">
+                <i class="fa-solid fa-user-shield"></i> Admin Portal
+            </a>
         </div>
-        <p style="font-size: 0.8rem; margin-top: 1.5rem;">Developed by Shreya &copy; 2026</p>
+        <p style="font-size: 0.82rem; color: var(--text-secondary);">Developed with passion by Shreya &copy; 2026 &bull; Clean Vanilla HTML, CSS & JavaScript</p>
     </footer>
 
     <!-- Loading Overlay -->
     <div id="city-loader" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
         <div class="spinner"></div>
-        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading...</h2>
+        <h2 style="margin-top: 1rem; color: var(--accent-color);" id="loader-text">Loading Transit Grid...</h2>
     </div>
 
-    <!-- Global JS -->
-    <script src="js/app.js?v=6"></script>
-    <script src="js/transit-data.js"></script>
-    <!-- Chart.js -->
+    <!-- Scripts -->
+    <script src="js/app.js?v=7"></script>
+    <script src="js/transit-data.js?v=7"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Dashboard Controller Script -->
     <script>
+        let currentCityRoutes = [];
+
         document.addEventListener('DOMContentLoaded', () => {
-            const city = localStorage.getItem('spt-city') || 'Delhi';
-            const counters = document.querySelectorAll('.counter');
+            const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+
+            // 1. Update labels
+            const cityLabel = document.getElementById('label-city-name');
+            const statsCityName = document.getElementById('stats-city-name');
+            if (cityLabel) cityLabel.textContent = currentCity;
+            if (statsCityName) statsCityName.textContent = currentCity;
+
+            // 2. Render City Chips
+            renderCityChips(currentCity);
+
+            // 3. Dynamic City Stats
+            updateCityStats(currentCity);
+
+            // 4. Render Live Departure Board
+            loadDepartureBoard(currentCity);
+
+            // 5. Render Analytics Charts
+            initDashboardCharts(currentCity);
+
+            // 6. Set Last Updated Timestamp
+            const timeSpan = document.getElementById('last-updated');
+            if (timeSpan) {
+                const now = new Date();
+                timeSpan.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> Last Synced: ${now.toLocaleTimeString()}`;
+            }
+
+            // 7. Auto refresh countdown simulation every 30 seconds
+            setInterval(() => {
+                loadDepartureBoard(localStorage.getItem('spt-city') || 'Delhi');
+            }, 30000);
+        });
+
+        // City Quick Switcher Chips
+        function renderCityChips(activeCity) {
+            const container = document.getElementById('city-chips-container');
+            if (!container || !window.TransitData) return;
+
+            const cities = TransitData.getAllCities();
+            let html = `<span style="font-size: 0.85rem; color: #cbd5e1; align-self: center; margin-right: 0.4rem; font-weight: 500;"><i class="fa-solid fa-location-crosshairs"></i> Quick Switch:</span>`;
             
-            // Adjust stats based on city
-            if (city === 'Delhi') { counters[0].dataset.target = '420'; counters[2].dataset.target = '54200'; }
-            else if (city === 'Mumbai') { counters[0].dataset.target = '650'; counters[2].dataset.target = '89100'; }
-            else if (city === 'Bangalore') { counters[0].dataset.target = '280'; counters[2].dataset.target = '32000'; }
-            else if (city === 'Hyderabad') { counters[0].dataset.target = '340'; counters[2].dataset.target = '41500'; }
-            else if (city === 'Chennai') { counters[0].dataset.target = '390'; counters[2].dataset.target = '48200'; }
-            else if (city === 'Pune') { counters[0].dataset.target = '310'; counters[2].dataset.target = '36400'; }
-            else { counters[0].dataset.target = '250'; counters[2].dataset.target = '28000'; }
+            cities.forEach(c => {
+                const isActive = c.toLowerCase() === activeCity.toLowerCase();
+                html += `<button class="city-chip ${isActive ? 'active' : ''}" onclick="selectCityFromChip('${c}')">
+                    <i class="fa-solid fa-bus"></i> ${c}
+                </button>`;
+            });
+            container.innerHTML = html;
+        }
 
-            // Number Counter Animation
+        function selectCityFromChip(cityName) {
+            localStorage.setItem('spt-city', cityName);
+            const selector = document.querySelector('.city-selector');
+            if (selector) selector.value = cityName;
+            
+            const loader = document.getElementById('city-loader');
+            const loaderText = document.getElementById('loader-text');
+            if (loader && loaderText) {
+                loaderText.textContent = `Connecting to ${cityName} Transit Grid...`;
+                loader.style.opacity = '1';
+                loader.style.pointerEvents = 'auto';
+                setTimeout(() => window.location.reload(), 450);
+            } else {
+                window.location.reload();
+            }
+        }
+
+        function handleHeroSearch() {
+            const query = (document.getElementById('global-search')?.value || '').trim();
+            if (query) {
+                window.location.href = `routes.html?search=${encodeURIComponent(query)}`;
+            } else {
+                window.location.href = 'routes.html';
+            }
+        }
+
+        // Stats Customization by City
+        function updateCityStats(city) {
+            const statActive = document.getElementById('stat-active-buses');
+            const statOntime = document.getElementById('stat-ontime-rate');
+            const statRiders = document.getElementById('stat-riders');
+            const statCo2 = document.getElementById('stat-co2');
+
+            const cityMetrics = {
+                'Delhi': { buses: 480, ontime: 94, riders: 68400, co2: 24 },
+                'Mumbai': { buses: 620, ontime: 92, riders: 91500, co2: 32 },
+                'Bangalore': { buses: 360, ontime: 91, riders: 47200, co2: 19 },
+                'Bagalkot': { buses: 85, ontime: 97, riders: 12400, co2: 6 },
+                'Hyderabad': { buses: 390, ontime: 95, riders: 51200, co2: 21 },
+                'Chennai': { buses: 440, ontime: 93, riders: 56800, co2: 22 },
+                'Pune': { buses: 330, ontime: 90, riders: 42100, co2: 17 }
+            };
+
+            const data = cityMetrics[city] || { buses: 250, ontime: 93, riders: 30000, co2: 12 };
+
+            if (statActive) statActive.dataset.target = data.buses;
+            if (statOntime) statOntime.dataset.target = data.ontime;
+            if (statRiders) statRiders.dataset.target = data.riders;
+            if (statCo2) statCo2.dataset.target = data.co2;
+
+            animateCounters();
+        }
+
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
             counters.forEach(counter => {
-                const updateCount = () => {
-                    const target = +counter.dataset.target;
-                    const suffix = counter.dataset.suffix || '';
-                    const count = +counter.innerText.replace(/\D/g, '');
-                    const inc = target / 50; // Speed
+                const target = +counter.dataset.target;
+                const suffix = counter.dataset.suffix || '';
+                let count = 0;
+                const speed = 40;
+                const inc = Math.max(1, Math.ceil(target / speed));
 
+                const update = () => {
+                    count += inc;
                     if (count < target) {
-                        counter.innerText = Math.ceil(count + inc) + suffix;
-                        setTimeout(updateCount, 20);
+                        counter.innerText = count.toLocaleString() + suffix;
+                        setTimeout(update, 20);
                     } else {
                         counter.innerText = target.toLocaleString() + suffix;
                     }
                 };
-                updateCount();
+                update();
             });
+        }
 
-            // Last Updated Time
-            const timeSpan = document.getElementById('last-updated');
+        // Live Departure Board Loader
+        function loadDepartureBoard(city) {
+            const tbody = document.getElementById('departure-board-tbody');
+            if (!tbody || !window.TransitData) return;
+
+            currentCityRoutes = TransitData.getAllRoutesForCity(city);
+            if (!currentCityRoutes || currentCityRoutes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No active departures scheduled for ${city} at this time.</td></tr>`;
+                return;
+            }
+
+            renderDepartureRows(currentCityRoutes);
+        }
+
+        function renderDepartureRows(routes) {
+            const tbody = document.getElementById('departure-board-tbody');
+            if (!tbody) return;
+
+            // Generate deterministic yet lively departures based on minutes
             const now = new Date();
-            timeSpan.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> Last Updated: ${now.toLocaleTimeString()}`;
+            const currentMins = now.getMinutes();
 
-            // Initialize Charts
+            const platforms = ['Bay 1', 'Bay 3', 'Bay 4', 'Platform A', 'Platform B', 'Bay 7', 'Terminal Bay'];
+            const occupancies = [
+                { label: 'Available', class: 'status-ontime', icon: 'fa-user-check' },
+                { label: 'Moderate', class: 'badge-express', icon: 'fa-user-group' },
+                { label: 'Crowded', class: 'status-delayed', icon: 'fa-triangle-exclamation' }
+            ];
+
+            tbody.innerHTML = routes.map((route, idx) => {
+                const etaMins = ((idx * 4 + (60 - currentMins)) % 25) + 1;
+                let etaDisplay = etaMins <= 2 ? `<strong style="color: var(--success-color);"><span class="live-pulse-dot"></span> Approaching (${etaMins}m)</strong>` : `In ${etaMins} mins`;
+                const platform = platforms[idx % platforms.length];
+                const occ = occupancies[idx % occupancies.length];
+                const statusBadge = route.status === 'Delayed' ? 
+                    `<span class="route-status status-delayed"><i class="fa-solid fa-clock"></i> +${(idx % 5) + 3}m Delay</span>` :
+                    `<span class="route-status status-ontime"><i class="fa-solid fa-circle-check"></i> On Time</span>`;
+                
+                // Destination corridor extraction
+                const dest = route.stops && route.stops.length > 1 ? 
+                    `${route.stops[route.stops.length - 1]} <span style="font-size: 0.8rem; color: var(--text-secondary);">(via ${route.stops[1] || route.stops[0]})</span>` : 
+                    route.name;
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <strong style="font-size: 1rem; color: var(--accent-color); font-weight: 700;">${route.id}</strong>
+                                <span class="route-badge ${route.type === 'Electric' ? 'badge-electric' : 'badge-express'}" style="font-size: 0.72rem;">${route.type}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>${dest}</strong>
+                        </td>
+                        <td>
+                            <span style="background: rgba(255,255,255,0.06); padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.82rem; border: 1px solid var(--card-border);">
+                                <i class="fa-solid fa-map-pin" style="color: var(--accent-color);"></i> ${platform}
+                            </span>
+                        </td>
+                        <td>
+                            ${etaDisplay}
+                        </td>
+                        <td>
+                            <span style="font-size: 0.82rem; color: var(--text-secondary);">
+                                <i class="fa-solid ${occ.icon}"></i> ${occ.label}
+                            </span>
+                        </td>
+                        <td>
+                            ${statusBadge}
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="tracking.html?route=${encodeURIComponent(route.id)}" class="sim-btn" style="text-decoration: none; padding: 0.4rem 0.8rem; font-size: 0.82rem;">
+                                <i class="fa-solid fa-satellite-dish"></i> Track Live
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterDepartureBoard(term) {
+            if (!term) {
+                renderDepartureRows(currentCityRoutes);
+                return;
+            }
+            const q = term.toLowerCase();
+            const filtered = currentCityRoutes.filter(r => 
+                r.id.toLowerCase().includes(q) || 
+                r.name.toLowerCase().includes(q) ||
+                (r.stops && r.stops.some(s => s.toLowerCase().includes(q)))
+            );
+            renderDepartureRows(filtered);
+        }
+
+        function refreshDepartureBoard() {
+            const city = localStorage.getItem('spt-city') || 'Delhi';
+            loadDepartureBoard(city);
+            const timeSpan = document.getElementById('last-updated');
+            if (timeSpan) {
+                timeSpan.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> Last Synced: ${new Date().toLocaleTimeString()}`;
+            }
+        }
+
+        // Initialize Charts
+        function initDashboardCharts(city) {
             const ctx1 = document.getElementById('ridershipChart');
-            if(ctx1) {
+            if (ctx1 && window.Chart) {
+                const multipliers = {
+                    'Delhi': 1.4,
+                    'Mumbai': 1.8,
+                    'Bangalore': 1.1,
+                    'Bagalkot': 0.35,
+                    'Hyderabad': 1.15,
+                    'Chennai': 1.25,
+                    'Pune': 0.95
+                };
+                const m = multipliers[city] || 1;
+                const weeklyData = [12000, 19000, 15000, 17000, 22000, 31000, 26000].map(v => Math.round(v * m));
+
                 new Chart(ctx1, {
                     type: 'line',
                     data: {
                         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                         datasets: [{
                             label: 'Passengers',
-                            data: [12000, 19000, 15000, 17000, 22000, 30000, 25000],
+                            data: weeklyData,
                             borderColor: '#3b82f6',
-                            tension: 0.4,
+                            borderWidth: 3,
+                            tension: 0.35,
                             fill: true,
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                            backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                            pointBackgroundColor: '#3b82f6',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         }]
                     },
-                    options: { responsive: true, plugins: { legend: { display: false } } }
+                    options: { 
+                        responsive: true,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                titleColor: '#fff',
+                                bodyColor: '#cbd5e1',
+                                padding: 10,
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: {
+                            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                        }
+                    }
                 });
             }
 
             const ctx2 = document.getElementById('delayChart');
-            if(ctx2) {
+            if (ctx2 && window.Chart) {
                 new Chart(ctx2, {
                     type: 'bar',
                     data: {
-                        labels: ['8 AM', '1 PM', '6 PM'],
+                        labels: ['8 AM (Morning Peak)', '1 PM (Off-Peak)', '6 PM (Evening Rush)'],
                         datasets: [{
                             label: 'Avg Delay (mins)',
-                            data: [15, 5, 25],
-                            backgroundColor: ['#ef4444', '#10b981', '#ef4444'],
-                            borderRadius: 6
+                            data: [14, 4, 22],
+                            backgroundColor: ['#ef4444', '#10b981', '#f59e0b'],
+                            borderRadius: 8
                         }]
                     },
-                    options: { responsive: true, plugins: { legend: { display: false } } }
+                    options: { 
+                        responsive: true, 
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                        }
+                    }
                 });
             }
-        });
+        }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
