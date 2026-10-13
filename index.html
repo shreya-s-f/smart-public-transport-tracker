@@ -181,6 +181,7 @@
 
     <!-- Global JS -->
     <script src="js/app.js?v=6"></script>
+    <script src="js/transit-data.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -190,8 +191,12 @@
             
             // Adjust stats based on city
             if (city === 'Delhi') { counters[0].dataset.target = '420'; counters[2].dataset.target = '54200'; }
-            if (city === 'Mumbai') { counters[0].dataset.target = '650'; counters[2].dataset.target = '89100'; }
-            if (city === 'Bangalore') { counters[0].dataset.target = '280'; counters[2].dataset.target = '32000'; }
+            else if (city === 'Mumbai') { counters[0].dataset.target = '650'; counters[2].dataset.target = '89100'; }
+            else if (city === 'Bangalore') { counters[0].dataset.target = '280'; counters[2].dataset.target = '32000'; }
+            else if (city === 'Hyderabad') { counters[0].dataset.target = '340'; counters[2].dataset.target = '41500'; }
+            else if (city === 'Chennai') { counters[0].dataset.target = '390'; counters[2].dataset.target = '48200'; }
+            else if (city === 'Pune') { counters[0].dataset.target = '310'; counters[2].dataset.target = '36400'; }
+            else { counters[0].dataset.target = '250'; counters[2].dataset.target = '28000'; }
 
             // Number Counter Animation
             counters.forEach(counter => {

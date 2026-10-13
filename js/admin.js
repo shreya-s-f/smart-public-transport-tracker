@@ -61,7 +61,7 @@ function renderAllAdminData() {
 
 // --- CITY HELPERS ---
 function getCities() {
-    const defaultCities = ['Delhi', 'Mumbai', 'Bangalore'];
+    const defaultCities = ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune'];
     let customCities = [];
     try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
     return [...new Set([...defaultCities, ...customCities])];

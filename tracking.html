@@ -73,24 +73,71 @@
     </nav>
 
     <main>
-        <div class="glass-card" style="margin-bottom: 2rem;">
-            <div class="tracker-header">
+        <!-- Tracker Top Bar -->
+        <div class="glass-card animate-fade-in-up" style="margin-bottom: 1.5rem; padding: 1.25rem 1.5rem;">
+            <div class="tracker-header" style="margin-bottom: 0;">
                 <div>
-                    <h2 id="tracking-route-title" style="color: var(--accent-color); margin-bottom: 0.2rem;">Route 10A Tracking</h2>
-                    <p id="tracking-route-path" style="color: var(--text-secondary);">Downtown ➔ Tech Park</p>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
+                        <h2 id="tracking-route-title" style="color: var(--accent-color); margin-bottom: 0;">Route 507 Tracking</h2>
+                        <span id="route-type-badge" class="badge-pill badge-electric"><i class="fa-solid fa-bolt"></i> Electric Fleet</span>
+                    </div>
+                    <p id="tracking-route-path" style="color: var(--text-secondary); margin-bottom: 0;">Loading route path...</p>
                 </div>
-                <div class="eta-badge" id="eta-display">
-                    <i class="fa-solid fa-clock"></i> ETA: 5 mins away
+
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <!-- In-page Route Switcher -->
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="route-switcher" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Switch Route:</label>
+                        <select id="route-switcher" class="city-selector" style="font-size: 0.9rem; padding: 0.4rem 0.8rem;">
+                            <!-- Populated dynamically by tracking.js -->
+                        </select>
+                    </div>
+
+                    <div class="eta-badge" id="eta-display">
+                        <i class="fa-solid fa-clock"></i> ETA: Calculating...
+                    </div>
+
+                    <button class="btn-primary" id="book-this-bus-btn" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-radius: 8px;">
+                        <i class="fa-solid fa-ticket"></i> Book This Bus
+                    </button>
                 </div>
-            </div>
-            
-            <div id="map-container"></div>
-            
-            <div style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-circle-info"></i> Simulation Mode: Bus movement is updated every second.
             </div>
         </div>
-        </main>
+
+        <!-- Simulation Controls Bar -->
+        <div class="sim-panel animate-fade-in-up">
+            <div class="sim-controls">
+                <button class="sim-btn" id="sim-play-pause-btn"><i class="fa-solid fa-pause"></i> Pause</button>
+                <button class="sim-btn" id="sim-reset-btn"><i class="fa-solid fa-rotate-left"></i> Restart</button>
+                <button class="sim-btn" id="sim-speed-btn"><i class="fa-solid fa-forward-step"></i> Speed: 1x</button>
+            </div>
+            <div style="display: flex; gap: 1.5rem; font-size: 0.88rem; color: var(--text-secondary); align-items: center; flex-wrap: wrap;">
+                <span><i class="fa-solid fa-gauge-high" style="color: var(--accent-color);"></i> Speed: <strong id="sim-speed-val" style="color: var(--text-primary);">38 km/h</strong></span>
+                <span><i class="fa-solid fa-road" style="color: var(--success-color);"></i> Remaining: <strong id="sim-dist-val" style="color: var(--text-primary);">4.2 km</strong></span>
+                <span><i class="fa-solid fa-circle-dot" style="color: #10b981; animation: pulseEffect 1.5s infinite;"></i> GPS Signal: <strong>Live Real-Time</strong></span>
+            </div>
+        </div>
+
+        <!-- Main Map & Stop Timeline Grid -->
+        <div class="dashboard-grid" style="grid-template-columns: 2.2fr 1fr; gap: 1.5rem; align-items: start;">
+            <!-- Left: Map Container -->
+            <div class="glass-card" style="padding: 1rem; position: relative;">
+                <div id="map-container" style="height: 520px; border-radius: 12px; margin-bottom: 0;"></div>
+            </div>
+
+            <!-- Right: Interactive Stops Timeline -->
+            <div class="glass-card animate-fade-in-up delay-1" style="padding: 1.5rem; max-height: 560px; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--text-primary);"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-color); margin-right: 0.4rem;"></i> Route Stops</h3>
+                    <span id="active-stop-indicator" style="font-size: 0.8rem; color: var(--accent-color); font-weight: 600;">Approaching...</span>
+                </div>
+                
+                <div class="stop-timeline" id="stops-timeline-container">
+                    <!-- Dynamic stops timeline populated by tracking.js -->
+                </div>
+            </div>
+        </div>
+    </main>
 
     <!-- Professional Footer -->
     <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
@@ -113,6 +160,7 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="js/app.js?v=6"></script>
+    <script src="js/transit-data.js"></script>
     <script src="js/tracking.js"></script>
 </body>
 </html>

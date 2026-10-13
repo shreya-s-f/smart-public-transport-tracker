@@ -107,7 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load custom cities added by Admin
     let customCities = [];
     try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
-    const allCities = [...new Set(['Delhi', 'Mumbai', 'Bangalore', ...customCities])];
+    const defaultCityList = ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune'];
+    const allCities = [...new Set([...defaultCityList, ...customCities])];
 
     citySelectors.forEach(selector => {
         // Populate options
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     window.location.reload();
-                }, 800);
+                }, 600);
             } else {
                 window.location.reload();
             }
@@ -144,9 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let recentSearches = JSON.parse(localStorage.getItem('spt-recent-searches')) || [];
         
         const popularRoutes = {
-            'Delhi': ['507', 'GL-23', '390', 'Airport Express'],
-            'Mumbai': ['BEST 301', 'AC-10', 'C-71', 'Bandra Local'],
-            'Bangalore': ['V-500D', 'KIA-9', '335E', 'Silk Board']
+            'Delhi': ['507', 'Airport-Exp', 'GL-23', '390', 'Metro-F1'],
+            'Mumbai': ['BEST-301', 'AC-10', 'C-71', 'BEST-42'],
+            'Bangalore': ['V-500D', 'KIA-9', '335E', 'G-4'],
+            'Hyderabad': ['TSRTC-100M', 'Pushpak-Airport', '216-IT'],
+            'Chennai': ['MTC-23C', 'MTC-570'],
+            'Pune': ['Rainbow-102', 'Hinjawadi-348']
         };
 
         globalSearch.addEventListener('focus', () => {

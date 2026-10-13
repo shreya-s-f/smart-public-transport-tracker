@@ -69,6 +69,22 @@
                             <!-- Populated by JS based on City -->
                         </select>
                     </div>
+
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-map-pin" style="color: #10b981;"></i> Boarding Stop</label>
+                            <select id="boarding-select" required>
+                                <!-- Populated dynamically based on route -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-location-dot" style="color: #ef4444;"></i> Drop Stop</label>
+                            <select id="drop-select" required>
+                                <!-- Populated dynamically based on route -->
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
                         <div class="form-group">
                             <label>Date of Journey</label>
@@ -162,6 +178,7 @@
     </div>
 
     <script src="js/app.js?v=6"></script>
+    <script src="js/transit-data.js"></script>
     <script src="js/booking.js"></script>
 </body>
 </html>

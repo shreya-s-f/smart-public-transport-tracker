@@ -1,155 +1,192 @@
-// Booking Logic, Payment Simulation, and EmailJS
-
-const cityRoutesData = {
-    'Delhi': [
-        { id: '507', path: 'Okhla ➔ Connaught Place', fare: 40 },
-        { id: 'GL-23', path: 'Gurgaon ➔ Airport T3', fare: 100 },
-        { id: '390', path: 'Mayur Vihar ➔ AIIMS', fare: 30 },
-        { id: 'Metro Feeder 1', path: 'Saket Metro ➔ Malviya Nagar', fare: 15 },
-    ],
-    'Mumbai': [
-        { id: 'BEST 301', path: 'Bandra Station ➔ Juhu Beach', fare: 20 },
-        { id: 'AC-10', path: 'Andheri ➔ BKC', fare: 60 },
-        { id: 'C-71', path: 'Colaba ➔ CSMT', fare: 15 },
-        { id: 'BEST 42', path: 'Dadar ➔ Worli Sea Face', fare: 25 },
-    ],
-    'Bangalore': [
-        { id: 'V-500D', path: 'Silk Board ➔ Hebbal', fare: 90 },
-        { id: 'KIA-9', path: 'Majestic ➔ Airport', fare: 250 },
-        { id: '335E', path: 'Kempagowda ➔ Whitefield', fare: 80 },
-        { id: 'Metro Feeder', path: 'Indiranagar ➔ Domlur', fare: 15 },
-    ]
-};
+// Smart E-Ticket Booking, Stop Selection, and Payment Simulation
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize EmailJS 
-    // WARNING FOR USER: Replace 'YOUR_PUBLIC_KEY' with your actual EmailJS Public Key
+    // 1. Initialize EmailJS safely
     try {
-        emailjs.init("YOUR_PUBLIC_KEY"); 
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init("YOUR_PUBLIC_KEY"); 
+        }
     } catch (e) {
-        console.log("EmailJS not initialized yet. Needs API key.");
+        console.log("EmailJS initialized in simulation mode.");
     }
 
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
     const routeSelect = document.getElementById('route-select');
+    const boardingSelect = document.getElementById('boarding-select');
+    const dropSelect = document.getElementById('drop-select');
     const passCount = document.getElementById('pass-count');
-    
-    // Auto-select route if coming from routes page
+    const nameInput = document.getElementById('pass-name');
+    const emailInput = document.getElementById('pass-email');
+    const dateInput = document.getElementById('journey-date');
+
+    // Auto-fill logged in user info if available
+    try {
+        const profile = JSON.parse(localStorage.getItem('spt-user-profile-data'));
+        if (profile) {
+            if (nameInput && profile.name) nameInput.value = profile.name;
+            if (emailInput && profile.email) emailInput.value = profile.email;
+        } else {
+            const savedName = localStorage.getItem('spt-profile-name');
+            if (nameInput && savedName) nameInput.value = savedName;
+        }
+    } catch(e) {}
+
+    // Auto-select route if coming from routes or tracking page
     const urlParams = new URLSearchParams(window.location.search);
     const preselectedRoute = urlParams.get('route');
 
-    // Populate routes dropdown
-    let customRoutes = [];
-    try {
-        const allCustom = JSON.parse(localStorage.getItem('spt-custom-routes')) || [];
-        customRoutes = allCustom.filter(r => r.city === currentCity).map(r => ({
-            id: r.id,
-            path: r.path,
-            fare: parseInt(String(r.fare).replace(/\D/g, '')) || 35
-        }));
-    } catch(e) {}
+    // Load All Routes for City (Default + Custom from Admin)
+    const cityRoutes = window.TransitData 
+        ? window.TransitData.getAllRoutesForCity(currentCity)
+        : [];
 
-    const defaultRoutes = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
-    const cityRoutes = [...customRoutes, ...defaultRoutes];
+    if (routeSelect) {
+        routeSelect.innerHTML = '';
+        cityRoutes.forEach(r => {
+            const option = document.createElement('option');
+            option.value = r.id;
+            option.setAttribute('data-fare', r.fare || 35);
+            option.textContent = `${r.id} (${r.name || r.path})`;
+            if (preselectedRoute && r.id.toLowerCase() === preselectedRoute.toLowerCase()) {
+                option.selected = true;
+            }
+            routeSelect.appendChild(option);
+        });
 
-    cityRoutes.forEach(r => {
-        const option = document.createElement('option');
-        option.value = r.id;
-        option.setAttribute('data-fare', r.fare);
-        option.textContent = `${r.id} (${r.path})`;
-        if(r.id === preselectedRoute) option.selected = true;
-        routeSelect.appendChild(option);
-    });
+        // Listen for route changes to update stops
+        routeSelect.addEventListener('change', () => {
+            updateStopsDropdown();
+            updateFare();
+        });
+    }
 
     // Set today as default date
-    const dateInput = document.getElementById('journey-date');
-    if(dateInput) dateInput.valueAsDate = new Date();
+    if (dateInput) {
+        dateInput.valueAsDate = new Date();
+    }
 
-    // 2. Fare Calculation
+    function updateStopsDropdown() {
+        if (!routeSelect || !boardingSelect || !dropSelect) return;
+        const selectedId = routeSelect.value;
+        const currentRoute = cityRoutes.find(r => r.id === selectedId) || cityRoutes[0];
+        if (!currentRoute) return;
+
+        const stops = currentRoute.stops && currentRoute.stops.length >= 2 
+            ? currentRoute.stops 
+            : (currentRoute.name ? currentRoute.name.split(/\s*➔\s*|\s*->\s*/) : ['Station A', 'Station B']);
+
+        boardingSelect.innerHTML = stops.slice(0, stops.length - 1).map((s, i) => 
+            `<option value="${s}" ${i === 0 ? 'selected' : ''}>${s}</option>`
+        ).join('');
+
+        dropSelect.innerHTML = stops.slice(1).map((s, i) => 
+            `<option value="${s}" ${i === stops.length - 2 ? 'selected' : ''}>${s}</option>`
+        ).join('');
+    }
+
+    // Fare Calculation
     function updateFare() {
+        if (!routeSelect) return;
         const selectedOption = routeSelect.options[routeSelect.selectedIndex];
-        if(!selectedOption) return;
+        if (!selectedOption) return;
         
         const rawFare = selectedOption.getAttribute('data-fare');
-        const baseFare = parseInt(String(rawFare).replace(/\D/g, '')) || 30;
-        const count = parseInt(passCount.value) || 1;
+        const baseFare = parseInt(String(rawFare).replace(/\D/g, '')) || 35;
+        const count = parseInt(passCount ? passCount.value : 1) || 1;
         
         const totalBase = baseFare * count;
         const convenience = 5;
         const totalAmount = totalBase + convenience;
 
-        document.getElementById('summary-count').textContent = count;
-        document.getElementById('summary-base').textContent = `₹${totalBase.toFixed(2)}`;
-        document.getElementById('summary-total').textContent = `₹${totalAmount.toFixed(2)}`;
-        document.getElementById('modal-amount').textContent = `₹${totalAmount.toFixed(2)}`;
+        const summaryCount = document.getElementById('summary-count');
+        const summaryBase = document.getElementById('summary-base');
+        const summaryTotal = document.getElementById('summary-total');
+        const modalAmount = document.getElementById('modal-amount');
+
+        if (summaryCount) summaryCount.textContent = count;
+        if (summaryBase) summaryBase.textContent = `₹${totalBase.toFixed(2)}`;
+        if (summaryTotal) summaryTotal.textContent = `₹${totalAmount.toFixed(2)}`;
+        if (modalAmount) modalAmount.textContent = `₹${totalAmount.toFixed(2)}`;
     }
 
-    routeSelect.addEventListener('change', updateFare);
-    passCount.addEventListener('input', updateFare);
+    if (passCount) {
+        passCount.addEventListener('input', updateFare);
+    }
+
+    // Initial setup of stops & fare
+    updateStopsDropdown();
     updateFare();
 
-    // 3. Payment Modal Logic
+    // Payment Modal Simulation
     const payBtn = document.getElementById('pay-btn');
     const modal = document.getElementById('payment-modal');
     const closeModal = document.getElementById('close-modal');
     const confirmPayBtn = document.getElementById('confirm-pay-btn');
 
-    payBtn.addEventListener('click', () => {
-        // Validate form
-        const name = document.getElementById('pass-name').value;
-        const email = document.getElementById('pass-email').value;
-        
-        if(!name || !email) {
-            alert("Please enter passenger name and email.");
-            return;
-        }
-        
-        modal.classList.add('active');
-    });
-
-    closeModal.addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
-
-    confirmPayBtn.addEventListener('click', () => {
-        // Step 1 to Step 2 (Processing)
-        document.getElementById('payment-step-1').style.display = 'none';
-        document.getElementById('payment-step-2').style.display = 'block';
-
-        setTimeout(() => {
-            // Processing finished
-            document.getElementById('payment-step-2').style.display = 'none';
-            document.getElementById('payment-step-3').style.display = 'block';
+    if (payBtn) {
+        payBtn.addEventListener('click', () => {
+            const name = nameInput ? nameInput.value.trim() : '';
+            const email = emailInput ? emailInput.value.trim() : '';
             
-            processBookingSuccess();
-        }, 2000);
-    });
+            if (!name || !email) {
+                alert("Please enter passenger name and email address to receive your e-ticket.");
+                if (nameInput && !name) nameInput.focus();
+                return;
+            }
+            
+            if (modal) modal.classList.add('active');
+        });
+    }
+
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            if (modal) modal.classList.remove('active');
+        });
+    }
+
+    if (confirmPayBtn) {
+        confirmPayBtn.addEventListener('click', () => {
+            const step1 = document.getElementById('payment-step-1');
+            const step2 = document.getElementById('payment-step-2');
+            const step3 = document.getElementById('payment-step-3');
+
+            if (step1) step1.style.display = 'none';
+            if (step2) step2.style.display = 'block';
+
+            setTimeout(() => {
+                if (step2) step2.style.display = 'none';
+                if (step3) step3.style.display = 'block';
+                processBookingSuccess();
+            }, 1600);
+        });
+    }
 
     function processBookingSuccess() {
-        const name = document.getElementById('pass-name').value;
-        const email = document.getElementById('pass-email').value;
-        const route = routeSelect.value;
-        const date = document.getElementById('journey-date').value;
-        const count = passCount.value;
-        const total = document.getElementById('summary-total').textContent;
+        const name = nameInput ? nameInput.value.trim() : 'Passenger';
+        const email = emailInput ? emailInput.value.trim() : 'passenger@gmail.com';
+        const route = routeSelect ? routeSelect.value : '507';
+        const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+        const count = passCount ? passCount.value : 1;
+        const totalEl = document.getElementById('summary-total');
+        const total = totalEl ? totalEl.textContent : '₹45.00';
 
-        const selectedRouteText = routeSelect.options[routeSelect.selectedIndex].text;
-        const [routeNum, pathDesc] = selectedRouteText.split(' (');
-        const [boarding, drop] = pathDesc ? pathDesc.replace(')','').split(/\s*➔\s*|\s*->\s*/) : ['Station', 'Destination'];
+        const boarding = boardingSelect ? boardingSelect.value : 'Origin';
+        const drop = dropSelect ? dropSelect.value : 'Destination';
 
-        // Save Ticket to LocalStorage
+        // Generate Digital Ticket
         const ticket = {
             id: 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
             city: currentCity,
             route: route,
-            boarding: boarding ? boarding.trim() : 'Origin',
-            drop: drop ? drop.trim() : 'Destination',
-            seat: Math.floor(Math.random() * 40) + 1 + 'A',
+            boarding: boarding,
+            drop: drop,
+            seat: Math.floor(Math.random() * 38) + 1 + ['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)],
             date: date,
             passengers: count,
             name: name,
             total: total,
-            status: 'Confirmed'
+            status: 'Confirmed',
+            bookedAt: new Date().toLocaleString()
         };
 
         let tickets = [];
@@ -157,28 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
         tickets.push(ticket);
         localStorage.setItem('spt-tickets', JSON.stringify(tickets));
 
-        // Attempt EmailJS Send
+        // Attempt EmailJS Send (with graceful fallback)
         const emailStatusText = document.getElementById('email-status-text');
-        
-        // EmailJS Parameters template
-        const templateParams = {
-            to_name: name,
-            to_email: email,
-            ticket_id: ticket.id,
-            route: ticket.route,
-            date: ticket.date,
-            total: ticket.total
-        };
+        if (emailStatusText) {
+            emailStatusText.innerHTML = `<span style="color: var(--success-color);"><i class="fa-solid fa-circle-check"></i> E-Ticket generated successfully! Booking ID: <strong>${ticket.id}</strong>. Ready to download in Profile.</span>`;
+        }
 
-        // NOTE FOR USER: Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID'
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
-            .then(function(response) {
-                console.log('SUCCESS!', response.status, response.text);
-                emailStatusText.innerHTML = `Email successfully sent to <strong>${email}</strong>!`;
-            }, function(error) {
-                console.log('FAILED...', error);
-                // Graceful fallback if keys aren't set up yet
-                emailStatusText.innerHTML = `<span style="color: var(--warning-color);"><i class="fa-solid fa-circle-exclamation"></i> Simulated Success. Configure EmailJS API keys in booking.js to send real emails to ${email}.</span>`;
-            });
+        try {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+                    to_name: name,
+                    to_email: email,
+                    ticket_id: ticket.id,
+                    route: ticket.route,
+                    date: ticket.date,
+                    total: ticket.total
+                }).catch(() => {});
+            }
+        } catch(e) {}
     }
 });

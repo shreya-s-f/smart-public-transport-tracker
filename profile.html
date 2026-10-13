@@ -172,8 +172,16 @@
     </div>
 
     <script src="js/app.js?v=6"></script>
+    <script src="js/transit-data.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Populate City Dropdown
+            const cityDropdown = document.getElementById('prof-city');
+            if (cityDropdown) {
+                const allCities = window.TransitData ? window.TransitData.getAllCities() : ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune'];
+                cityDropdown.innerHTML = allCities.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+
             loadProfile();
             renderTickets();
             renderFavorites();

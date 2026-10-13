@@ -1,98 +1,95 @@
-// Pan-India Routes Data and Logic
-
-const cityRoutesData = {
-    'Delhi': [
-        { id: '507', path: 'Okhla ➔ Connaught Place', status: 'On Time', stops: 14 },
-        { id: 'GL-23', path: 'Gurgaon ➔ Airport T3', status: '5m Delay', stops: 8 },
-        { id: '390', path: 'Mayur Vihar ➔ AIIMS', status: 'On Time', stops: 12 },
-        { id: 'Metro Feeder 1', path: 'Saket Metro ➔ Malviya Nagar', status: 'On Time', stops: 4 },
-    ],
-    'Mumbai': [
-        { id: 'BEST 301', path: 'Bandra Station ➔ Juhu Beach', status: 'On Time', stops: 10 },
-        { id: 'AC-10', path: 'Andheri ➔ BKC', status: '15m Delay', stops: 15 },
-        { id: 'C-71', path: 'Colaba ➔ CSMT', status: 'On Time', stops: 6 },
-        { id: 'BEST 42', path: 'Dadar ➔ Worli Sea Face', status: 'On Time', stops: 7 },
-    ],
-    'Bangalore': [
-        { id: 'V-500D', path: 'Silk Board ➔ Hebbal', status: 'Heavy Traffic', stops: 20 },
-        { id: 'KIA-9', path: 'Majestic ➔ Airport', status: 'On Time', stops: 5 },
-        { id: '335E', path: 'Kempagowda ➔ Whitefield', status: '10m Delay', stops: 22 },
-        { id: 'Metro Feeder', path: 'Indiranagar ➔ Domlur', status: 'On Time', stops: 4 },
-    ]
-};
+// Pan-India Routes Data and Interactive Explorer Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('route-list-container');
     const searchInput = document.getElementById('route-search');
-    
-    // Get city from global storage
+    const counterBadge = document.getElementById('route-counter-badge');
+    const heading = document.getElementById('routes-heading');
+    const filterPills = document.querySelectorAll('.filter-pill');
+
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
-    let defaultRoutes = cityRoutesData[currentCity] || cityRoutesData['Delhi'];
     
-    // Merge custom routes from Admin panel
-    let customRoutes = [];
-    try {
-        const allCustom = JSON.parse(localStorage.getItem('spt-custom-routes')) || [];
-        customRoutes = allCustom.filter(r => r.city === currentCity).map(r => ({
-            id: r.id,
-            path: r.path,
-            status: r.status,
-            stops: Math.floor(Math.random() * 10) + 5
-        }));
-    } catch(e) {}
-    
-    const routesData = [...customRoutes, ...defaultRoutes];
-    
-    // Handle Auto-Search from Dashboard
+    // Retrieve all routes using centralized TransitData (includes custom routes from Admin)
+    const routesData = window.TransitData 
+        ? window.TransitData.getAllRoutesForCity(currentCity)
+        : [];
+
+    let activeFilter = 'all';
+
+    // Handle Auto-Search from Dashboard query params
     const urlParams = new URLSearchParams(window.location.search);
     const initialSearch = urlParams.get('search') || '';
-    
-    // Update heading
-    const heading = document.getElementById('routes-heading');
-    if (heading) heading.innerHTML = `Available Routes in <span style="color: var(--accent-color);">${currentCity}</span>`;
 
-    if (container) {
-        if (searchInput) {
-            searchInput.placeholder = `Search routes in ${currentCity} (e.g. ${routesData[0].id})`;
-            if (initialSearch) {
-                searchInput.value = initialSearch;
-            }
-            
-            searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtered = routesData.filter(r => 
-                    r.id.toLowerCase().includes(term) || 
-                    r.path.toLowerCase().includes(term)
-                );
-                renderRoutes(filtered);
-            });
-            
-            // Initial render
-            const term = initialSearch.toLowerCase();
-            const filtered = routesData.filter(r => 
-                r.id.toLowerCase().includes(term) || 
-                r.path.toLowerCase().includes(term)
-            );
-            renderRoutes(filtered);
-        } else {
-            renderRoutes(routesData);
+    if (heading) {
+        heading.innerHTML = `Available Routes in <span style="color: var(--accent-color);">${currentCity}</span>`;
+    }
+
+    // Filter pill click listener
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            filterPills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            activeFilter = pill.getAttribute('data-category');
+            filterAndRender();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.placeholder = `Search routes in ${currentCity} by number, stop or area (e.g. ${routesData[0]?.id || '507'})...`;
+        if (initialSearch) {
+            searchInput.value = initialSearch;
         }
+
+        searchInput.addEventListener('input', () => {
+            filterAndRender();
+        });
+    }
+
+    function filterAndRender() {
+        const term = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+        const filtered = routesData.filter(r => {
+            const matchesSearch = !term || 
+                r.id.toLowerCase().includes(term) ||
+                (r.name && r.name.toLowerCase().includes(term)) ||
+                (r.stops && r.stops.some(s => s.toLowerCase().includes(term))) ||
+                (r.category && r.category.toLowerCase().includes(term));
+
+            let matchesCategory = true;
+            if (activeFilter === 'electric') {
+                matchesCategory = r.type === 'Electric' || (r.category && r.category.toLowerCase().includes('electric'));
+            } else if (activeFilter === 'ac') {
+                matchesCategory = r.type === 'AC' || (r.category && r.category.toLowerCase().includes('ac'));
+            } else if (activeFilter === 'airport') {
+                matchesCategory = (r.category && r.category.toLowerCase().includes('airport')) || r.id.toLowerCase().includes('airport') || r.id.toLowerCase().includes('kia');
+            } else if (activeFilter === 'feeder') {
+                matchesCategory = (r.category && r.category.toLowerCase().includes('feeder')) || r.id.toLowerCase().includes('metro');
+            }
+
+            return matchesSearch && matchesCategory;
+        });
+
+        renderRoutes(filtered);
     }
 
     function renderRoutes(routes) {
+        if (!container) return;
         container.innerHTML = '';
-        
+
+        if (counterBadge) {
+            counterBadge.textContent = `Showing ${routes.length} of ${routesData.length} routes in ${currentCity}`;
+        }
+
         if (routes.length === 0) {
             container.innerHTML = `
             <div class="empty-state animate-fade-in-up">
                 <i class="fa-solid fa-bus-slash"></i>
-                <h3>No routes found</h3>
-                <p>We couldn't find any active buses for your search.</p>
+                <h3>No routes found for "${searchInput ? searchInput.value : ''}"</h3>
+                <p>Try searching another bus number, stop name, or switch category filter.</p>
             </div>`;
             return;
         }
 
-        // Get favorites from local storage
         let favorites = [];
         try { favorites = JSON.parse(localStorage.getItem('spt-favorites')) || []; } catch (e) {}
 
@@ -100,29 +97,60 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFav = favorites.includes(route.id);
             const statusClass = route.status === 'On Time' ? 'status-ontime' : 'status-delayed';
             const heartClass = isFav ? 'fa-solid favorite-active' : 'fa-regular';
-            
-            // Add animation delay based on index
-            const animDelay = (index % 5) * 0.1;
-            
+            const animDelay = (index % 6) * 0.08;
+
+            let badgeClass = 'badge-regular';
+            let badgeIcon = 'fa-bus';
+            if (route.type === 'Electric') { badgeClass = 'badge-electric'; badgeIcon = 'fa-bolt'; }
+            else if (route.type === 'AC') { badgeClass = 'badge-ac'; badgeIcon = 'fa-snowflake'; }
+            else if (route.category?.toLowerCase().includes('airport')) { badgeClass = 'badge-express'; badgeIcon = 'fa-plane'; }
+
+            const stopsList = route.stops || (route.name ? route.name.split(/\s*➔\s*|\s*->\s*/) : ['Origin', 'Destination']);
+            const stopsCount = stopsList.length;
+            const stopsSummary = stopsList.length > 2 
+                ? `${stopsList[0]} ➔ ${stopsList[1]} ➔ ... ➔ ${stopsList[stopsList.length - 1]}`
+                : route.name;
+
             const card = document.createElement('div');
             card.className = 'glass-card route-item animate-fade-in-up';
             card.style.animationDelay = `${animDelay}s`;
+            card.style.padding = '1.25rem 1.5rem';
+            card.style.marginBottom = '0.8rem';
             card.innerHTML = `
-                <div class="route-details">
-                    <span class="route-number"><i class="fa-solid fa-bus"></i> ${route.id}</span>
-                    <span class="route-path">${route.path}</span>
-                    <span style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-map-pin"></i> ${route.stops} Stops</span>
+                <div class="route-details" style="flex: 1; padding-right: 1.5rem;">
+                    <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                        <span class="route-number"><i class="fa-solid fa-bus-simple"></i> ${route.id}</span>
+                        <span class="badge-pill ${badgeClass}"><i class="fa-solid ${badgeIcon}"></i> ${route.type || 'Standard'}</span>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">${route.category || 'Transit Line'}</span>
+                        <span class="route-status ${statusClass}" style="margin-left: auto;">${route.status}</span>
+                    </div>
+
+                    <p class="route-path" style="font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.4rem;">
+                        ${route.name}
+                    </p>
+
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                        <i class="fa-solid fa-route" style="color: var(--accent-color);"></i>
+                        <span>${stopsSummary}</span>
+                        <span style="background: rgba(0,0,0,0.04); padding: 0.15rem 0.5rem; border-radius: 4px;">${stopsCount} Stops</span>
+                    </div>
+
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 1.2rem; flex-wrap: wrap;">
+                        <span><i class="fa-solid fa-indian-rupee-sign" style="color: var(--success-color);"></i> <strong>₹${route.fare}</strong> Fare</span>
+                        <span><i class="fa-solid fa-arrows-rotate" style="color: var(--accent-color);"></i> ${route.frequency || 'Every 15 min'}</span>
+                        <span><i class="fa-regular fa-clock"></i> ${route.firstBus || '05:30 AM'} - ${route.lastBus || '11:00 PM'}</span>
+                    </div>
                 </div>
-                <div class="route-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem;">
-                    <span class="route-status ${statusClass}">${route.status}</span>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 0.2rem; align-items: center;">
-                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 8px;" onclick="window.location.href='booking.html?route=${encodeURIComponent(route.id)}'">
-                            Book
+
+                <div class="route-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; min-width: 140px;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%; justify-content: flex-end;">
+                        <button class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="window.location.href='booking.html?route=${encodeURIComponent(route.id)}'">
+                            <i class="fa-solid fa-ticket"></i> Book
                         </button>
-                        <button class="btn-icon track-btn" data-id="${route.id}" title="Track Bus">
-                            <i class="fa-solid fa-location-crosshairs"></i>
+                        <button class="btn-icon track-btn" data-id="${route.id}" title="Track Live Map">
+                            <i class="fa-solid fa-location-crosshairs" style="color: var(--accent-color);"></i>
                         </button>
-                        <button class="btn-icon fav-btn" data-id="${route.id}" title="Toggle Favorite">
+                        <button class="btn-icon fav-btn" data-id="${route.id}" title="Save to Favorites">
                             <i class="${heartClass} fa-heart"></i>
                         </button>
                     </div>
@@ -131,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(card);
         });
 
+        // Favorite & Track listeners
         document.querySelectorAll('.fav-btn').forEach(btn => btn.addEventListener('click', handleFavoriteToggle));
         document.querySelectorAll('.track-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -159,4 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         localStorage.setItem('spt-favorites', JSON.stringify(favorites));
     }
+
+    // Initial render
+    filterAndRender();
 });

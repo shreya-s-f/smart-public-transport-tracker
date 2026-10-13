@@ -45,16 +45,28 @@
     </nav>
 
     <main>
-        <div class="search-container" style="margin-bottom: 2rem;">
-            <input type="text" id="route-search" class="search-input" placeholder="Search routes (e.g. 10A, Downtown)">
+        <div class="search-container" style="margin-bottom: 1rem;">
+            <input type="text" id="route-search" class="search-input" placeholder="Search routes by bus number, stop or area (e.g. Airport, Whitefield, AIIMS)...">
         </div>
 
-        <h2 id="routes-heading" style="margin-bottom: 1.5rem;">Available Routes</h2>
+        <!-- Category Filter Pills -->
+        <div class="filter-pills" id="route-category-filters">
+            <button class="filter-pill active" data-category="all"><i class="fa-solid fa-list-check"></i> All Routes</button>
+            <button class="filter-pill" data-category="electric"><i class="fa-solid fa-bolt" style="color: #10b981;"></i> Electric Fleet</button>
+            <button class="filter-pill" data-category="ac"><i class="fa-solid fa-snowflake" style="color: #3b82f6;"></i> AC Express</button>
+            <button class="filter-pill" data-category="airport"><i class="fa-solid fa-plane-departure" style="color: #f59e0b;"></i> Airport Lines</button>
+            <button class="filter-pill" data-category="feeder"><i class="fa-solid fa-train-subway" style="color: #8b5cf6;"></i> Metro Feeder</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 id="routes-heading">Available Routes</h2>
+            <span id="route-counter-badge" style="font-size: 0.85rem; background: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.35rem 0.8rem; border-radius: 20px; font-weight: 600;">Showing 0 routes</span>
+        </div>
         
         <div class="route-list" id="route-list-container">
             <!-- Routes will be injected here via JavaScript -->
         </div>
-        </main>
+    </main>
 
     <!-- Professional Footer -->
     <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
@@ -75,6 +87,7 @@
     </div>
 
     <script src="js/app.js?v=6"></script>
+    <script src="js/transit-data.js"></script>
     <script src="js/routes.js"></script>
 </body>
 </html>

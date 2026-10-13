@@ -1,40 +1,4 @@
-// Timetable and Notifications Data - Pan India
-
-const cityTimetableData = {
-    'Delhi': [
-        { stop: 'Connaught Place', first: '06:00 AM', last: '11:30 PM', freq: 'Every 15 mins', status: 'Active' },
-        { stop: 'India Gate', first: '06:10 AM', last: '11:40 PM', freq: 'Every 15 mins', status: 'Active' },
-        { stop: 'AIIMS', first: '06:25 AM', last: '11:55 PM', freq: 'Every 15 mins', status: 'Minor Delays' },
-        { stop: 'Okhla', first: '06:40 AM', last: '12:10 AM', freq: 'Every 15 mins', status: 'Active' },
-    ],
-    'Mumbai': [
-        { stop: 'CSMT', first: '05:30 AM', last: '11:00 PM', freq: 'Every 10 mins', status: 'Active' },
-        { stop: 'Marine Drive', first: '05:45 AM', last: '11:15 PM', freq: 'Every 10 mins', status: 'Active' },
-        { stop: 'Worli Sea Face', first: '06:00 AM', last: '11:30 PM', freq: 'Every 10 mins', status: 'Active' },
-        { stop: 'Bandra', first: '06:20 AM', last: '11:50 PM', freq: 'Every 10 mins', status: 'Minor Delays' },
-    ],
-    'Bangalore': [
-        { stop: 'Majestic (KBS)', first: '05:00 AM', last: '11:30 PM', freq: 'Every 20 mins', status: 'Active' },
-        { stop: 'Corporation', first: '05:15 AM', last: '11:45 PM', freq: 'Every 20 mins', status: 'Heavy Traffic' },
-        { stop: 'Silk Board', first: '05:40 AM', last: '12:00 AM', freq: 'Every 30 mins', status: 'Heavy Traffic' },
-        { stop: 'Electronic City', first: '06:10 AM', last: '12:30 AM', freq: 'Every 30 mins', status: 'Active' },
-    ]
-};
-
-const cityAlertsData = {
-    'Delhi': [
-        { type: 'alert', title: 'Route 507 - Major Delay', message: 'Expect delays up to 15 minutes due to heavy traffic near AIIMS.', time: '10 mins ago', route: '507' },
-        { type: 'warning', title: 'Stop Relocation', message: 'The India Gate stop has been moved 50 meters north due to VIP movement.', time: '1 hour ago', route: 'All' },
-    ],
-    'Mumbai': [
-        { type: 'alert', title: 'BEST 301 - Waterlogging', message: 'Service suspended temporarily due to waterlogging in Dadar.', time: '20 mins ago', route: '301' },
-        { type: 'warning', title: 'AC-10 Rerouted', message: 'Buses rerouted via Sea Link due to roadwork in Bandra.', time: '2 hours ago', route: 'AC-10' },
-    ],
-    'Bangalore': [
-        { type: 'alert', title: 'Silk Board Traffic', message: 'Severe traffic congestion at Silk Board junction. All V-500 series buses delayed by 45 mins.', time: 'Just now', route: 'V-500D' },
-        { type: 'info', title: 'Weekend Schedule Active', message: 'BMTC is operating on a weekend schedule today.', time: '5 hours ago', route: 'All' },
-    ]
-};
+// Timetable and Notifications Logic - Pan India
 
 document.addEventListener('DOMContentLoaded', () => {
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
@@ -44,48 +8,92 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableHeading = document.getElementById('timetable-heading');
     
     if (tbody) {
-        if (tableHeading) tableHeading.innerHTML = `Weekly Schedule for <span style="color: var(--accent-color);">${currentCity}</span>`;
-        const data = cityTimetableData[currentCity] || cityTimetableData['Delhi'];
+        if (tableHeading) {
+            tableHeading.innerHTML = `Weekly Transit Timetable for <span style="color: var(--accent-color);">${currentCity}</span>`;
+        }
+
+        const routes = window.TransitData 
+            ? window.TransitData.getAllRoutesForCity(currentCity)
+            : [];
         
         tbody.innerHTML = '';
-        data.forEach((row, index) => {
-            const statusClass = row.status === 'Active' ? 'status-ontime' : 'status-delayed';
-            const animDelay = (index * 0.1);
-            
-            const card = document.createElement('div');
-            card.className = 'glass-card route-item animate-fade-in-up';
-            card.style.animationDelay = `${animDelay}s`;
-            card.innerHTML = `
-                <div class="route-details" style="flex: 1;">
-                    <span class="route-number" style="display: block; margin-bottom: 0.5rem;"><i class="fa-solid fa-map-pin"></i> ${row.stop}</span>
-                    <span style="font-size: 0.9rem; color: var(--text-secondary); display: flex; gap: 1rem; align-items: center;">
-                        <span><i class="fa-solid fa-hourglass-start"></i> First: ${row.first}</span>
-                        <span><i class="fa-solid fa-hourglass-end"></i> Last: ${row.last}</span>
-                        <span><i class="fa-solid fa-clock-rotate-left"></i> ${row.freq}</span>
-                    </span>
-                </div>
-                <div class="route-actions" style="margin-left: 1rem;">
-                    <span class="route-status ${statusClass}">${row.status}</span>
-                </div>
-            `;
-            tbody.appendChild(card);
-        });
+        if (routes.length === 0) {
+            tbody.innerHTML = '<div class="empty-state"><p>No timetables available for this city.</p></div>';
+        } else {
+            routes.forEach((route, index) => {
+                const statusClass = route.status === 'On Time' ? 'status-ontime' : 'status-delayed';
+                const animDelay = (index % 6) * 0.08;
+                
+                const card = document.createElement('div');
+                card.className = 'glass-card route-item animate-fade-in-up';
+                card.style.animationDelay = `${animDelay}s`;
+                card.style.marginBottom = '0.8rem';
+                card.style.padding = '1.2rem 1.5rem';
+                card.innerHTML = `
+                    <div class="route-details" style="flex: 1;">
+                        <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap;">
+                            <span class="route-number"><i class="fa-solid fa-bus"></i> ${route.id}</span>
+                            <span class="badge-pill ${route.type === 'Electric' ? 'badge-electric' : route.type === 'AC' ? 'badge-ac' : 'badge-regular'}">
+                                ${route.type || 'Standard'}
+                            </span>
+                            <span style="font-size: 0.85rem; color: var(--text-secondary);">${route.category || 'Line'}</span>
+                            <span class="route-status ${statusClass}" style="margin-left: auto;">${route.status}</span>
+                        </div>
+
+                        <p class="route-path" style="font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem;">${route.name}</p>
+
+                        <div style="font-size: 0.88rem; color: var(--text-secondary); display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <span><i class="fa-solid fa-hourglass-start" style="color: var(--accent-color);"></i> First Bus: <strong>${route.firstBus || '05:30 AM'}</strong></span>
+                            <span><i class="fa-solid fa-hourglass-end" style="color: var(--danger-color);"></i> Last Bus: <strong>${route.lastBus || '11:00 PM'}</strong></span>
+                            <span><i class="fa-solid fa-arrows-rotate" style="color: var(--success-color);"></i> Freq: <strong>${route.frequency || 'Every 15 min'}</strong></span>
+                            <span><i class="fa-solid fa-indian-rupee-sign"></i> Fare: <strong>₹${route.fare || '35'}</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="route-actions" style="margin-left: 1.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                        <button class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="window.location.href='booking.html?route=${encodeURIComponent(route.id)}'">
+                            <i class="fa-solid fa-ticket"></i> Book
+                        </button>
+                        <button class="btn-icon" style="color: var(--accent-color);" onclick="window.location.href='tracking.html?route=${encodeURIComponent(route.id)}'" title="Live Map">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </button>
+                    </div>
+                `;
+                tbody.appendChild(card);
+            });
+        }
     }
 
-    // --- Notifications Logic ---
+    // --- Notifications / Alerts Logic ---
     const alertsContainer = document.getElementById('notifications-container');
     const alertsHeading = document.getElementById('alerts-heading');
 
     if (alertsContainer) {
-        if(alertsHeading) alertsHeading.innerHTML = `System Alerts for <span style="color: var(--accent-color);">${currentCity}</span>`;
-        const data = cityAlertsData[currentCity] || cityAlertsData['Delhi'];
+        if (alertsHeading) {
+            alertsHeading.innerHTML = `Live Service Alerts & Advisories for <span style="color: var(--accent-color);">${currentCity}</span>`;
+        }
+        
+        const cityAlerts = (window.TransitData && window.TransitData.alerts[currentCity]) 
+            ? window.TransitData.alerts[currentCity] 
+            : [
+                { type: 'info', title: 'Normal Operations', message: 'All scheduled bus fleets are operating normally in this city.', time: 'Just now', route: 'All' }
+            ];
         
         alertsContainer.innerHTML = '';
-        data.forEach((notif, index) => {
-            let icon = 'fa-info-circle';
+        cityAlerts.forEach((notif, index) => {
+            let icon = 'fa-circle-info';
             let color = 'var(--accent-color)';
-            if(notif.type === 'alert') { icon = 'fa-triangle-exclamation'; color = 'var(--danger-color)'; }
-            if(notif.type === 'warning') { icon = 'fa-circle-exclamation'; color = 'var(--warning-color)'; }
+            let badgeText = 'General Notice';
+
+            if (notif.type === 'alert') { 
+                icon = 'fa-triangle-exclamation'; 
+                color = 'var(--danger-color)'; 
+                badgeText = 'Traffic Delay';
+            } else if (notif.type === 'warning') { 
+                icon = 'fa-circle-exclamation'; 
+                color = 'var(--warning-color)'; 
+                badgeText = 'Route Advisory';
+            }
             
             const animDelay = (index * 0.1);
             
@@ -93,10 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
             item.className = `notification-item ${notif.type} animate-fade-in-up`;
             item.style.animationDelay = `${animDelay}s`;
             item.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-time">${notif.time} &bull; Route ${notif.route}</div>
-                    <h4><i class="fa-solid ${icon}" style="margin-right: 0.5rem; color: ${color}"></i>${notif.title}</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem;">${notif.message}</p>
+                <div class="notification-content" style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                        <span style="font-size: 0.8rem; background: rgba(0,0,0,0.04); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600;">
+                            Route ${notif.route} • ${badgeText}
+                        </span>
+                        <span class="notification-time"><i class="fa-regular fa-clock"></i> ${notif.time}</span>
+                    </div>
+                    <h4 style="margin: 0.4rem 0;"><i class="fa-solid ${icon}" style="margin-right: 0.5rem; color: ${color};"></i>${notif.title}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">${notif.message}</p>
                 </div>
             `;
             alertsContainer.appendChild(item);
