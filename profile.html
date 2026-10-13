@@ -85,15 +85,37 @@
             display: inline-block;
         }
 
-        .profile-avatar-img {
+        .profile-avatar-box {
             width: 110px;
             height: 110px;
             border-radius: 50%;
-            object-fit: cover;
             border: 4px solid var(--card-bg);
-            background: #cbd5e1;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .profile-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
             display: block;
+        }
+
+        .profile-avatar-default {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #ffffff;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         }
 
         .camera-badge-btn {
@@ -498,9 +520,14 @@
                 <!-- Header Info Body -->
                 <div class="profile-header-body">
                     <div class="profile-avatar-row">
-                        <div class="avatar-wrapper">
-                            <img id="display-avatar-img" class="profile-avatar-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop" alt="Profile Photo">
-                            <button class="camera-badge-btn" onclick="openAvatarSelector()" title="Change Profile Picture">
+                        <div class="avatar-wrapper" onclick="openAvatarSelector()" style="cursor: pointer;">
+                            <div class="profile-avatar-box">
+                                <div id="display-avatar-default" class="profile-avatar-default">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <img id="display-avatar-img" class="profile-avatar-img" src="" alt="Profile Photo" style="display: none;">
+                            </div>
+                            <button class="camera-badge-btn" onclick="openAvatarSelector(); event.stopPropagation();" title="Upload Profile Picture">
                                 <i class="fa-solid fa-camera"></i>
                             </button>
                         </div>
@@ -768,9 +795,19 @@
                     <input type="text" id="input-edit-location" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Bengaluru, India" required>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Profile Bio</label>
-                    <textarea id="input-edit-bio" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none; font-family: inherit;"></textarea>
+                <div style="margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-camera" style="color: var(--accent-color);"></i>
+                        <span style="font-size: 0.85rem; font-weight: 500;">Profile Photo</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="sim-btn" onclick="openAvatarSelector()" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;">
+                            <i class="fa-solid fa-upload"></i> Upload
+                        </button>
+                        <button type="button" class="sim-btn" onclick="removeAvatarPhoto()" style="padding: 0.35rem 0.7rem; font-size: 0.8rem; color: var(--danger-color);">
+                            <i class="fa-solid fa-trash-can"></i> Remove
+                        </button>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
@@ -838,7 +875,7 @@
                 email: 'shreya.f@example.com',
                 location: 'Bengaluru, India',
                 bio: 'Exploring new places, one ride at a time. 🚆',
-                avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
+                avatar: null,
                 emailVerified: true
             };
 
@@ -849,7 +886,16 @@
                     if (savedData.email) profile.email = savedData.email;
                     if (savedData.city) profile.location = savedData.city.includes('India') ? savedData.city : `${savedData.city}, India`;
                     if (savedData.bio) profile.bio = savedData.bio;
-                    if (savedData.avatar) profile.avatar = savedData.avatar;
+                    
+                    // Clear old unsplash image if cached
+                    if (savedData.avatar && savedData.avatar.includes('unsplash.com')) {
+                        delete savedData.avatar;
+                        localStorage.setItem('spt-user-profile-data', JSON.stringify(savedData));
+                        profile.avatar = null;
+                    } else if (savedData.avatar) {
+                        profile.avatar = savedData.avatar;
+                    }
+
                     if (savedData.emailVerified !== undefined) profile.emailVerified = savedData.emailVerified;
                 }
             } catch(e) {}
@@ -859,7 +905,19 @@
             document.getElementById('display-user-email').textContent = profile.email;
             document.getElementById('display-user-location').textContent = profile.location;
             document.getElementById('display-user-bio').textContent = profile.bio;
-            document.getElementById('display-avatar-img').src = profile.avatar;
+
+            // Toggle avatar image vs clean default icon
+            const imgEl = document.getElementById('display-avatar-img');
+            const defEl = document.getElementById('display-avatar-default');
+            if (profile.avatar) {
+                imgEl.src = profile.avatar;
+                imgEl.style.display = 'block';
+                if (defEl) defEl.style.display = 'none';
+            } else {
+                imgEl.src = '';
+                imgEl.style.display = 'none';
+                if (defEl) defEl.style.display = 'flex';
+            }
 
             const emailPill = document.getElementById('display-email-pill');
             if (emailPill) {
@@ -949,7 +1007,11 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Image = e.target.result;
-                document.getElementById('display-avatar-img').src = base64Image;
+                const imgEl = document.getElementById('display-avatar-img');
+                const defEl = document.getElementById('display-avatar-default');
+                imgEl.src = base64Image;
+                imgEl.style.display = 'block';
+                if (defEl) defEl.style.display = 'none';
 
                 let currentData = {};
                 try { currentData = JSON.parse(localStorage.getItem('spt-user-profile-data')) || {}; } catch(e) {}
@@ -962,6 +1024,15 @@
                 setTimeout(() => { toast.style.display = 'none'; }, 3500);
             };
             reader.readAsDataURL(file);
+        }
+
+        function removeAvatarPhoto() {
+            let currentData = {};
+            try { currentData = JSON.parse(localStorage.getItem('spt-user-profile-data')) || {}; } catch(e) {}
+            delete currentData.avatar;
+            localStorage.setItem('spt-user-profile-data', JSON.stringify(currentData));
+            loadUserProfile();
+            alert('Profile picture removed. Reverted to default avatar.');
         }
 
         // Feature and Info Modals
