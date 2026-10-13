@@ -41,6 +41,4 @@ Transit.IN/
 *   [html2pdf.js](https://ekoopmans.github.io/html2pdf.js/) (PDF Ticket Downloads)
 *   [FontAwesome](https://fontawesome.com/) (Icons)
 
-## 💡 Resume Summary
 
-> **Developed a responsive Smart Public Transport Tracker covering major Indian cities, featuring live departure boards, route analytics dashboards, and a multi-step e-ticket booking system using HTML, CSS, JavaScript, and Chart.js.**
