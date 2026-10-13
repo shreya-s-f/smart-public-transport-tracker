@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit.IN - Profile</title>
+    <title>Transit.IN - Profile & Commuter Dashboard</title>
     
     <!-- Google Fonts: Inter and Caveat (for Explore Travel Repeat script) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,11 +21,11 @@
     <script src="js/auth.js?v=8"></script>
 
     <style>
-        /* Exact Profile Page Design Styles matching reference mockup */
+        /* Expansive End-to-End Profile Page Design */
         .profile-container {
-            max-width: 860px;
-            margin: 0 auto;
             width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .profile-card {
@@ -33,42 +33,42 @@
             border: 1px solid var(--card-border);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.8rem;
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
         }
 
         /* Panoramic Cover Banner */
         .cover-banner {
-            height: 190px;
-            background-image: linear-gradient(rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.35)), url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=1400&auto=format&fit=crop');
+            height: 230px;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.35)), url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=1600&auto=format&fit=crop');
             background-size: cover;
             background-position: center 60%;
             position: relative;
             display: flex;
             align-items: flex-start;
             justify-content: flex-end;
-            padding: 1.2rem 1.8rem;
+            padding: 1.5rem 2rem;
         }
 
         .cover-banner-script {
             font-family: 'Caveat', cursive;
             color: #ffffff;
-            font-size: 1.75rem;
+            font-size: 2.1rem;
             font-weight: 700;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-            transform: rotate(-6deg);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+            transform: rotate(-5deg);
             display: inline-block;
             letter-spacing: 0.5px;
-            line-height: 1.1;
+            line-height: 1.15;
             text-align: right;
             user-select: none;
         }
 
         /* Profile Header Area */
         .profile-header-body {
-            padding: 0 1.8rem 1.6rem 1.8rem;
+            padding: 0 2.2rem 2rem 2.2rem;
             position: relative;
         }
 
@@ -77,7 +77,7 @@
             justify-content: space-between;
             align-items: flex-end;
             margin-top: -55px;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .avatar-wrapper {
@@ -90,7 +90,7 @@
             height: 110px;
             border-radius: 50%;
             border: 4px solid var(--card-bg);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             display: flex;
@@ -145,81 +145,82 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.55rem 1.1rem;
+            padding: 0.6rem 1.3rem;
             background: var(--card-bg);
             color: var(--text-primary);
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            font-size: 0.9rem;
+            border-radius: 12px;
+            font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .btn-edit-profile:hover {
-            background: rgba(59, 130, 246, 0.08);
+            background: rgba(59, 130, 246, 0.1);
             border-color: var(--accent-color);
             color: var(--accent-color);
+            transform: translateY(-1px);
         }
 
         .profile-name {
-            font-size: 1.45rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
             color: var(--text-primary);
-            margin: 0 0 0.2rem 0;
+            margin: 0 0 0.3rem 0;
         }
 
         .profile-email {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
             margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .profile-location {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin: 0 0 0.8rem 0;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .profile-location {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            margin: 0 0 0.8rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
         .profile-bio {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         /* 4 Horizontal Stat Cards */
         .stats-grid-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 1.4rem;
+            margin-bottom: 1.8rem;
         }
 
         .stat-mini-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            padding: 1.1rem 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            padding: 1.3rem 1.4rem;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 1.1rem;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .stat-mini-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-mini-icon {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -227,180 +228,234 @@
         }
 
         .stat-mini-value {
-            font-size: 1.35rem;
-            font-weight: 700;
+            font-size: 1.55rem;
+            font-weight: 800;
             color: var(--text-primary);
             line-height: 1.1;
         }
 
         .stat-mini-label {
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             color: var(--text-secondary);
-            margin-top: 0.2rem;
-            font-weight: 500;
+            margin-top: 0.25rem;
+            font-weight: 600;
         }
 
-        /* Recent Trips Card */
+        /* Trips Section */
         .trips-section-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 1.5rem 1.6rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            margin-bottom: 1.5rem;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.8rem;
         }
 
         .trips-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
         }
 
         .trips-title {
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 800;
             color: var(--text-primary);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
         .trips-view-all {
             color: var(--accent-color);
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.92rem;
+            font-weight: 700;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            transition: gap 0.2s;
+            gap: 0.4rem;
+            cursor: pointer;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.2s;
         }
         .trips-view-all:hover {
-            gap: 0.5rem;
+            background: var(--accent-color);
+            color: #ffffff;
+            gap: 0.6rem;
+        }
+
+        .trip-filter-tabs {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .trip-filter-tab {
+            padding: 0.4rem 0.95rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trip-filter-tab.active, .trip-filter-tab:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
         }
 
         .trip-item-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem 0;
+            padding: 1.1rem 1.2rem;
             border-bottom: 1px solid var(--card-border);
             cursor: pointer;
-            transition: background 0.2s, padding-left 0.2s;
-            border-radius: 8px;
-        }
-        .trip-item-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0.2rem;
+            transition: background 0.2s, transform 0.2s;
+            border-radius: 12px;
+            margin-bottom: 0.4rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .trip-item-row:hover {
-            padding-left: 0.4rem;
+            background: rgba(59, 130, 246, 0.06);
+            transform: translateX(4px);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .trip-item-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .trip-icon-circle {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             flex-shrink: 0;
         }
 
         .trip-route-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
 
         .trip-meta {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
         }
 
         .trip-item-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .pill-completed {
             background: rgba(16, 185, 129, 0.14);
             color: #10b981;
-            padding: 0.3rem 0.85rem;
+            padding: 0.35rem 0.95rem;
             border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .pill-active {
+            background: rgba(59, 130, 246, 0.14);
+            color: #3b82f6;
+            padding: 0.35rem 0.95rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .trip-chevron {
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 1rem;
+            transition: transform 0.2s, color 0.2s;
+        }
+        .trip-item-row:hover .trip-chevron {
+            color: var(--accent-color);
+            transform: translateX(3px);
         }
 
-        /* Bottom Two Column Grid */
+        /* Settings Grid */
         .settings-grid-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
         }
 
         .settings-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 1.4rem 1.6rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 1.8rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .settings-card-title {
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 800;
             color: var(--text-primary);
-            margin: 0 0 0.8rem 0;
+            margin: 0 0 1.2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .settings-item-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.85rem 0;
+            padding: 1rem 0.8rem;
             color: var(--text-primary);
             text-decoration: none;
             cursor: pointer;
-            transition: color 0.2s, padding-left 0.2s;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--card-border);
+            border-radius: 10px;
         }
         .settings-item-row:last-child {
             border-bottom: none;
-            padding-bottom: 0.2rem;
         }
         .settings-item-row:hover {
             color: var(--accent-color);
-            padding-left: 0.3rem;
+            background: rgba(59, 130, 246, 0.06);
+            padding-left: 1.1rem;
         }
 
         .settings-item-left {
             display: flex;
             align-items: center;
-            gap: 0.9rem;
-            font-size: 0.92rem;
-            font-weight: 500;
+            gap: 1.1rem;
+            font-size: 0.96rem;
+            font-weight: 600;
         }
 
         .settings-item-icon {
-            width: 20px;
+            width: 24px;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.15rem;
             color: var(--text-secondary);
         }
         .settings-item-row:hover .settings-item-icon {
@@ -409,16 +464,21 @@
 
         .settings-chevron {
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        .settings-item-row:hover .settings-chevron {
+            transform: translateX(3px);
+            color: var(--accent-color);
         }
 
-        /* Edit Profile Modal */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 9999;
             display: none;
             align-items: center;
@@ -431,30 +491,23 @@
             border: 1px solid var(--card-border);
             border-radius: 20px;
             width: 100%;
-            max-width: 520px;
-            padding: 2rem;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            max-width: 540px;
+            padding: 2.2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .stats-grid-row {
                 grid-template-columns: repeat(2, 1fr);
             }
             .settings-grid-row {
                 grid-template-columns: 1fr;
             }
-            .profile-avatar-row {
-                margin-top: -45px;
-            }
-            .profile-avatar-img {
-                width: 90px;
-                height: 90px;
-            }
             .cover-banner {
-                height: 150px;
+                height: 170px;
             }
         }
     </style>
@@ -496,12 +549,12 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area (End-to-End Expansive Layout) -->
     <main>
         <div class="profile-container">
 
             <!-- Alert Toast Feedback -->
-            <div id="save-toast" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: var(--success-color); padding: 0.9rem 1.2rem; border-radius: 12px; margin-bottom: 1.2rem; text-align: center; font-weight: 600;" class="animate-fade-in-up">
+            <div id="save-toast" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: var(--success-color); padding: 1rem 1.4rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;" class="animate-fade-in-up">
                 <i class="fa-solid fa-circle-check"></i> Profile information updated successfully!
             </div>
 
@@ -540,7 +593,7 @@
                     <h2 class="profile-name" id="display-user-name">Shreya F</h2>
                     <div class="profile-email">
                         <span id="display-user-email">shreya.f@example.com</span>
-                        <span id="display-email-pill" style="font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-weight: 600;">
+                        <span id="display-email-pill" style="font-size: 0.75rem; padding: 0.15rem 0.55rem; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-weight: 600;">
                             <i class="fa-solid fa-circle-check"></i> Verified
                         </span>
                     </div>
@@ -604,82 +657,34 @@
             </div>
 
             <!-- ============================================== -->
-            <!-- 3. RECENT TRIPS SECTION                        -->
+            <!-- 3. TRIPS SECTION WITH DYNAMIC VIEW ALL TOGGLE  -->
             <!-- ============================================== -->
             <div class="trips-section-card animate-fade-in-up delay-2">
                 <div class="trips-header">
-                    <h3 class="trips-title">Recent Trips</h3>
-                    <a href="booking.html" class="trips-view-all">View All <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i></a>
+                    <h3 class="trips-title" id="trips-section-heading">
+                        <i class="fa-solid fa-route" style="color: var(--accent-color);"></i> Recent Trips
+                    </h3>
+                    <button type="button" class="trips-view-all" id="btn-toggle-all-trips" onclick="toggleAllTrips()">
+                        <span id="view-all-label">View All</span> <i id="view-all-icon" class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i>
+                    </button>
                 </div>
 
+                <!-- Filter Tabs (shown when viewing all trips) -->
+                <div class="trip-filter-tabs" id="trip-filter-tabs" style="display: none;">
+                    <button class="trip-filter-tab active" onclick="applyTripFilter('all', this)">
+                        All Trips (<span id="count-all">12</span>)
+                    </button>
+                    <button class="trip-filter-tab" onclick="applyTripFilter('completed', this)">
+                        Completed (<span id="count-completed">10</span>)
+                    </button>
+                    <button class="trip-filter-tab" onclick="applyTripFilter('active', this)">
+                        Active / Upcoming (<span id="count-active">2</span>)
+                    </button>
+                </div>
+
+                <!-- Trips List Container -->
                 <div id="recent-trips-list">
-                    <!-- Item 1: MG Road to Whitefield -->
-                    <div class="trip-item-row" onclick="viewTripDetail('MG Road', 'Whitefield', '12 Oct 2025 • 08:15 AM', 'Route 500D')">
-                        <div class="trip-item-left">
-                            <div class="trip-icon-circle" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
-                                <i class="fa-solid fa-bus"></i>
-                            </div>
-                            <div>
-                                <div class="trip-route-title">MG Road &rarr; Whitefield</div>
-                                <div class="trip-meta">12 Oct 2025 &bull; 08:15 AM</div>
-                            </div>
-                        </div>
-                        <div class="trip-item-right">
-                            <span class="pill-completed">Completed</span>
-                            <i class="fa-solid fa-chevron-right trip-chevron"></i>
-                        </div>
-                    </div>
-
-                    <!-- Item 2: Electronic City to Majestic -->
-                    <div class="trip-item-row" onclick="viewTripDetail('Electronic City', 'Majestic', '8 Oct 2025 • 05:40 PM', 'Route 356CW')">
-                        <div class="trip-item-left">
-                            <div class="trip-icon-circle" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-                                <i class="fa-solid fa-bus"></i>
-                            </div>
-                            <div>
-                                <div class="trip-route-title">Electronic City &rarr; Majestic</div>
-                                <div class="trip-meta">8 Oct 2025 &bull; 05:40 PM</div>
-                            </div>
-                        </div>
-                        <div class="trip-item-right">
-                            <span class="pill-completed">Completed</span>
-                            <i class="fa-solid fa-chevron-right trip-chevron"></i>
-                        </div>
-                    </div>
-
-                    <!-- Item 3: Indiranagar to Yeshwanthpur -->
-                    <div class="trip-item-row" onclick="viewTripDetail('Indiranagar', 'Yeshwanthpur', '5 Oct 2025 • 09:20 AM', 'Route 401K')">
-                        <div class="trip-item-left">
-                            <div class="trip-icon-circle" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
-                                <i class="fa-solid fa-bus"></i>
-                            </div>
-                            <div>
-                                <div class="trip-route-title">Indiranagar &rarr; Yeshwanthpur</div>
-                                <div class="trip-meta">5 Oct 2025 &bull; 09:20 AM</div>
-                            </div>
-                        </div>
-                        <div class="trip-item-right">
-                            <span class="pill-completed">Completed</span>
-                            <i class="fa-solid fa-chevron-right trip-chevron"></i>
-                        </div>
-                    </div>
-
-                    <!-- Item 4: BTM Layout to Kempegowda Airport -->
-                    <div class="trip-item-row" onclick="viewTripDetail('BTM Layout', 'Kempegowda Airport', '1 Oct 2025 • 07:10 PM', 'KIA-8 Express')">
-                        <div class="trip-item-left">
-                            <div class="trip-icon-circle" style="background: rgba(249, 115, 22, 0.15); color: #f97316;">
-                                <i class="fa-solid fa-bus"></i>
-                            </div>
-                            <div>
-                                <div class="trip-route-title">BTM Layout &rarr; Kempegowda Airport</div>
-                                <div class="trip-meta">1 Oct 2025 &bull; 07:10 PM</div>
-                            </div>
-                        </div>
-                        <div class="trip-item-right">
-                            <span class="pill-completed">Completed</span>
-                            <i class="fa-solid fa-chevron-right trip-chevron"></i>
-                        </div>
-                    </div>
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
 
@@ -690,9 +695,12 @@
                 
                 <!-- Card Left: Account Settings -->
                 <div class="settings-card">
-                    <h3 class="settings-card-title">Account Settings</h3>
+                    <h3 class="settings-card-title">
+                        <i class="fa-solid fa-sliders" style="color: var(--accent-color);"></i> Account Settings
+                    </h3>
                     
-                    <div class="settings-item-row" onclick="openEditModal()">
+                    <!-- Personal Information -->
+                    <div class="settings-item-row" onclick="openEditModal()" title="Edit Personal Information">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-user settings-item-icon"></i>
                             <span>Personal Information</span>
@@ -700,7 +708,8 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="showFeatureModal('Payment Methods', 'Manage your linked UPI, Credit/Debit cards, and Transit.IN Commuter Smart Card balance.')">
+                    <!-- Payment Methods -->
+                    <div class="settings-item-row" onclick="openPaymentModal()" title="Manage Payment Methods & Transit Card">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-credit-card settings-item-icon"></i>
                             <span>Payment Methods</span>
@@ -708,7 +717,8 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="showFeatureModal('Notifications', 'Customize real-time push alerts for bus arrivals, route disruptions, and e-ticket receipts.')">
+                    <!-- Notifications -->
+                    <div class="settings-item-row" onclick="window.location.href='notifications.html'" title="Open Alerts & Notifications">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-bell settings-item-icon"></i>
                             <span>Notifications</span>
@@ -716,7 +726,8 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="showFeatureModal('Privacy & Security', 'Manage two-factor authentication, active login sessions, and data privacy options.')">
+                    <!-- Privacy & Security -->
+                    <div class="settings-item-row" onclick="openPrivacyModal()" title="Account Privacy & Security">
                         <div class="settings-item-left">
                             <i class="fa-solid fa-shield-halved settings-item-icon"></i>
                             <span>Privacy & Security</span>
@@ -727,9 +738,12 @@
 
                 <!-- Card Right: Quick Links -->
                 <div class="settings-card">
-                    <h3 class="settings-card-title">Quick Links</h3>
+                    <h3 class="settings-card-title">
+                        <i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> Quick Links
+                    </h3>
 
-                    <div class="settings-item-row" onclick="showFeatureModal('Help & Support', 'Transit.IN 24/7 Helpline: 1800-425-TRANSIT\nEmail: support@transit.in\nOperating across 7 Indian metropolitan hubs.')">
+                    <!-- Help & Support -->
+                    <div class="settings-item-row" onclick="openHelpModal()" title="Help & Support Desk">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-circle-question settings-item-icon"></i>
                             <span>Help & Support</span>
@@ -737,7 +751,8 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="showFeedbackModal()">
+                    <!-- Feedback -->
+                    <div class="settings-item-row" onclick="openFeedbackModal()" title="Share Feedback">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-comment-dots settings-item-icon"></i>
                             <span>Feedback</span>
@@ -745,7 +760,8 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="showFeatureModal('About Transit+', 'Transit.IN v2.5\nNext-Generation Intelligent Public Transit Platform.\nBuilt with clean Vanilla HTML, CSS & JavaScript.')">
+                    <!-- About Transit+ -->
+                    <div class="settings-item-row" onclick="openAboutModal()" title="About Platform">
                         <div class="settings-item-left">
                             <i class="fa-solid fa-circle-info settings-item-icon"></i>
                             <span>About Transit+</span>
@@ -753,10 +769,11 @@
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
 
-                    <div class="settings-item-row" onclick="handleLogout()" style="color: var(--danger-color);">
+                    <!-- Log Out -->
+                    <div class="settings-item-row" onclick="handleLogout()" style="color: var(--danger-color);" title="Log out from account">
                         <div class="settings-item-left">
                             <i class="fa-solid fa-arrow-right-from-bracket settings-item-icon" style="color: var(--danger-color);"></i>
-                            <span style="font-weight: 600;">Log Out</span>
+                            <span style="font-weight: 700;">Log Out</span>
                         </div>
                         <i class="fa-solid fa-chevron-right settings-chevron"></i>
                     </div>
@@ -768,7 +785,72 @@
     </main>
 
     <!-- ============================================== -->
-    <!-- EDIT PROFILE MODAL DIALOG                      -->
+    <!-- MODAL 1: TRIP DETAIL / DIGITAL E-TICKET MODAL  -->
+    <!-- ============================================== -->
+    <div id="trip-detail-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;" id="printable-ticket-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <span class="route-number" id="modal-trip-route" style="font-size: 1.1rem; padding: 0.35rem 0.8rem;">Route 500D</span>
+                    <span id="modal-trip-status" class="pill-completed">Completed</span>
+                </div>
+                <button type="button" onclick="closeTripModal()" style="background: transparent; border: none; font-size: 1.3rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px dashed var(--card-border); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.4rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase;">Origin</div>
+                        <strong style="font-size: 1.05rem; color: var(--text-primary);" id="modal-trip-origin">MG Road</strong>
+                    </div>
+                    <div style="color: var(--accent-color); font-size: 1.2rem;"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase;">Destination</div>
+                        <strong style="font-size: 1.05rem; color: var(--text-primary);" id="modal-trip-dest">Whitefield</strong>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; font-size: 0.85rem; border-top: 1px solid var(--card-border); padding-top: 0.8rem;">
+                    <div>
+                        <span style="color: var(--text-secondary);"><i class="fa-regular fa-calendar"></i> Date:</span>
+                        <strong style="display: block; color: var(--text-primary);" id="modal-trip-date">12 Oct 2025</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary);"><i class="fa-regular fa-clock"></i> Departure:</span>
+                        <strong style="display: block; color: var(--text-primary);" id="modal-trip-time">08:15 AM</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary);"><i class="fa-solid fa-chair"></i> Seat / Pax:</span>
+                        <strong style="display: block; color: var(--text-primary);" id="modal-trip-seat">Seat 14B &bull; 1 Pax</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary);"><i class="fa-solid fa-indian-rupee-sign"></i> Fare Paid:</span>
+                        <strong style="display: block; color: var(--success-color);" id="modal-trip-fare">₹45.00 (UPI)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons for Trip Modal -->
+            <div style="display: flex; flex-direction: column; gap: 0.7rem;">
+                <button type="button" id="modal-track-btn" class="btn-primary" style="width: 100%; padding: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onclick="trackModalTrip()">
+                    <i class="fa-solid fa-satellite-dish"></i> Track This Route Live on Map ➔
+                </button>
+                <div style="display: flex; gap: 0.7rem;">
+                    <button type="button" class="sim-btn" style="flex: 1; padding: 0.7rem; justify-content: center;" onclick="downloadTripPDF()">
+                        <i class="fa-solid fa-file-arrow-down"></i> Download PDF Pass
+                    </button>
+                    <button type="button" class="sim-btn" style="flex: 1; padding: 0.7rem; justify-content: center;" onclick="rebookModalTrip()">
+                        <i class="fa-solid fa-ticket"></i> Re-Book Ride
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 2: EDIT PROFILE MODAL                    -->
     <!-- ============================================== -->
     <div id="edit-profile-modal" class="modal-overlay">
         <div class="modal-box animate-fade-in-up">
@@ -795,6 +877,11 @@
                     <input type="text" id="input-edit-location" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Bengaluru, India" required>
                 </div>
 
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Profile Bio</label>
+                    <textarea id="input-edit-bio" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none; font-family: inherit;"></textarea>
+                </div>
+
                 <div style="margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <i class="fa-solid fa-camera" style="color: var(--accent-color);"></i>
@@ -818,15 +905,170 @@
         </div>
     </div>
 
-    <!-- Quick Info Modal -->
-    <div id="info-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 440px; text-align: center;">
-            <div id="info-modal-icon" style="font-size: 2.2rem; color: var(--accent-color); margin-bottom: 1rem;">
-                <i class="fa-solid fa-circle-info"></i>
+    <!-- ============================================== -->
+    <!-- MODAL 3: PAYMENT METHODS & TRANSIT CARD MODAL  -->
+    <!-- ============================================== -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-credit-card" style="color: var(--accent-color);"></i> Payment & Transit Wallet</h3>
+                <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <h3 id="info-modal-title" style="margin-bottom: 0.6rem; color: var(--text-primary);">Feature Info</h3>
-            <p id="info-modal-desc" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; white-space: pre-line; margin-bottom: 1.5rem;"></p>
-            <button type="button" onclick="closeInfoModal()" class="btn-primary" style="width: 100%;">Got it</button>
+
+            <!-- Digital Smart Card Preview -->
+            <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 16px; padding: 1.4rem; color: #ffffff; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); margin-bottom: 1.4rem; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 1px;"><i class="fa-solid fa-bus"></i> Transit.IN PASS</span>
+                    <i class="fa-solid fa-wifi" style="transform: rotate(90deg); font-size: 1.2rem;"></i>
+                </div>
+                <div style="font-size: 0.82rem; opacity: 0.85;">Current Card Balance</div>
+                <div style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem;" id="wallet-balance">₹480.00</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; opacity: 0.9;">
+                    <span>Cardholder: <strong id="wallet-holder">Shreya F</strong></span>
+                    <span>Valid Across India</span>
+                </div>
+            </div>
+
+            <!-- Linked Payment Methods -->
+            <div style="margin-bottom: 1.4rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.6rem;">Linked Payment Options</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.7rem;">
+                        <i class="fa-brands fa-google-pay" style="font-size: 1.4rem; color: #3b82f6;"></i>
+                        <span style="font-size: 0.9rem; font-weight: 600;">UPI AutoPay (shreya@upi)</span>
+                    </div>
+                    <span style="color: var(--success-color); font-size: 0.8rem; font-weight: 700;">Primary</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.8rem;">
+                <button type="button" class="btn-primary" style="flex: 1;" onclick="addCardBalance()">
+                    <i class="fa-solid fa-plus"></i> Add ₹200 Recharge
+                </button>
+                <button type="button" class="sim-btn" onclick="window.location.href='booking.html'">
+                    Book Ticket Now ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 4: PRIVACY & SECURITY MODAL              -->
+    <!-- ============================================== -->
+    <div id="privacy-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-shield-halved" style="color: var(--accent-color);"></i> Privacy & Security</h3>
+                <button type="button" onclick="closePrivacyModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div style="padding: 1rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Two-Factor Authentication (Email OTP)</strong>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Verify logins with a one-time security code</p>
+                </div>
+                <input type="checkbox" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color);">
+            </div>
+
+            <div style="padding: 1rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Live GPS Location Sharing</strong>
+                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Used to calculate closest transit stops</p>
+                </div>
+                <input type="checkbox" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color);">
+            </div>
+
+            <div style="padding: 1rem 0; margin-bottom: 1.2rem;">
+                <strong>Active Sessions</strong>
+                <p style="font-size: 0.82rem; color: var(--success-color); margin: 0.2rem 0 0 0;"><i class="fa-solid fa-circle-dot"></i> This Device (Active Now)</p>
+            </div>
+
+            <button type="button" onclick="closePrivacyModal()" class="btn-primary" style="width: 100%;">Save Security Preferences</button>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 5: HELP & SUPPORT MODAL                  -->
+    <!-- ============================================== -->
+    <div id="help-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-circle-question" style="color: var(--accent-color);"></i> Transit.IN Help & Support</h3>
+                <button type="button" onclick="closeHelpModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem;">
+                <strong style="color: var(--accent-color); font-size: 1.1rem; display: block; margin-bottom: 0.3rem;"><i class="fa-solid fa-headset"></i> 24/7 Commuter Helpline</strong>
+                <p style="font-size: 0.95rem; margin: 0; color: var(--text-primary);">Toll-Free: <strong>1800-425-TRANSIT</strong></p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.3rem 0 0 0;">Dedicated support across Delhi, Mumbai, Bangalore, Bagalkot, Hyderabad, Chennai, and Pune.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem;">
+                <a href="routes.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
+                    <span><i class="fa-solid fa-map-location-dot"></i> Browse Transit Routes & Stops</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="tracking.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
+                    <span><i class="fa-solid fa-satellite-dish"></i> Live GPS Bus Tracker Help</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="notifications.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> Check Route Diversions & Delays</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <button type="button" onclick="closeHelpModal()" class="btn-primary" style="width: 100%;">Close Help Desk</button>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 6: INTERACTIVE FEEDBACK MODAL            -->
+    <!-- ============================================== -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-comment-dots" style="color: var(--accent-color);"></i> Share Commuter Feedback</h3>
+                <button type="button" onclick="closeFeedbackModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="feedback-form" onsubmit="submitFeedback(event)">
+                <div style="text-align: center; margin-bottom: 1.2rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">How was your transit experience?</div>
+                    <div style="font-size: 1.8rem; color: #eab308; cursor: pointer; display: flex; justify-content: center; gap: 0.5rem;" id="star-rating-box">
+                        <i class="fa-solid fa-star" onclick="setFeedbackRating(1)"></i>
+                        <i class="fa-solid fa-star" onclick="setFeedbackRating(2)"></i>
+                        <i class="fa-solid fa-star" onclick="setFeedbackRating(3)"></i>
+                        <i class="fa-solid fa-star" onclick="setFeedbackRating(4)"></i>
+                        <i class="fa-solid fa-star" onclick="setFeedbackRating(5)"></i>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Category</label>
+                    <select id="feedback-category" class="search-input" style="width: 100%; box-sizing: border-box;">
+                        <option value="Bus Punctuality">Bus Punctuality & Timing</option>
+                        <option value="Live Tracking Accuracy">GPS Radar & Live Map Accuracy</option>
+                        <option value="Digital Ticket Booking">Ticket Booking & QR Pass</option>
+                        <option value="App Design & UI">App Design & Ease of Use</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 1.4rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Your Message</label>
+                    <textarea id="feedback-comment" class="search-input" style="width: 100%; height: 80px; box-sizing: border-box; resize: none; font-family: inherit;" placeholder="Tell us how we can make your commute better..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Submit Feedback ➔</button>
+            </form>
         </div>
     </div>
 
@@ -863,9 +1105,30 @@
     <script src="js/app.js?v=8"></script>
     <script src="js/transit-data.js?v=8"></script>
     <script>
+        // Full trips data store
+        const ALL_TRIPS_DATA = [
+            { id: 'TRP-101', route: '500D', origin: 'MG Road', dest: 'Whitefield', date: '12 Oct 2025', time: '08:15 AM', status: 'Completed', type: 'AC Express', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)', seat: '14B', fare: '45.00' },
+            { id: 'TRP-102', route: '356CW', origin: 'Electronic City', dest: 'Majestic', date: '8 Oct 2025', time: '05:40 PM', status: 'Completed', type: 'Electric', color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', seat: '22A', fare: '35.00' },
+            { id: 'TRP-103', route: '401K', origin: 'Indiranagar', dest: 'Yeshwanthpur', date: '5 Oct 2025', time: '09:20 AM', status: 'Completed', type: 'Standard', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)', seat: '08C', fare: '25.00' },
+            { id: 'TRP-104', route: 'KIA-8', origin: 'BTM Layout', dest: 'Kempegowda Airport', date: '1 Oct 2025', time: '07:10 PM', status: 'Completed', type: 'Airport Express', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', seat: '03A', fare: '180.00' },
+            { id: 'TRP-105', route: '507', origin: 'Okhla Phase 1', dest: 'Connaught Place', date: '28 Sep 2025', time: '10:00 AM', status: 'Completed', type: 'AC Express', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)', seat: '19B', fare: '40.00' },
+            { id: 'TRP-106', route: 'Airport-Exp', origin: 'ISBT Kashmiri Gate', dest: 'IGI Airport T3', date: '24 Sep 2025', time: '06:30 AM', status: 'Completed', type: 'Airport Express', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', seat: '05A', fare: '90.00' },
+            { id: 'TRP-107', route: 'BEST-301', origin: 'CSMT', dest: 'Bandra Kurla Complex (BKC)', date: '19 Sep 2025', time: '04:15 PM', status: 'Completed', type: 'Electric', color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', seat: '11D', fare: '30.00' },
+            { id: 'TRP-108', route: 'BGK-01', origin: 'Navanagar', dest: 'College Cross (Bagalkot)', date: '14 Sep 2025', time: '08:45 AM', status: 'Completed', type: 'City Shuttle', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)', seat: '02A', fare: '15.00' },
+            { id: 'TRP-109', route: '100M', origin: 'Secunderabad', dest: 'Hitec City (Cyber Towers)', date: '10 Sep 2025', time: '09:00 AM', status: 'Completed', type: 'AC Express', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)', seat: '17C', fare: '45.00' },
+            { id: 'TRP-110', route: 'Rainbow-102', origin: 'Swargate', dest: 'Hinjawadi Phase 3', date: '4 Sep 2025', time: '08:10 AM', status: 'Completed', type: 'BRTS Priority', color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', seat: '12B', fare: '35.00' },
+            { id: 'TRP-111', route: 'V-500D', origin: 'Silk Board', dest: 'Hebbal Flyover', date: 'Tomorrow', time: '09:00 AM', status: 'Active', type: 'AC Express', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)', seat: '21B', fare: '45.00' },
+            { id: 'TRP-112', route: 'KIA-9', origin: 'Majestic Bus Stand', dest: 'Kempegowda Airport', date: 'Next Friday', time: '05:30 AM', status: 'Active', type: 'Airport Express', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', seat: '04A', fare: '210.00' }
+        ];
+
+        let isViewingAllTrips = false;
+        let currentActiveFilter = 'all';
+        let selectedTripForModal = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             loadUserProfile();
             loadUserStatsAndTrips();
+            renderTripsList();
         });
 
         // Load Profile Data from LocalStorage
@@ -905,6 +1168,8 @@
             document.getElementById('display-user-email').textContent = profile.email;
             document.getElementById('display-user-location').textContent = profile.location;
             document.getElementById('display-user-bio').textContent = profile.bio;
+            const walletHolder = document.getElementById('wallet-holder');
+            if (walletHolder) walletHolder.textContent = profile.name;
 
             // Toggle avatar image vs clean default icon
             const imgEl = document.getElementById('display-avatar-img');
@@ -944,7 +1209,7 @@
             let tickets = [];
             try { tickets = JSON.parse(localStorage.getItem('spt-tickets')) || []; } catch(e) {}
 
-            const tripCount = Math.max(12, tickets.length + 10);
+            const tripCount = ALL_TRIPS_DATA.length + tickets.length;
             const citiesCount = 8;
             const co2Count = Math.round(tripCount * 3.75);
 
@@ -952,13 +1217,249 @@
             document.getElementById('stat-cities-visited').textContent = citiesCount;
             document.getElementById('stat-co2-saved').textContent = `${co2Count} kg`;
             document.getElementById('stat-avg-rating').textContent = '5.0';
+
+            // Counts for tabs
+            const completedCount = ALL_TRIPS_DATA.filter(t => t.status === 'Completed').length + tickets.length;
+            const activeCount = ALL_TRIPS_DATA.filter(t => t.status === 'Active').length;
+            document.getElementById('count-all').textContent = tripCount;
+            document.getElementById('count-completed').textContent = completedCount;
+            document.getElementById('count-active').textContent = activeCount;
+        }
+
+        // Toggle View All Trips
+        function toggleAllTrips() {
+            isViewingAllTrips = !isViewingAllTrips;
+            const label = document.getElementById('view-all-label');
+            const icon = document.getElementById('view-all-icon');
+            const tabs = document.getElementById('trip-filter-tabs');
+            const heading = document.getElementById('trips-section-heading');
+
+            if (isViewingAllTrips) {
+                label.textContent = 'Collapse';
+                icon.className = 'fa-solid fa-chevron-up';
+                tabs.style.display = 'flex';
+                heading.innerHTML = '<i class="fa-solid fa-list-check" style="color: var(--accent-color);"></i> All Commuter Trips';
+            } else {
+                label.textContent = 'View All';
+                icon.className = 'fa-solid fa-chevron-right';
+                tabs.style.display = 'none';
+                heading.innerHTML = '<i class="fa-solid fa-route" style="color: var(--accent-color);"></i> Recent Trips';
+            }
+
+            renderTripsList();
+        }
+
+        function applyTripFilter(filter, btn) {
+            currentActiveFilter = filter;
+            document.querySelectorAll('.trip-filter-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderTripsList();
+        }
+
+        // Render Trips
+        function renderTripsList() {
+            const container = document.getElementById('recent-trips-list');
+            if (!container) return;
+
+            // Load any dynamic booked tickets from localStorage too
+            let userBooked = [];
+            try {
+                const storedTickets = JSON.parse(localStorage.getItem('spt-tickets')) || [];
+                userBooked = storedTickets.map((t, idx) => ({
+                    id: t.id || `TKT-${idx+1}`,
+                    route: t.route || 'Transit-Express',
+                    origin: t.boarding || 'Origin Point',
+                    dest: t.drop || 'Destination Point',
+                    date: t.date || 'Today',
+                    time: '09:00 AM',
+                    status: 'Active',
+                    type: 'E-Ticket Pass',
+                    color: '#10b981',
+                    bg: 'rgba(16, 185, 129, 0.15)',
+                    seat: t.seat || '22A',
+                    fare: t.total ? String(t.total).replace('₹','') : '40.00'
+                }));
+            } catch(e) {}
+
+            const combined = [...userBooked, ...ALL_TRIPS_DATA];
+
+            let tripsToShow = combined;
+            if (!isViewingAllTrips) {
+                // Show only 4 recent trips
+                tripsToShow = combined.slice(0, 4);
+            } else {
+                // Filter according to currentActiveFilter
+                if (currentActiveFilter === 'completed') {
+                    tripsToShow = combined.filter(t => t.status === 'Completed');
+                } else if (currentActiveFilter === 'active') {
+                    tripsToShow = combined.filter(t => t.status === 'Active');
+                }
+            }
+
+            container.innerHTML = tripsToShow.map((trip, idx) => {
+                const isCompleted = trip.status === 'Completed';
+                const pillClass = isCompleted ? 'pill-completed' : 'pill-active';
+                const pillText = isCompleted ? 'Completed' : 'Active Pass';
+
+                return `
+                    <div class="trip-item-row" onclick="openTripModal('${trip.id}')" title="Click to view digital pass or track live">
+                        <div class="trip-item-left">
+                            <div class="trip-icon-circle" style="background: ${trip.bg}; color: ${trip.color};">
+                                <i class="fa-solid fa-bus"></i>
+                            </div>
+                            <div>
+                                <div class="trip-route-title">${trip.origin} &rarr; ${trip.dest}</div>
+                                <div class="trip-meta">${trip.date} &bull; ${trip.time} &bull; <strong style="color: var(--accent-color);">${trip.route}</strong></div>
+                            </div>
+                        </div>
+                        <div class="trip-item-right">
+                            <span class="${pillClass}">${pillText}</span>
+                            <i class="fa-solid fa-chevron-right trip-chevron"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open Digital Trip Modal
+        function openTripModal(tripId) {
+            let tickets = [];
+            try { tickets = JSON.parse(localStorage.getItem('spt-tickets')) || []; } catch(e) {}
+            const combined = [...tickets.map((t, idx) => ({
+                id: t.id || `TKT-${idx+1}`,
+                route: t.route || 'Transit-Express',
+                origin: t.boarding || 'Origin Point',
+                dest: t.drop || 'Destination Point',
+                date: t.date || 'Today',
+                time: '09:00 AM',
+                status: 'Active',
+                seat: t.seat || '22A',
+                fare: t.total ? String(t.total).replace('₹','') : '40.00'
+            })), ...ALL_TRIPS_DATA];
+
+            const trip = combined.find(t => t.id === tripId) || ALL_TRIPS_DATA[0];
+            selectedTripForModal = trip;
+
+            document.getElementById('modal-trip-route').textContent = `Route ${trip.route}`;
+            document.getElementById('modal-trip-origin').textContent = trip.origin;
+            document.getElementById('modal-trip-dest').textContent = trip.dest;
+            document.getElementById('modal-trip-date').textContent = trip.date;
+            document.getElementById('modal-trip-time').textContent = trip.time;
+            document.getElementById('modal-trip-seat').textContent = `${trip.seat || '14B'} • 1 Pax`;
+            document.getElementById('modal-trip-fare').textContent = `₹${trip.fare || '45.00'} (Verified)`;
+            
+            const statusEl = document.getElementById('modal-trip-status');
+            if (trip.status === 'Completed') {
+                statusEl.className = 'pill-completed';
+                statusEl.textContent = 'Completed';
+            } else {
+                statusEl.className = 'pill-active';
+                statusEl.textContent = 'Active Pass';
+            }
+
+            document.getElementById('trip-detail-modal').style.display = 'flex';
+        }
+
+        function closeTripModal() {
+            document.getElementById('trip-detail-modal').style.display = 'none';
+        }
+
+        function trackModalTrip() {
+            if (selectedTripForModal && selectedTripForModal.route) {
+                window.location.href = `tracking.html?route=${encodeURIComponent(selectedTripForModal.route)}`;
+            } else {
+                window.location.href = 'tracking.html';
+            }
+        }
+
+        function rebookModalTrip() {
+            if (selectedTripForModal && selectedTripForModal.route) {
+                window.location.href = `booking.html?route=${encodeURIComponent(selectedTripForModal.route)}`;
+            } else {
+                window.location.href = 'booking.html';
+            }
+        }
+
+        function downloadTripPDF() {
+            const element = document.getElementById('printable-ticket-box');
+            const opt = {
+                margin: 0.5,
+                filename: `TransitIN_Trip_${selectedTripForModal?.id || 'Pass'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Payment Modal
+        function openPaymentModal() {
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+        function addCardBalance() {
+            const balEl = document.getElementById('wallet-balance');
+            let current = parseFloat(balEl.textContent.replace('₹','')) || 480;
+            current += 200;
+            balEl.textContent = `₹${current.toFixed(2)}`;
+            alert('Recharge Successful! ₹200 added to your Transit.IN Digital Commuter Card.');
+        }
+
+        // Privacy Modal
+        function openPrivacyModal() {
+            document.getElementById('privacy-modal').style.display = 'flex';
+        }
+        function closePrivacyModal() {
+            document.getElementById('privacy-modal').style.display = 'none';
+        }
+
+        // Help Modal
+        function openHelpModal() {
+            document.getElementById('help-modal').style.display = 'flex';
+        }
+        function closeHelpModal() {
+            document.getElementById('help-modal').style.display = 'none';
+        }
+
+        // Feedback Modal
+        let feedbackRating = 5;
+        function openFeedbackModal() {
+            document.getElementById('feedback-modal').style.display = 'flex';
+        }
+        function closeFeedbackModal() {
+            document.getElementById('feedback-modal').style.display = 'none';
+        }
+        function setFeedbackRating(stars) {
+            feedbackRating = stars;
+            const starIcons = document.querySelectorAll('#star-rating-box i');
+            starIcons.forEach((icon, i) => {
+                if (i < stars) {
+                    icon.className = 'fa-solid fa-star';
+                } else {
+                    icon.className = 'fa-regular fa-star';
+                }
+            });
+        }
+        function submitFeedback(e) {
+            e.preventDefault();
+            const cat = document.getElementById('feedback-category').value;
+            const comment = document.getElementById('feedback-comment').value;
+            alert(`Thank you for your ${feedbackRating}-Star feedback regarding "${cat}"! Your thoughts help us enhance public transit.`);
+            closeFeedbackModal();
+            document.getElementById('feedback-form').reset();
+        }
+
+        // About Modal
+        function openAboutModal() {
+            alert('Transit.IN v2.5\nIntelligent Public Transport Platform\n\nBuilt with clean Vanilla HTML, CSS & JavaScript.\nPan-India coverage with real-time GPS telemetry and OSRM turn-by-turn road routing.');
         }
 
         // Edit Profile Modal
         function openEditModal() {
             document.getElementById('edit-profile-modal').style.display = 'flex';
         }
-
         function closeEditModal() {
             document.getElementById('edit-profile-modal').style.display = 'none';
         }
@@ -995,7 +1496,7 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3500);
         });
 
-        // Avatar change
+        // Avatar Upload & Remove
         function openAvatarSelector() {
             document.getElementById('avatar-file-input').click();
         }
@@ -1033,28 +1534,6 @@
             localStorage.setItem('spt-user-profile-data', JSON.stringify(currentData));
             loadUserProfile();
             alert('Profile picture removed. Reverted to default avatar.');
-        }
-
-        // Feature and Info Modals
-        function showFeatureModal(title, description) {
-            document.getElementById('info-modal-title').textContent = title;
-            document.getElementById('info-modal-desc').textContent = description;
-            document.getElementById('info-modal').style.display = 'flex';
-        }
-
-        function closeInfoModal() {
-            document.getElementById('info-modal').style.display = 'none';
-        }
-
-        function showFeedbackModal() {
-            const feedback = prompt("We value your input! Share your feedback for Transit.IN:");
-            if (feedback && feedback.trim()) {
-                alert("Thank you! Your feedback has been recorded and submitted to our support team.");
-            }
-        }
-
-        function viewTripDetail(origin, destination, time, route) {
-            showFeatureModal(`Trip Details: ${route}`, `Origin: ${origin}\nDestination: ${destination}\nDeparture: ${time}\nStatus: Verified Completed\nGreen Journey: 3.5 kg CO₂ Emissions Saved`);
         }
 
         function handleLogout() {
