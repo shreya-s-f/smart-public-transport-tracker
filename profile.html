@@ -86,7 +86,12 @@
                                 <input type="text" id="prof-name" class="search-input" style="width: 100%; font-weight: 600;" placeholder="Enter Full Name" required>
                             </div>
                             <div>
-                                <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 0.4rem; font-weight: 600;">Email Address</label>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; margin: 0;">Email Address</label>
+                                    <span id="email-status-pill" style="font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: var(--success-color);">
+                                        <i class="fa-solid fa-circle-check"></i> Email Verified
+                                    </span>
+                                </div>
                                 <input type="email" id="prof-email" class="search-input" style="width: 100%; font-weight: 600;" placeholder="Enter Email" required>
                             </div>
                             <div>
@@ -217,11 +222,15 @@
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     
+                    let prevData = {};
+                    try { prevData = JSON.parse(localStorage.getItem('spt-user-profile-data')) || {}; } catch(e) {}
+
                     const updated = {
                         name: document.getElementById('prof-name').value.trim() || 'Passenger',
                         email: document.getElementById('prof-email').value.trim() || 'passenger@gmail.com',
                         phone: document.getElementById('prof-phone').value.trim() || '+91 98765 43210',
-                        city: document.getElementById('prof-city').value
+                        city: document.getElementById('prof-city').value,
+                        emailVerified: prevData.email === document.getElementById('prof-email').value.trim() ? (prevData.emailVerified !== false) : true
                     };
 
                     localStorage.setItem('spt-user-profile-data', JSON.stringify(updated));
@@ -245,7 +254,8 @@
                 name: localStorage.getItem('spt-profile-name') || 'Shreya',
                 email: 'shreya@gmail.com',
                 phone: '+91 98765 43210',
-                city: localStorage.getItem('spt-city') || 'Delhi'
+                city: localStorage.getItem('spt-city') || 'Delhi',
+                emailVerified: true
             };
 
             try {
@@ -261,6 +271,19 @@
             document.getElementById('prof-email').value = profile.email;
             document.getElementById('prof-phone').value = profile.phone;
             document.getElementById('prof-city').value = profile.city;
+
+            const pill = document.getElementById('email-status-pill');
+            if (pill) {
+                if (profile.emailVerified !== false) {
+                    pill.innerHTML = '<i class="fa-solid fa-circle-check"></i> Email Verified';
+                    pill.style.background = 'rgba(16, 185, 129, 0.15)';
+                    pill.style.color = 'var(--success-color)';
+                } else {
+                    pill.innerHTML = '<i class="fa-solid fa-clock"></i> Pending Verification';
+                    pill.style.background = 'rgba(245, 158, 11, 0.15)';
+                    pill.style.color = 'var(--warning-color)';
+                }
+            }
         }
 
         function renderTickets() {
