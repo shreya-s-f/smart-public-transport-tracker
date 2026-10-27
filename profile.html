@@ -1371,8 +1371,8 @@
     <!-- MODAL 6: INTERACTIVE FEEDBACK MODAL            -->
     <!-- ============================================== -->
     <div id="feedback-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
                 <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-comment-dots" style="color: var(--accent-color);"></i> Share Commuter Feedback</h3>
                 <button type="button" onclick="closeFeedbackModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
                     <i class="fa-solid fa-xmark"></i>
@@ -1380,34 +1380,53 @@
             </div>
 
             <form id="feedback-form" onsubmit="submitFeedback(event)">
-                <div style="text-align: center; margin-bottom: 1.2rem;">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">How was your transit experience?</div>
-                    <div style="font-size: 1.8rem; color: #eab308; cursor: pointer; display: flex; justify-content: center; gap: 0.5rem;" id="star-rating-box">
+                <div style="text-align: center; margin-bottom: 1.2rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.4rem; font-weight: 600;">Rate Your Transit.IN Experience</div>
+                    <div style="font-size: 2rem; color: #eab308; cursor: pointer; display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 0.3rem;" id="star-rating-box">
                         <i class="fa-solid fa-star" onclick="setFeedbackRating(1)"></i>
                         <i class="fa-solid fa-star" onclick="setFeedbackRating(2)"></i>
                         <i class="fa-solid fa-star" onclick="setFeedbackRating(3)"></i>
                         <i class="fa-solid fa-star" onclick="setFeedbackRating(4)"></i>
                         <i class="fa-solid fa-star" onclick="setFeedbackRating(5)"></i>
                     </div>
+                    <div id="rating-text-label" style="font-size: 0.82rem; font-weight: 700; color: var(--accent-color);">5 Stars - Excellent Experience!</div>
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Category</label>
-                    <select id="feedback-category" class="search-input" style="width: 100%; box-sizing: border-box;">
-                        <option value="Bus Punctuality">Bus Punctuality & Timing</option>
-                        <option value="Live Tracking Accuracy">GPS Radar & Live Map Accuracy</option>
-                        <option value="Digital Ticket Booking">Ticket Booking & QR Pass</option>
-                        <option value="App Design & UI">App Design & Ease of Use</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Feedback Category</label>
+                        <select id="feedback-category" class="search-input" style="width: 100%; box-sizing: border-box;">
+                            <option value="GPS Radar & Live Map Accuracy">GPS Radar & Live Map Accuracy</option>
+                            <option value="Bus Punctuality & Timetables">Bus Punctuality & Timetables</option>
+                            <option value="Ticket Booking & QR Pass">Ticket Booking & QR Pass</option>
+                            <option value="App Design & Theme UI">App Design & Theme UI</option>
+                            <option value="New City / Route Suggestion">New City / Route Suggestion</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Posting As</label>
+                        <input type="text" id="feedback-author-name" class="search-input" style="width: 100%; box-sizing: border-box;" value="Shreya F (Verified Commuter)" required>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 1.4rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Your Message</label>
-                    <textarea id="feedback-comment" class="search-input" style="width: 100%; height: 80px; box-sizing: border-box; resize: none; font-family: inherit;" placeholder="Tell us how we can make your commute better..." required></textarea>
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Your Comments & Suggestions</label>
+                    <textarea id="feedback-comment" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none; font-family: inherit;" placeholder="Tell us what you liked and how we can improve your daily travel..." required></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%;">Submit Feedback ➔</button>
+                <div style="display: flex; gap: 0.8rem; justify-content: flex-end; margin-bottom: 1.2rem;">
+                    <button type="button" onclick="closeFeedbackModal()" class="sim-btn">Cancel</button>
+                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button>
+                </div>
             </form>
+
+            <!-- Past Feedback Community Log -->
+            <div style="border-top: 1px solid var(--card-border); padding-top: 0.8rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">Recent Community Reviews</div>
+                <div id="community-feedbacks-list" style="max-height: 120px; overflow-y: auto;">
+                    <!-- Rendered dynamically via JS -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2143,14 +2162,28 @@
             `).join('');
         }
 
-        // Feedback Modal
+        // ==========================================
+        // FEEDBACK SYSTEM LOGIC
+        // ==========================================
         let feedbackRating = 5;
+        const RATING_LABELS = {
+            1: '1 Star - Needs Substantial Improvement',
+            2: '2 Stars - Fair, Several Issues Encountered',
+            3: '3 Stars - Good Transit Experience',
+            4: '4 Stars - Very Good & Reliable Commute',
+            5: '5 Stars - Excellent Experience!'
+        };
+
         function openFeedbackModal() {
+            setFeedbackRating(5);
+            renderCommunityFeedbacks();
             document.getElementById('feedback-modal').style.display = 'flex';
         }
+
         function closeFeedbackModal() {
             document.getElementById('feedback-modal').style.display = 'none';
         }
+
         function setFeedbackRating(stars) {
             feedbackRating = stars;
             const starIcons = document.querySelectorAll('#star-rating-box i');
@@ -2161,14 +2194,77 @@
                     icon.className = 'fa-regular fa-star';
                 }
             });
+            const lbl = document.getElementById('rating-text-label');
+            if (lbl) lbl.textContent = RATING_LABELS[stars] || `${stars} Stars`;
         }
+
         function submitFeedback(e) {
             e.preventDefault();
             const cat = document.getElementById('feedback-category').value;
-            const comment = document.getElementById('feedback-comment').value;
-            alert(`Thank you for your ${feedbackRating}-Star feedback regarding "${cat}"! Your thoughts help us enhance public transit.`);
+            const author = document.getElementById('feedback-author-name').value.trim();
+            const comment = document.getElementById('feedback-comment').value.trim();
+
+            const newReview = {
+                id: `REV-${Math.floor(1000 + Math.random() * 9000)}`,
+                stars: feedbackRating,
+                category: cat,
+                author: author || 'Commuter',
+                comment: comment,
+                date: 'Just Now'
+            };
+
+            let list = [];
+            try { list = JSON.parse(localStorage.getItem('spt-user-feedbacks')) || []; } catch(e) {}
+            list.unshift(newReview);
+            localStorage.setItem('spt-user-feedbacks', JSON.stringify(list));
+
+            document.getElementById('feedback-comment').value = '';
+            renderCommunityFeedbacks();
+
+            const toast = document.getElementById('save-toast');
+            toast.innerHTML = `<i class="fa-solid fa-star" style="color: #eab308;"></i> Thank you for your ${feedbackRating}-Star feedback on "${cat}"!`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+
             closeFeedbackModal();
-            document.getElementById('feedback-form').reset();
+        }
+
+        function renderCommunityFeedbacks() {
+            const container = document.getElementById('community-feedbacks-list');
+            if (!container) return;
+
+            let list = [];
+            try { list = JSON.parse(localStorage.getItem('spt-user-feedbacks')) || []; } catch(e) {}
+
+            if (list.length === 0) {
+                list = [
+                    {
+                        stars: 5,
+                        category: 'GPS Radar & Live Map Accuracy',
+                        author: 'Shreya F (Bengaluru)',
+                        comment: 'Live bus tracking for route 500D with real-road OSRM curvature is extremely accurate and smooth!',
+                        date: 'Yesterday'
+                    },
+                    {
+                        stars: 5,
+                        category: 'New City / Route Suggestion',
+                        author: 'Ravi K (Bagalkot)',
+                        comment: 'Really proud to see Bagalkot Navanagar to College Cross route working so nicely on the map.',
+                        date: '2 days ago'
+                    }
+                ];
+            }
+
+            container.innerHTML = list.map(item => `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.6rem 0.8rem; margin-bottom: 0.4rem; font-size: 0.8rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                        <span style="color: #eab308;">${'★'.repeat(item.stars)}${'☆'.repeat(5 - item.stars)}</span>
+                        <span style="color: var(--accent-color); font-weight: 600; font-size: 0.75rem;">${item.category}</span>
+                    </div>
+                    <div style="color: var(--text-primary); margin-bottom: 0.2rem;">"${item.comment}"</div>
+                    <div style="color: var(--text-secondary); font-size: 0.72rem;">— ${item.author} &bull; ${item.date}</div>
+                </div>
+            `).join('');
         }
 
         // About Modal
