@@ -1265,36 +1265,105 @@
     <!-- MODAL 5: HELP & SUPPORT MODAL                  -->
     <!-- ============================================== -->
     <div id="help-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-circle-question" style="color: var(--accent-color);"></i> Transit.IN Help & Support</h3>
+        <div class="modal-box animate-fade-in-up" style="max-width: 550px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-circle-question" style="color: var(--accent-color);"></i> Transit.IN Help & Support Desk</h3>
                 <button type="button" onclick="closeHelpModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem;">
-                <strong style="color: var(--accent-color); font-size: 1.1rem; display: block; margin-bottom: 0.3rem;"><i class="fa-solid fa-headset"></i> 24/7 Commuter Helpline</strong>
-                <p style="font-size: 0.95rem; margin: 0; color: var(--text-primary);">Toll-Free: <strong>1800-425-TRANSIT</strong></p>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.3rem 0 0 0;">Dedicated support across Delhi, Mumbai, Bangalore, Bagalkot, Hyderabad, Chennai, and Pune.</p>
+            <!-- Tabs: Support FAQs & Raise a Ticket -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.6rem;">
+                <button type="button" id="tab-btn-help-faqs" class="trip-filter-tab active" onclick="switchHelpTab('faqs')">Commuter FAQs & Helplines</button>
+                <button type="button" id="tab-btn-help-ticket" class="trip-filter-tab" onclick="switchHelpTab('ticket')">Raise Support Ticket</button>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem;">
-                <a href="routes.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
-                    <span><i class="fa-solid fa-map-location-dot"></i> Browse Transit Routes & Stops</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-                <a href="tracking.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
-                    <span><i class="fa-solid fa-satellite-dish"></i> Live GPS Bus Tracker Help</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
-                <a href="notifications.html" class="sim-btn" style="text-decoration: none; padding: 0.75rem; justify-content: space-between;">
-                    <span><i class="fa-solid fa-triangle-exclamation"></i> Check Route Diversions & Delays</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+            <!-- Tab 1: FAQs & Helpline Details -->
+            <div id="tab-help-faqs-content">
+                <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.2rem;">
+                    <strong style="color: var(--accent-color); font-size: 1.05rem; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-headset"></i> 24/7 National Commuter Helpline</strong>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                        <div><i class="fa-solid fa-phone"></i> Toll-Free: <strong>1800-425-8726</strong></div>
+                        <div><i class="fa-brands fa-whatsapp"></i> WhatsApp: <strong>+91 98765 00000</strong></div>
+                        <div><i class="fa-solid fa-envelope"></i> Email: <strong>support@transit.in</strong></div>
+                        <div><i class="fa-solid fa-clock"></i> Hours: <strong>24/7 Pan-India</strong></div>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.4rem 0 0 0;">Supported Transit Authorities: BMTC, DTC, BEST, NWKRTC (Bagalkot), TSRTC, MTC, PMPML.</p>
+                </div>
+
+                <!-- FAQ Accordions -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem;">
+                    <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.65rem 0.9rem; font-size: 0.85rem; cursor: pointer;">
+                        <summary style="font-weight: 700; color: var(--text-primary); outline: none;">How accurate is the Live GPS Bus Tracking?</summary>
+                        <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0; line-height: 1.4;">
+                            Live buses stream telemetry updates every 10 seconds. Real road curvatures and turns are calculated via the Open Source Routing Machine (OSRM) engine over OpenStreetMap data.
+                        </p>
+                    </details>
+
+                    <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.65rem 0.9rem; font-size: 0.85rem; cursor: pointer;">
+                        <summary style="font-weight: 700; color: var(--text-primary); outline: none;">Is Bagalkot transit supported on the live map?</summary>
+                        <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0; line-height: 1.4;">
+                            Yes! Bagalkot city shuttles (Navanagar to College Cross, Bagalkot Railway Station, Vidyagiri, BVVS Campus) are fully indexed with real street turns and verified stop coordinates.
+                        </p>
+                    </details>
+
+                    <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.65rem 0.9rem; font-size: 0.85rem; cursor: pointer;">
+                        <summary style="font-weight: 700; color: var(--text-primary); outline: none;">How do I show my digital e-ticket to the conductor?</summary>
+                        <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0; line-height: 1.4;">
+                            Simply tap any trip from your Recent Trips list to open the digital ticket pass or download a PDF pass to present offline.
+                        </p>
+                    </details>
+                </div>
+
+                <div style="display: flex; gap: 0.8rem;">
+                    <a href="routes.html" class="sim-btn" style="flex: 1; text-decoration: none; justify-content: center; font-size: 0.85rem;">
+                        <i class="fa-solid fa-map-location-dot"></i> Browse Routes
+                    </a>
+                    <button type="button" onclick="closeHelpModal()" class="btn-primary" style="flex: 1;">
+                        Close Help Desk
+                    </button>
+                </div>
             </div>
 
-            <button type="button" onclick="closeHelpModal()" class="btn-primary" style="width: 100%;">Close Help Desk</button>
+            <!-- Tab 2: Raise a Support Ticket -->
+            <div id="tab-help-ticket-content" style="display: none;">
+                <form id="raise-ticket-form" onsubmit="handleRaiseTicket(event)">
+                    <div style="margin-bottom: 0.9rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Issue Category</label>
+                        <select id="ticket-category" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                            <option value="Route Delay & Schedule Discrepancy">Route Delay & Schedule Discrepancy</option>
+                            <option value="Ticket Booking / Payment Debit">Ticket Booking / Payment Debit</option>
+                            <option value="GPS Live Tracking Inaccuracy">GPS Live Tracking Inaccuracy</option>
+                            <option value="Bus Cleanliness & Driver Behavior">Bus Cleanliness & Crew Behavior</option>
+                            <option value="Lost & Found in Transit">Lost & Found in Transit</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 0.9rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Route / Bus Number or City</label>
+                        <input type="text" id="ticket-route" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. 500D (Bengaluru) or BGK-01 (Bagalkot)" required>
+                    </div>
+
+                    <div style="margin-bottom: 1.1rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Detailed Description</label>
+                        <textarea id="ticket-description" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none; font-family: inherit;" placeholder="Please describe the issue in detail..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 0.8rem; justify-content: flex-end; margin-bottom: 1.2rem;">
+                        <button type="button" onclick="switchHelpTab('faqs')" class="sim-btn">Back</button>
+                        <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;"><i class="fa-solid fa-paper-plane"></i> Submit Ticket</button>
+                    </div>
+                </form>
+
+                <!-- Existing User Tickets Log -->
+                <div style="border-top: 1px solid var(--card-border); padding-top: 0.8rem;">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">Your Raised Support Tickets</div>
+                    <div id="user-tickets-list" style="max-height: 120px; overflow-y: auto;">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1982,12 +2051,96 @@
             switchSecurityTab('settings');
         }
 
-        // Help Modal
+        // ==========================================
+        // HELP & SUPPORT DESK LOGIC
+        // ==========================================
         function openHelpModal() {
+            switchHelpTab('faqs');
+            renderUserTickets();
             document.getElementById('help-modal').style.display = 'flex';
         }
+
         function closeHelpModal() {
             document.getElementById('help-modal').style.display = 'none';
+        }
+
+        function switchHelpTab(tab) {
+            const btnFaqs = document.getElementById('tab-btn-help-faqs');
+            const btnTicket = document.getElementById('tab-btn-help-ticket');
+            const faqsContent = document.getElementById('tab-help-faqs-content');
+            const ticketContent = document.getElementById('tab-help-ticket-content');
+
+            if (tab === 'faqs') {
+                btnFaqs.classList.add('active');
+                btnTicket.classList.remove('active');
+                faqsContent.style.display = 'block';
+                ticketContent.style.display = 'none';
+            } else {
+                btnTicket.classList.add('active');
+                btnFaqs.classList.remove('active');
+                faqsContent.style.display = 'none';
+                ticketContent.style.display = 'block';
+                renderUserTickets();
+            }
+        }
+
+        function handleRaiseTicket(e) {
+            e.preventDefault();
+            const category = document.getElementById('ticket-category').value;
+            const route = document.getElementById('ticket-route').value.trim();
+            const desc = document.getElementById('ticket-description').value.trim();
+
+            const ticketId = `TKT-${Math.floor(1000 + Math.random() * 9000)}`;
+            const newTicket = {
+                id: ticketId,
+                category: category,
+                route: route,
+                description: desc,
+                status: 'Under Review',
+                createdAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+            };
+
+            let tickets = [];
+            try { tickets = JSON.parse(localStorage.getItem('spt-support-tickets')) || []; } catch(e) {}
+            tickets.unshift(newTicket);
+            localStorage.setItem('spt-support-tickets', JSON.stringify(tickets));
+
+            document.getElementById('raise-ticket-form').reset();
+            renderUserTickets();
+
+            alert(`Support Ticket ${ticketId} created successfully! Our transit support team will contact you within 24 hours.`);
+        }
+
+        function renderUserTickets() {
+            const container = document.getElementById('user-tickets-list');
+            if (!container) return;
+
+            let tickets = [];
+            try { tickets = JSON.parse(localStorage.getItem('spt-support-tickets')) || []; } catch(e) {}
+
+            if (tickets.length === 0) {
+                // Seed with a default resolved ticket for display
+                tickets = [{
+                    id: 'TKT-7402',
+                    category: 'Route Delay & Schedule Discrepancy',
+                    route: '500D (Bengaluru)',
+                    description: 'Bus was delayed by 12 mins at Silk Board.',
+                    status: 'Resolved',
+                    createdAt: '10 Oct 2025'
+                }];
+            }
+
+            container.innerHTML = tickets.map(t => `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.55rem 0.75rem; margin-bottom: 0.4rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-primary);">${t.id}: ${t.category}</div>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem;">${t.route} &bull; ${t.createdAt}</div>
+                    </div>
+                    <span style="font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 700; ${t.status === 'Resolved' ? 'background: rgba(16,185,129,0.15); color: var(--success-color);' : 'background: rgba(245,158,11,0.15); color: var(--warning-color);'}">
+                        ${t.status}
+                    </span>
+                </div>
+            `).join('');
         }
 
         // Feedback Modal
