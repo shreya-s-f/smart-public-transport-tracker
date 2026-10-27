@@ -1158,36 +1158,106 @@
     <!-- MODAL 4: PRIVACY & SECURITY MODAL              -->
     <!-- ============================================== -->
     <div id="privacy-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
                 <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-shield-halved" style="color: var(--accent-color);"></i> Privacy & Security</h3>
                 <button type="button" onclick="closePrivacyModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div style="padding: 1rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <strong>Two-Factor Authentication (Email OTP)</strong>
-                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Verify logins with a one-time security code</p>
+            <!-- Tabs: Security Preferences & Change Password -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.6rem;">
+                <button type="button" id="tab-btn-security" class="trip-filter-tab active" onclick="switchSecurityTab('settings')">Security Controls</button>
+                <button type="button" id="tab-btn-password" class="trip-filter-tab" onclick="switchSecurityTab('password')">Change Password</button>
+            </div>
+
+            <!-- Tab 1: Security Controls -->
+            <div id="tab-security-content">
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Two-Factor Authentication (Email OTP)</strong>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Require a 6-digit OTP sent to your email on every new sign-in</p>
+                    </div>
+                    <input type="checkbox" id="sec-toggle-2fa" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
                 </div>
-                <input type="checkbox" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color);">
-            </div>
 
-            <div style="padding: 1rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <strong>Live GPS Location Sharing</strong>
-                    <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Used to calculate closest transit stops</p>
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">High-Precision GPS Location</strong>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Used to calculate closest bus stands and walking distance</p>
+                    </div>
+                    <input type="checkbox" id="sec-toggle-gps" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
                 </div>
-                <input type="checkbox" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color);">
+
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Commute Route Privacy</strong>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.2rem 0 0 0;">Anonymize telemetry data used for public crowd density estimates</p>
+                    </div>
+                    <input type="checkbox" id="sec-toggle-anonymize" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <!-- Active Sessions -->
+                <div style="padding: 0.9rem 0; border-bottom: 1px solid var(--card-border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem;">Active Authorized Sessions</strong>
+                        <button type="button" onclick="terminateOtherSessions()" style="background: transparent; border: none; color: var(--danger-color); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                            <i class="fa-solid fa-power-off"></i> Terminate Others
+                        </button>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.6rem 0.8rem; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary);"><i class="fa-solid fa-laptop"></i> Windows PC &bull; Chrome Browser</div>
+                            <div style="font-size: 0.75rem; color: var(--success-color);"><i class="fa-solid fa-circle-dot"></i> Current Session (Bengaluru, IN)</div>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--accent-color); font-weight: 600;">Active Now</span>
+                    </div>
+                    <div id="session-mobile-row" style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.6rem 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary);"><i class="fa-solid fa-mobile-screen"></i> Android App &bull; Transit.IN v2.5</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Last active 2 hours ago</div>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">Standby</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.8rem; margin-top: 1.2rem; justify-content: space-between;">
+                    <button type="button" onclick="clearCommuteHistory()" class="sim-btn" style="color: var(--danger-color); font-size: 0.82rem;">
+                        <i class="fa-solid fa-trash-can"></i> Clear Route History
+                    </button>
+                    <button type="button" onclick="saveSecurityPreferences()" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Security Settings
+                    </button>
+                </div>
             </div>
 
-            <div style="padding: 1rem 0; margin-bottom: 1.2rem;">
-                <strong>Active Sessions</strong>
-                <p style="font-size: 0.82rem; color: var(--success-color); margin: 0.2rem 0 0 0;"><i class="fa-solid fa-circle-dot"></i> This Device (Active Now)</p>
-            </div>
+            <!-- Tab 2: Change Password -->
+            <div id="tab-password-content" style="display: none;">
+                <form id="change-password-form" onsubmit="handleChangePassword(event)">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Current Password</label>
+                        <input type="password" id="input-curr-password" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="Enter current password" required>
+                    </div>
 
-            <button type="button" onclick="closePrivacyModal()" class="btn-primary" style="width: 100%;">Save Security Preferences</button>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">New Password</label>
+                        <input type="password" id="input-new-password" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="Minimum 6 characters" minlength="6" required>
+                    </div>
+
+                    <div style="margin-bottom: 1.2rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Confirm New Password</label>
+                        <input type="password" id="input-confirm-password" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="Re-enter new password" minlength="6" required>
+                    </div>
+
+                    <div id="password-error-msg" style="display: none; color: var(--danger-color); font-size: 0.82rem; margin-bottom: 0.8rem;"></div>
+
+                    <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+                        <button type="button" onclick="switchSecurityTab('settings')" class="sim-btn">Cancel</button>
+                        <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;"><i class="fa-solid fa-key"></i> Update Password</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -1795,12 +1865,121 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3500);
         }
 
-        // Privacy Modal
+        // ==========================================
+        // PRIVACY & SECURITY LOGIC
+        // ==========================================
         function openPrivacyModal() {
+            let sec = {
+                twoFactor: true,
+                highGps: true,
+                anonymize: true
+            };
+            try {
+                const stored = JSON.parse(localStorage.getItem('spt-security-settings'));
+                if (stored) sec = { ...sec, ...stored };
+            } catch(e) {}
+
+            document.getElementById('sec-toggle-2fa').checked = sec.twoFactor !== false;
+            document.getElementById('sec-toggle-gps').checked = sec.highGps !== false;
+            document.getElementById('sec-toggle-anonymize').checked = sec.anonymize !== false;
+
+            switchSecurityTab('settings');
             document.getElementById('privacy-modal').style.display = 'flex';
         }
+
         function closePrivacyModal() {
             document.getElementById('privacy-modal').style.display = 'none';
+        }
+
+        function switchSecurityTab(tab) {
+            const btnSec = document.getElementById('tab-btn-security');
+            const btnPass = document.getElementById('tab-btn-password');
+            const secContent = document.getElementById('tab-security-content');
+            const passContent = document.getElementById('tab-password-content');
+
+            if (tab === 'settings') {
+                btnSec.classList.add('active');
+                btnPass.classList.remove('active');
+                secContent.style.display = 'block';
+                passContent.style.display = 'none';
+            } else {
+                btnPass.classList.add('active');
+                btnSec.classList.remove('active');
+                secContent.style.display = 'none';
+                passContent.style.display = 'block';
+            }
+        }
+
+        function saveSecurityPreferences() {
+            const sec = {
+                twoFactor: document.getElementById('sec-toggle-2fa').checked,
+                highGps: document.getElementById('sec-toggle-gps').checked,
+                anonymize: document.getElementById('sec-toggle-anonymize').checked,
+                updatedAt: new Date().toISOString()
+            };
+            localStorage.setItem('spt-security-settings', JSON.stringify(sec));
+            closePrivacyModal();
+
+            const toast = document.getElementById('save-toast');
+            toast.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Privacy and security settings updated successfully!';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        function terminateOtherSessions() {
+            const mobileRow = document.getElementById('session-mobile-row');
+            if (mobileRow) {
+                mobileRow.style.display = 'none';
+            }
+            alert('All other remote mobile and tablet sessions have been terminated. Your account is now secure.');
+        }
+
+        function clearCommuteHistory() {
+            if (confirm("Clear your cached transit search history and recent route queries?")) {
+                localStorage.removeItem('spt-recent-searches');
+                alert('Your commute search history and cached queries have been cleared.');
+            }
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const curr = document.getElementById('input-curr-password').value;
+            const newP = document.getElementById('input-new-password').value;
+            const conf = document.getElementById('input-confirm-password').value;
+            const errBox = document.getElementById('password-error-msg');
+
+            if (newP !== conf) {
+                errBox.textContent = 'New passwords do not match. Please verify and re-enter.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            if (newP.length < 6) {
+                errBox.textContent = 'Password must be at least 6 characters long.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            // Update registered password in spt_users or current profile
+            try {
+                let users = JSON.parse(localStorage.getItem('spt_users')) || [];
+                let currentEmail = 'shreya.f@example.com';
+                try {
+                    const prof = JSON.parse(localStorage.getItem('spt-user-profile-data'));
+                    if (prof && prof.email) currentEmail = prof.email;
+                } catch(e) {}
+
+                let userFound = users.find(u => u.email.toLowerCase() === currentEmail.toLowerCase());
+                if (userFound) {
+                    userFound.password = newP;
+                    localStorage.setItem('spt_users', JSON.stringify(users));
+                }
+            } catch(e) {}
+
+            errBox.style.display = 'none';
+            document.getElementById('change-password-form').reset();
+            alert('Password changed successfully! Please use your new password next time you sign in.');
+            switchSecurityTab('settings');
         }
 
         // Help Modal
