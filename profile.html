@@ -723,7 +723,7 @@
                     </div>
 
                     <!-- Notifications -->
-                    <div class="settings-item-row" onclick="window.location.href='notifications.html'" title="Open Alerts & Notifications">
+                    <div class="settings-item-row" onclick="openNotificationSettingsModal()" title="Manage Commuter Alerts & Notifications">
                         <div class="settings-item-left">
                             <i class="fa-regular fa-bell settings-item-icon"></i>
                             <span>Notifications</span>
@@ -1071,6 +1071,86 @@
                     Book Ticket with Wallet ➔
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 3B: NOTIFICATION PREFERENCES MODAL        -->
+    <!-- ============================================== -->
+    <div id="notification-settings-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-regular fa-bell" style="color: var(--accent-color);"></i> Notification Preferences</h3>
+                <button type="button" onclick="closeNotificationSettingsModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.2rem;">
+                Configure alerts for delays, stop proximity, fare changes, and daily route status across your selected transit cities.
+            </p>
+
+            <form id="notification-settings-form" onsubmit="saveNotificationSettings(event)">
+                <!-- Toggle 1: Route Delays -->
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Live Bus Delays & Traffic Jams</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-secondary);">Real-time alerts if your tracked bus or metro is running &gt;5 mins late</span>
+                    </div>
+                    <input type="checkbox" id="notif-toggle-delays" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <!-- Toggle 2: Approaching Stop Alerts -->
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Approaching Stop Alarms</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-secondary);">Proximity chime when your vehicle is 2 stops away from boarding</span>
+                    </div>
+                    <input type="checkbox" id="notif-toggle-arrival" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <!-- Toggle 3: Fare Discounts & Offers -->
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Pass Expiry & Wallet Offers</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-secondary);">Reminders when transit pass expires or special cashback is live</span>
+                    </div>
+                    <input type="checkbox" id="notif-toggle-offers" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <!-- Toggle 4: Email Trip Invoices -->
+                <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;">Email Trip Receipts & Carbon Report</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-secondary);">Receive monthly eco-transit score and tax-ready PDF invoices</span>
+                    </div>
+                    <input type="checkbox" id="notif-toggle-email" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <!-- Toggle 5: Emergency Transit Advisories -->
+                <div style="padding: 0.8rem 0; margin-bottom: 1.2rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="padding-right: 1rem;">
+                        <strong style="color: var(--text-primary); font-size: 0.92rem; display: block;"><i class="fa-solid fa-triangle-exclamation" style="color: var(--warning-color);"></i> Route Diversions & Strikes</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-secondary);">Critical city transit advisories, route halts, and metro maintenance</span>
+                    </div>
+                    <input type="checkbox" id="notif-toggle-emergency" checked style="width: 1.3rem; height: 1.3rem; accent-color: var(--accent-color); cursor: pointer;">
+                </div>
+
+                <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary);">Need to see live service alerts?</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Browse active disruptions across all 7 Indian metro cities</div>
+                    </div>
+                    <a href="notifications.html" class="sim-btn" style="text-decoration: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; white-space: nowrap;">
+                        View Alerts Board ➔
+                    </a>
+                </div>
+
+                <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeNotificationSettingsModal()" class="sim-btn">Cancel</button>
+                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;"><i class="fa-solid fa-floppy-disk"></i> Save Preferences</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1663,6 +1743,56 @@
             input.value = '';
             toggleAddPaymentMethod();
             alert(`Payment Method "${val}" successfully linked to your Transit.IN account!`);
+        }
+
+        // ==========================================
+        // NOTIFICATIONS SETTINGS LOGIC
+        // ==========================================
+        function openNotificationSettingsModal() {
+            let settings = {
+                delays: true,
+                arrival: true,
+                offers: true,
+                email: true,
+                emergency: true
+            };
+
+            try {
+                const stored = JSON.parse(localStorage.getItem('spt-notification-settings'));
+                if (stored) settings = { ...settings, ...stored };
+            } catch(e) {}
+
+            document.getElementById('notif-toggle-delays').checked = settings.delays !== false;
+            document.getElementById('notif-toggle-arrival').checked = settings.arrival !== false;
+            document.getElementById('notif-toggle-offers').checked = settings.offers !== false;
+            document.getElementById('notif-toggle-email').checked = settings.email !== false;
+            document.getElementById('notif-toggle-emergency').checked = settings.emergency !== false;
+
+            document.getElementById('notification-settings-modal').style.display = 'flex';
+        }
+
+        function closeNotificationSettingsModal() {
+            document.getElementById('notification-settings-modal').style.display = 'none';
+        }
+
+        function saveNotificationSettings(e) {
+            e.preventDefault();
+            const settings = {
+                delays: document.getElementById('notif-toggle-delays').checked,
+                arrival: document.getElementById('notif-toggle-arrival').checked,
+                offers: document.getElementById('notif-toggle-offers').checked,
+                email: document.getElementById('notif-toggle-email').checked,
+                emergency: document.getElementById('notif-toggle-emergency').checked,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('spt-notification-settings', JSON.stringify(settings));
+            closeNotificationSettingsModal();
+
+            const toast = document.getElementById('save-toast');
+            toast.innerHTML = '<i class="fa-solid fa-bell"></i> Notification preferences saved successfully!';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
         }
 
         // Privacy Modal
