@@ -1430,7 +1430,85 @@
         </div>
     </div>
 
-    <!-- Hidden file picker for avatar -->
+    <!-- ============================================== -->
+    <!-- MODAL 7: ABOUT TRANSIT+ MODAL                  -->
+    <!-- ============================================== -->
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 560px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: var(--accent-color); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fa-solid fa-bus"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--text-primary);">Transit.IN <span style="font-size: 0.78rem; background: var(--accent-color); color: #fff; padding: 0.15rem 0.5rem; border-radius: 10px; margin-left: 0.3rem;">v2.6.0</span></h3>
+                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-secondary);">Smart Public Transport Tracker &bull; Pan-India Telemetry</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAboutModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Project Overview Summary -->
+            <p style="font-size: 0.88rem; color: var(--text-primary); line-height: 1.5; margin-bottom: 1rem;">
+                <strong>Transit.IN</strong> is an intelligent public mobility suite engineered to modernize everyday commuting across India. It bridges passenger schedules, real-time vehicle radar telemetry, road routing, and contactless ticketing into a cohesive, responsive web platform.
+            </p>
+
+            <!-- Key Capabilities Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1.2rem;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.7rem 0.8rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-color); margin-bottom: 0.2rem;"><i class="fa-solid fa-satellite-dish"></i> Real-Road GPS Telemetry</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Accurate street curvature calculations via OpenStreetMap and OSRM engine.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.7rem 0.8rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--success-color); margin-bottom: 0.2rem;"><i class="fa-solid fa-city"></i> 7 Indian Metro Regions</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Bengaluru, Bagalkot, Delhi, Mumbai, Hyderabad, Chennai, and Pune.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.7rem 0.8rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.2rem;"><i class="fa-solid fa-qrcode"></i> Digital Passes & Wallet</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Instant booking, QR code generation, wallet balance, and PDF pass exports.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.7rem 0.8rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--warning-color); margin-bottom: 0.2rem;"><i class="fa-solid fa-bolt"></i> Zero Backend Dependency</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Fully self-contained client architecture with localStorage persistence.</div>
+                </div>
+            </div>
+
+            <!-- Tech Stack Chips -->
+            <div style="margin-bottom: 1.2rem;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.4rem;">Technology Architecture</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(59, 130, 246, 0.12); color: var(--accent-color); font-weight: 600;">HTML5 &amp; CSS3 Variables</span>
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(16, 185, 129, 0.12); color: var(--success-color); font-weight: 600;">Vanilla JavaScript ES6+</span>
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(245, 158, 11, 0.12); color: var(--warning-color); font-weight: 600;">Leaflet.js &amp; OpenStreetMap</span>
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(139, 92, 246, 0.12); color: #8b5cf6; font-weight: 600;">OSRM Routing API</span>
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(239, 68, 68, 0.12); color: var(--danger-color); font-weight: 600;">html2pdf.js</span>
+                    <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(255, 255, 255, 0.08); color: var(--text-primary); font-weight: 600;">FontAwesome 6.4</span>
+                </div>
+            </div>
+
+            <!-- Developer Profile Banner -->
+            <div style="background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Designed &amp; Developed by Shreya Fakirapur</div>
+                    <div style="font-size: 0.78rem; color: var(--text-secondary);">Full Stack &amp; Smart Mobility Software Engineer</div>
+                </div>
+                <div style="display: flex; gap: 0.6rem;">
+                    <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" class="sim-btn" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; text-decoration: none;" title="View Code on GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/shreya-fakirapur-557388324" target="_blank" rel="noopener noreferrer" class="sim-btn" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; color: var(--accent-color); text-decoration: none;" title="Connect on LinkedIn">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+
+            <button type="button" onclick="closeAboutModal()" class="btn-primary" style="width: 100%; padding: 0.7rem;">
+                Back to Dashboard
+            </button>
+        </div>
+    </div>
     <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileChosen(event)">
 
     <!-- Professional Footer -->
@@ -2267,9 +2345,14 @@
             `).join('');
         }
 
-        // About Modal
+        // ==========================================
+        // ABOUT TRANSIT+ MODAL LOGIC
+        // ==========================================
         function openAboutModal() {
-            alert('Transit.IN v2.5\nIntelligent Public Transport Platform\n\nBuilt with clean Vanilla HTML, CSS & JavaScript.\nPan-India coverage with real-time GPS telemetry and OSRM turn-by-turn road routing.');
+            document.getElementById('about-modal').style.display = 'flex';
+        }
+        function closeAboutModal() {
+            document.getElementById('about-modal').style.display = 'none';
         }
 
         // Edit Profile Modal
