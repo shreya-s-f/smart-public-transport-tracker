@@ -1509,7 +1509,32 @@
             </button>
         </div>
     </div>
-    <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileChosen(event)">
+    <!-- ============================================== -->
+    <!-- MODAL 8: SLEEK LOGOUT CONFIRMATION MODAL       -->
+    <!-- ============================================== -->
+    <div id="logout-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 440px; text-align: center;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.12); color: var(--danger-color); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.2rem;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </div>
+            
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem; color: var(--text-primary);">Sign Out of Transit.IN?</h3>
+            <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+                You will be logged out of your current commuter session. You can easily sign back in at any time with your credentials or email OTP.
+            </p>
+
+            <div style="display: flex; gap: 0.8rem;">
+                <button type="button" onclick="closeLogoutModal()" class="sim-btn" style="flex: 1; padding: 0.75rem; justify-content: center; font-weight: 600;">
+                    Stay Signed In
+                </button>
+                <button type="button" onclick="confirmLogoutAction()" style="flex: 1; padding: 0.75rem; background: var(--danger-color); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.2s;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file picker for avatar -->
 
     <!-- Professional Footer -->
     <footer style="margin-top: 4rem; padding: 2.5rem 1.5rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary); background: rgba(15, 23, 42, 0.4);">
@@ -2445,12 +2470,31 @@
             alert('Profile picture removed. Reverted to default avatar.');
         }
 
+        // ==========================================
+        // LOGOUT WORKFLOW LOGIC
+        // ==========================================
         function handleLogout() {
-            if (confirm("Are you sure you want to log out of your Transit.IN account?")) {
-                localStorage.removeItem('spt-authenticated');
-                localStorage.removeItem('spt-user-role');
-                window.location.href = 'login.html';
+            document.getElementById('logout-modal').style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').style.display = 'none';
+        }
+
+        function confirmLogoutAction() {
+            const btn = event?.currentTarget;
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing Out...';
+                btn.disabled = true;
             }
+
+            localStorage.removeItem('spt-authenticated');
+            localStorage.removeItem('spt-user-role');
+            localStorage.removeItem('spt-user-email');
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 600);
         }
     </script>
 </body>
