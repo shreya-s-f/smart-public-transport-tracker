@@ -956,46 +956,119 @@
     <!-- MODAL 3: PAYMENT METHODS & TRANSIT CARD MODAL  -->
     <!-- ============================================== -->
     <div id="payment-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-credit-card" style="color: var(--accent-color);"></i> Payment & Transit Wallet</h3>
+        <div class="modal-box animate-fade-in-up" style="max-width: 540px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-credit-card" style="color: var(--accent-color);"></i> Transit Wallet & Payment Methods</h3>
                 <button type="button" onclick="closePaymentModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <!-- Digital Smart Card Preview -->
-            <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 16px; padding: 1.4rem; color: #ffffff; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); margin-bottom: 1.4rem; position: relative;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 1px;"><i class="fa-solid fa-bus"></i> Transit.IN PASS</span>
-                    <i class="fa-solid fa-wifi" style="transform: rotate(90deg); font-size: 1.2rem;"></i>
+            <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #2563eb 100%); border-radius: 16px; padding: 1.4rem; color: #ffffff; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); margin-bottom: 1.3rem; position: relative; overflow: hidden;">
+                <div style="position: absolute; right: -15px; bottom: -15px; font-size: 8rem; opacity: 0.08; pointer-events: none;">
+                    <i class="fa-solid fa-bus"></i>
                 </div>
-                <div style="font-size: 0.82rem; opacity: 0.85;">Current Card Balance</div>
-                <div style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem;" id="wallet-balance">₹480.00</div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; opacity: 0.9;">
-                    <span>Cardholder: <strong id="wallet-holder">Shreya F</strong></span>
-                    <span>Valid Across India</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                    <span style="font-weight: 800; font-size: 1.15rem; letter-spacing: 1px;"><i class="fa-solid fa-bus"></i> Transit.IN PASS</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 0.15rem 0.5rem; border-radius: 6px;">NFC TAP & GO</span>
+                        <i class="fa-solid fa-wifi" style="transform: rotate(90deg); font-size: 1.1rem;"></i>
+                    </div>
+                </div>
+                <div style="font-family: monospace; font-size: 1.15rem; letter-spacing: 2px; margin-bottom: 0.8rem; opacity: 0.95;">
+                    8821 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4920
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <div style="font-size: 0.75rem; opacity: 0.85; text-transform: uppercase;">Available Transit Balance</div>
+                        <div style="font-size: 1.9rem; font-weight: 800; line-height: 1.1;" id="wallet-balance">₹480.00</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.72rem; opacity: 0.85;">CARDHOLDER</div>
+                        <strong id="wallet-holder" style="font-size: 0.95rem;">Shreya F</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instant Recharge Section -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.2rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.6rem; display: flex; justify-content: space-between;">
+                    <span><i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> Instant Wallet Recharge</span>
+                    <span style="font-size: 0.75rem; color: var(--success-color); font-weight: 600;">Zero Convenience Fee</span>
+                </div>
+                <div style="display: flex; gap: 0.6rem; margin-bottom: 0.8rem;">
+                    <button type="button" class="sim-btn" style="flex: 1; padding: 0.5rem; font-weight: 700;" onclick="quickRechargeWallet(100)">+ ₹100</button>
+                    <button type="button" class="sim-btn" style="flex: 1; padding: 0.5rem; font-weight: 700;" onclick="quickRechargeWallet(200)">+ ₹200</button>
+                    <button type="button" class="sim-btn" style="flex: 1; padding: 0.5rem; font-weight: 700;" onclick="quickRechargeWallet(500)">+ ₹500</button>
+                </div>
+                <div style="display: flex; gap: 0.6rem;">
+                    <input type="number" id="custom-recharge-amount" class="search-input" style="flex: 1; padding: 0.55rem 0.8rem; box-sizing: border-box;" placeholder="Enter custom amount (₹)">
+                    <button type="button" class="btn-primary" style="padding: 0.55rem 1rem; white-space: nowrap;" onclick="rechargeCustomWallet()">
+                        <i class="fa-solid fa-plus"></i> Recharge
+                    </button>
                 </div>
             </div>
 
             <!-- Linked Payment Methods -->
-            <div style="margin-bottom: 1.4rem;">
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.6rem;">Linked Payment Options</div>
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; margin-bottom: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 0.7rem;">
-                        <i class="fa-brands fa-google-pay" style="font-size: 1.4rem; color: #3b82f6;"></i>
-                        <span style="font-size: 0.9rem; font-weight: 600;">UPI AutoPay (shreya@upi)</span>
+            <div style="margin-bottom: 1.2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Linked Payment Methods</span>
+                    <button type="button" onclick="toggleAddPaymentMethod()" style="background: transparent; border: none; color: var(--accent-color); font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                        <i class="fa-solid fa-plus"></i> Add Method
+                    </button>
+                </div>
+
+                <div id="linked-methods-list">
+                    <!-- Method 1: Primary UPI -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-brands fa-google-pay" style="font-size: 1.5rem; color: #3b82f6;"></i>
+                            <div>
+                                <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-primary);" id="display-upi-id">shreya@oksbi</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">UPI AutoPay &bull; Bank Verified</div>
+                            </div>
+                        </div>
+                        <span style="color: var(--success-color); font-size: 0.75rem; font-weight: 700; background: rgba(16,185,129,0.12); padding: 0.2rem 0.6rem; border-radius: 10px;">Primary</span>
                     </div>
-                    <span style="color: var(--success-color); font-size: 0.8rem; font-weight: 700;">Primary</span>
+
+                    <!-- Method 2: RuPay Card -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-regular fa-credit-card" style="font-size: 1.3rem; color: #10b981;"></i>
+                            <div>
+                                <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-primary);">RuPay NCMC Debit Card &bull;&bull;&bull;&bull; 4291</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">National Common Mobility Card</div>
+                            </div>
+                        </div>
+                        <span style="color: var(--text-secondary); font-size: 0.75rem; font-weight: 600;">Saved</span>
+                    </div>
+                </div>
+
+                <!-- Add New Method Inline Form (Hidden by default) -->
+                <div id="add-payment-form" style="display: none; background: rgba(255,255,255,0.04); border: 1px dashed var(--accent-color); border-radius: 10px; padding: 0.9rem; margin-top: 0.5rem;">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-color); margin-bottom: 0.6rem;">Link New UPI ID or Card</div>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="text" id="new-payment-input" class="search-input" style="flex: 1; padding: 0.5rem 0.8rem;" placeholder="e.g. yourname@upi or Card Number">
+                        <button type="button" class="btn-primary" style="padding: 0.5rem 0.9rem;" onclick="saveNewPaymentMethod()">Link</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Wallet Activity / Ledger -->
+            <div style="margin-bottom: 1.2rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.6rem;">Recent Wallet Transactions</div>
+                <div id="wallet-transactions-list" style="max-height: 140px; overflow-y: auto;">
+                    <!-- Rendered via JS -->
                 </div>
             </div>
 
             <div style="display: flex; gap: 0.8rem;">
-                <button type="button" class="btn-primary" style="flex: 1;" onclick="addCardBalance()">
-                    <i class="fa-solid fa-plus"></i> Add ₹200 Recharge
+                <button type="button" class="sim-btn" style="flex: 1;" onclick="closePaymentModal()">
+                    Close
                 </button>
-                <button type="button" class="sim-btn" onclick="window.location.href='booking.html'">
-                    Book Ticket Now ➔
+                <button type="button" class="btn-primary" style="flex: 1;" onclick="window.location.href='booking.html'">
+                    Book Ticket with Wallet ➔
                 </button>
             </div>
         </div>
@@ -1176,6 +1249,7 @@
             loadUserProfile();
             loadUserStatsAndTrips();
             renderTripsList();
+            loadWalletDisplay();
         });
 
         // Load Profile Data from LocalStorage
@@ -1459,19 +1533,136 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        // Payment Modal
+        // ==========================================
+        // PAYMENT & TRANSIT CARD WALLET LOGIC
+        // ==========================================
+        function initWalletData() {
+            let wallet = {
+                balance: 480.00,
+                upiId: 'shreya@oksbi',
+                transactions: [
+                    { id: 'TXN-9081', desc: 'BMTC AC Express 500D Fare', amount: -45.00, date: '12 Oct, 08:30 AM', type: 'debit' },
+                    { id: 'TXN-9045', desc: 'UPI Auto-Recharge (SBI UPI)', amount: 200.00, date: '10 Oct, 09:15 AM', type: 'credit' },
+                    { id: 'TXN-8992', desc: 'Namma Metro Ticket Swipe', amount: -35.00, date: '08 Oct, 05:45 PM', type: 'debit' },
+                    { id: 'TXN-8910', desc: 'Bagalkot City Bus BGK-01', amount: -15.00, date: '14 Sep, 09:00 AM', type: 'debit' }
+                ]
+            };
+
+            try {
+                const stored = JSON.parse(localStorage.getItem('spt-payment-wallet'));
+                if (stored) {
+                    if (stored.balance !== undefined) wallet.balance = stored.balance;
+                    if (stored.upiId) wallet.upiId = stored.upiId;
+                    if (stored.transactions) wallet.transactions = stored.transactions;
+                } else {
+                    localStorage.setItem('spt-payment-wallet', JSON.stringify(wallet));
+                }
+            } catch(e) {}
+
+            return wallet;
+        }
+
+        function loadWalletDisplay() {
+            const wallet = initWalletData();
+            const balEl = document.getElementById('wallet-balance');
+            if (balEl) balEl.textContent = `₹${parseFloat(wallet.balance).toFixed(2)}`;
+
+            const upiEl = document.getElementById('display-upi-id');
+            if (upiEl && wallet.upiId) upiEl.textContent = wallet.upiId;
+
+            renderWalletTransactions(wallet.transactions);
+        }
+
+        function renderWalletTransactions(transactions) {
+            const listEl = document.getElementById('wallet-transactions-list');
+            if (!listEl) return;
+
+            if (!transactions || transactions.length === 0) {
+                listEl.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; padding: 0.5rem;">No recent transactions</div>';
+                return;
+            }
+
+            listEl.innerHTML = transactions.map(t => {
+                const isCredit = t.type === 'credit';
+                const sign = isCredit ? '+' : '';
+                const color = isCredit ? 'var(--success-color)' : 'var(--text-primary)';
+                const icon = isCredit ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
+                const bg = isCredit ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.03)';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.7rem; background: ${bg}; border-radius: 8px; margin-bottom: 0.35rem; font-size: 0.82rem; border: 1px solid var(--card-border);">
+                        <div>
+                            <strong style="color: var(--text-primary); display: block;">${t.desc}</strong>
+                            <span style="color: var(--text-secondary); font-size: 0.75rem;">${t.date}</span>
+                        </div>
+                        <span style="font-weight: 700; color: ${color}; font-size: 0.9rem;">
+                            ${sign}₹${Math.abs(t.amount).toFixed(2)}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function openPaymentModal() {
+            loadWalletDisplay();
             document.getElementById('payment-modal').style.display = 'flex';
         }
+
         function closePaymentModal() {
             document.getElementById('payment-modal').style.display = 'none';
         }
-        function addCardBalance() {
-            const balEl = document.getElementById('wallet-balance');
-            let current = parseFloat(balEl.textContent.replace('₹','')) || 480;
-            current += 200;
-            balEl.textContent = `₹${current.toFixed(2)}`;
-            alert('Recharge Successful! ₹200 added to your Transit.IN Digital Commuter Card.');
+
+        function quickRechargeWallet(amount) {
+            const wallet = initWalletData();
+            wallet.balance = parseFloat(wallet.balance) + amount;
+            wallet.transactions.unshift({
+                id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
+                desc: `Instant Wallet Recharge (UPI/Card)`,
+                amount: amount,
+                date: 'Just Now',
+                type: 'credit'
+            });
+
+            localStorage.setItem('spt-payment-wallet', JSON.stringify(wallet));
+            loadWalletDisplay();
+
+            alert(`₹${amount} recharged successfully! New Card Balance: ₹${wallet.balance.toFixed(2)}`);
+        }
+
+        function rechargeCustomWallet() {
+            const input = document.getElementById('custom-recharge-amount');
+            const amt = parseFloat(input.value);
+            if (!amt || amt <= 0) {
+                alert('Please enter a valid recharge amount greater than ₹0.');
+                return;
+            }
+
+            quickRechargeWallet(amt);
+            input.value = '';
+        }
+
+        function toggleAddPaymentMethod() {
+            const form = document.getElementById('add-payment-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveNewPaymentMethod() {
+            const input = document.getElementById('new-payment-input');
+            const val = input.value.trim();
+            if (!val) {
+                alert('Please enter a valid UPI ID or Card Number.');
+                return;
+            }
+
+            const wallet = initWalletData();
+            if (val.includes('@')) {
+                wallet.upiId = val;
+            }
+            localStorage.setItem('spt-payment-wallet', JSON.stringify(wallet));
+            loadWalletDisplay();
+            input.value = '';
+            toggleAddPaymentMethod();
+            alert(`Payment Method "${val}" successfully linked to your Transit.IN account!`);
         }
 
         // Privacy Modal
