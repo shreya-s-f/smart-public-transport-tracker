@@ -600,6 +600,11 @@
                     <div class="profile-location">
                         <i class="fa-solid fa-location-dot" style="color: var(--accent-color);"></i>
                         <span id="display-user-location">Bengaluru, India</span>
+                        <span style="margin: 0 0.5rem; opacity: 0.4;">&bull;</span>
+                        <i class="fa-solid fa-phone" style="color: var(--accent-color); font-size: 0.85rem;"></i>
+                        <span id="display-user-phone">+91 98765 43210</span>
+                        <span style="margin: 0 0.5rem; opacity: 0.4;">&bull;</span>
+                        <span id="display-user-type" style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.12); color: var(--accent-color); padding: 0.15rem 0.6rem; border-radius: 12px; font-weight: 600;">Daily Commuter</span>
                     </div>
                     <p class="profile-bio" id="display-user-bio">
                         Exploring new places, one ride at a time. 🚆
@@ -850,39 +855,81 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- MODAL 2: EDIT PROFILE MODAL                    -->
+    <!-- MODAL 2: EDIT PROFILE MODAL (PERSONAL INFO)    -->
     <!-- ============================================== -->
     <div id="edit-profile-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-user-pen" style="color: var(--accent-color);"></i> Edit Profile Details</h3>
+        <div class="modal-box animate-fade-in-up" style="max-width: 580px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-primary);"><i class="fa-solid fa-user-pen" style="color: var(--accent-color);"></i> Personal Information</h3>
                 <button type="button" onclick="closeEditModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <form id="edit-profile-form">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Full Name</label>
-                    <input type="text" id="input-edit-name" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Full Name</label>
+                        <input type="text" id="input-edit-name" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Email Address</label>
+                        <input type="email" id="input-edit-email" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Mobile Number</label>
+                        <input type="tel" id="input-edit-phone" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Primary Transit City</label>
+                        <select id="input-edit-city" class="search-input" style="width: 100%; box-sizing: border-box;">
+                            <option value="Bengaluru">Bengaluru (BMTC / Namma Metro)</option>
+                            <option value="Delhi">Delhi (DTC / Delhi Metro)</option>
+                            <option value="Mumbai">Mumbai (BEST / Mumbai Suburban)</option>
+                            <option value="Bagalkot">Bagalkot (NWKRTC / City Express)</option>
+                            <option value="Hyderabad">Hyderabad (TSRTC / Hyderabad Metro)</option>
+                            <option value="Chennai">Chennai (MTC / Chennai Metro)</option>
+                            <option value="Pune">Pune (PMPML / Pune Metro)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Commuter Category</label>
+                        <select id="input-edit-type" class="search-input" style="width: 100%; box-sizing: border-box;">
+                            <option value="Daily Commuter">Daily Commuter</option>
+                            <option value="Student Pass Holder">Student Pass Holder</option>
+                            <option value="Senior Citizen">Senior Citizen (Concession)</option>
+                            <option value="Corporate Professional">Corporate Transit Pass</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Location Details</label>
+                        <input type="text" id="input-edit-location" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Bengaluru, India" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger-color);"></i> Emergency Contact Name</label>
+                        <input type="text" id="input-edit-emergency-name" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Ramesh F (Guardian)">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;"><i class="fa-solid fa-phone" style="color: var(--danger-color);"></i> Emergency Contact Phone</label>
+                        <input type="tel" id="input-edit-emergency-phone" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="+91 94480 12345">
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Email Address</label>
-                    <input type="email" id="input-edit-email" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Commuter Bio</label>
+                    <textarea id="input-edit-bio" class="search-input" style="width: 100%; height: 60px; box-sizing: border-box; resize: none; font-family: inherit;"></textarea>
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Location / City</label>
-                    <input type="text" id="input-edit-location" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Bengaluru, India" required>
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Profile Bio</label>
-                    <textarea id="input-edit-bio" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none; font-family: inherit;"></textarea>
-                </div>
-
-                <div style="margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px;">
+                <div style="margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 10px;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <i class="fa-solid fa-camera" style="color: var(--accent-color);"></i>
                         <span style="font-size: 0.85rem; font-weight: 500;">Profile Photo</span>
@@ -899,7 +946,7 @@
 
                 <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
                     <button type="button" onclick="closeEditModal()" class="sim-btn">Cancel</button>
-                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">Save Changes</button>
+                    <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;"><i class="fa-solid fa-floppy-disk"></i> Save Personal Details</button>
                 </div>
             </form>
         </div>
@@ -1136,7 +1183,12 @@
             let profile = {
                 name: 'Shreya F',
                 email: 'shreya.f@example.com',
+                phone: '+91 98765 43210',
+                city: 'Bengaluru',
                 location: 'Bengaluru, India',
+                userType: 'Daily Commuter',
+                emergencyName: 'Ramesh F (Guardian)',
+                emergencyPhone: '+91 94480 12345',
                 bio: 'Exploring new places, one ride at a time. 🚆',
                 avatar: null,
                 emailVerified: true
@@ -1147,7 +1199,13 @@
                 if (savedData) {
                     if (savedData.name) profile.name = savedData.name;
                     if (savedData.email) profile.email = savedData.email;
-                    if (savedData.city) profile.location = savedData.city.includes('India') ? savedData.city : `${savedData.city}, India`;
+                    if (savedData.phone) profile.phone = savedData.phone;
+                    if (savedData.city) profile.city = savedData.city;
+                    if (savedData.location) profile.location = savedData.location;
+                    else if (savedData.city) profile.location = savedData.city.includes('India') ? savedData.city : `${savedData.city}, India`;
+                    if (savedData.userType) profile.userType = savedData.userType;
+                    if (savedData.emergencyName) profile.emergencyName = savedData.emergencyName;
+                    if (savedData.emergencyPhone) profile.emergencyPhone = savedData.emergencyPhone;
                     if (savedData.bio) profile.bio = savedData.bio;
                     
                     // Clear old unsplash image if cached
@@ -1167,6 +1225,10 @@
             document.getElementById('display-user-name').textContent = profile.name;
             document.getElementById('display-user-email').textContent = profile.email;
             document.getElementById('display-user-location').textContent = profile.location;
+            const phoneEl = document.getElementById('display-user-phone');
+            if (phoneEl) phoneEl.textContent = profile.phone;
+            const typeEl = document.getElementById('display-user-type');
+            if (typeEl) typeEl.textContent = profile.userType;
             document.getElementById('display-user-bio').textContent = profile.bio;
             const walletHolder = document.getElementById('wallet-holder');
             if (walletHolder) walletHolder.textContent = profile.name;
@@ -1200,7 +1262,12 @@
             // Sync form inputs
             document.getElementById('input-edit-name').value = profile.name;
             document.getElementById('input-edit-email').value = profile.email;
+            if (document.getElementById('input-edit-phone')) document.getElementById('input-edit-phone').value = profile.phone;
+            if (document.getElementById('input-edit-city')) document.getElementById('input-edit-city').value = profile.city || 'Bengaluru';
+            if (document.getElementById('input-edit-type')) document.getElementById('input-edit-type').value = profile.userType || 'Daily Commuter';
             document.getElementById('input-edit-location').value = profile.location;
+            if (document.getElementById('input-edit-emergency-name')) document.getElementById('input-edit-emergency-name').value = profile.emergencyName || '';
+            if (document.getElementById('input-edit-emergency-phone')) document.getElementById('input-edit-emergency-phone').value = profile.emergencyPhone || '';
             document.getElementById('input-edit-bio').value = profile.bio;
         }
 
@@ -1468,7 +1535,12 @@
             e.preventDefault();
             const name = document.getElementById('input-edit-name').value.trim();
             const email = document.getElementById('input-edit-email').value.trim();
+            const phone = document.getElementById('input-edit-phone').value.trim();
+            const city = document.getElementById('input-edit-city').value;
+            const userType = document.getElementById('input-edit-type').value;
             const location = document.getElementById('input-edit-location').value.trim();
+            const emergencyName = document.getElementById('input-edit-emergency-name').value.trim();
+            const emergencyPhone = document.getElementById('input-edit-emergency-phone').value.trim();
             const bio = document.getElementById('input-edit-bio').value.trim();
 
             let currentData = {};
@@ -1478,8 +1550,12 @@
                 ...currentData,
                 name: name,
                 email: email,
-                city: location.replace(/,\s*India$/i, '').trim(),
+                phone: phone,
+                city: city,
+                userType: userType,
                 location: location,
+                emergencyName: emergencyName,
+                emergencyPhone: emergencyPhone,
                 bio: bio
             };
 
@@ -1491,6 +1567,7 @@
 
             // Toast feedback
             const toast = document.getElementById('save-toast');
+            toast.innerHTML = '<i class="fa-solid fa-circle-check"></i> Personal information updated successfully!';
             toast.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => { toast.style.display = 'none'; }, 3500);
