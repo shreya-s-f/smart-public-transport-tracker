@@ -69,37 +69,126 @@
             </span>
         </div>
 
-        <!-- Hero Section with Transparent Glass Bus Backdrop -->
-        <div id="hero-section" class="glass-card animate-fade-in-up" style="margin-bottom: 2.5rem; text-align: center; padding: 3.5rem 1.8rem; background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.84) 0%, rgba(30, 58, 138, 0.80) 50%, rgba(15, 23, 42, 0.88) 100%), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);">
-            <div style="position: relative; z-index: 1;">
-                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 1rem;">
-                    <i class="fa-solid fa-satellite-dish"></i> Live GPS Telemetry & Pan-India Routing
-                </div>
+        <!-- ============================================== -->
+        <!-- INTERACTIVE GLASS SLIDES FEATURE SHOWCASE      -->
+        <!-- ============================================== -->
+        <div class="glass-carousel-wrapper animate-fade-in-up" id="main-hero-carousel">
+            <div class="glass-carousel-track" id="hero-carousel-track">
                 
-                <h1 style="font-size: 2.8rem; font-weight: 800; margin-bottom: 0.8rem; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-                    Smart Public Transit Tracker & Live Commute
-                </h1>
-                
-                <p style="color: #cbd5e1; margin-bottom: 2rem; font-size: 1.15rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-                    Track live city buses, view real-time countdown departures, explore road-mapped routes, and book paperless digital tickets with instant QR passes.
-                </p>
-                
-                <!-- Quick Route Search -->
-                <div class="search-container" style="max-width: 680px; margin: 0 auto; position: relative;">
-                    <input type="text" id="global-search" class="search-input" placeholder="Search by route code, stop name (e.g. 507, Navanagar, Airport)..." autocomplete="off" style="box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
-                    <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; margin-top: 0.5rem; text-align: left; padding: 0.5rem 0; box-shadow: var(--shadow-lg); z-index: 100;">
-                        <!-- Populated by JS -->
+                <!-- SLIDE 1: Real-Time GPS Telemetry & Pan-India Routing -->
+                <div class="glass-slide" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop');">
+                    <div class="glass-slide-content">
+                        <div class="glass-slide-badge" style="background: rgba(59, 130, 246, 0.25); color: #93c5fd;">
+                            <span class="live-pulse-dot"></span> LIVE FLEET RADAR &bull; OSRM ENGINE
+                        </div>
+                        <h1 class="glass-slide-title">
+                            Real-Time GPS Telemetry & Pan-India Commute
+                        </h1>
+                        <p class="glass-slide-desc">
+                            Track live public buses streaming actual road coordinates, countdown departures, and turn-by-turn road curves across 7 Indian metro regions.
+                        </p>
+                        
+                        <!-- Quick Route Search within Slide -->
+                        <div class="search-container" style="max-width: 650px; margin-bottom: 1.5rem; position: relative;">
+                            <input type="text" id="global-search" class="search-input" placeholder="Search route code or stop (e.g. 507, Navanagar, Airport)..." autocomplete="off">
+                            <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; margin-top: 0.5rem; text-align: left; padding: 0.5rem 0; box-shadow: var(--shadow-lg); z-index: 100;"></div>
+                            <button class="btn-primary btn-pulse" onclick="handleHeroSearch()" style="white-space: nowrap;">
+                                <i class="fa-solid fa-magnifying-glass"></i> Find Routes
+                            </button>
+                        </div>
+
+                        <!-- Pan-India City Switcher -->
+                        <div class="city-chips-bar" id="city-chips-container">
+                            <span style="font-size: 0.8rem; color: #cbd5e1; align-self: center; margin-right: 0.3rem;"><i class="fa-solid fa-city"></i> Switch Metro:</span>
+                        </div>
                     </div>
-                    <button class="btn-primary btn-pulse" onclick="handleHeroSearch()" style="white-space: nowrap;">
-                        <i class="fa-solid fa-magnifying-glass"></i> Find Routes
-                    </button>
                 </div>
 
-                <!-- Pan-India Quick City Switcher Pills -->
-                <div class="city-chips-bar" id="city-chips-container">
-                    <span style="font-size: 0.8rem; color: #94a3b8; align-self: center; margin-right: 0.3rem;"><i class="fa-solid fa-city"></i> Switch Metro:</span>
-                    <!-- Populated dynamically -->
+                <!-- SLIDE 2: Smart Intermodal Journey Planner -->
+                <div class="glass-slide" style="background-image: url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2000&auto=format&fit=crop');">
+                    <div class="glass-slide-content">
+                        <div class="glass-slide-badge" style="background: rgba(16, 185, 129, 0.25); color: #6ee7b7;">
+                            <i class="fa-solid fa-route"></i> INTERMODAL JOURNEY FINDER
+                        </div>
+                        <h2 class="glass-slide-title">
+                            A-to-B Route Planner with Live Interchange
+                        </h2>
+                        <p class="glass-slide-desc">
+                            Plan multi-stop journeys combining express buses and metro feeders. View exact platform bays, transfer stops, walking directions, and upfront ticket pricing.
+                        </p>
+                        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                            <button class="btn-primary" onclick="document.getElementById('journey-planner-container').scrollIntoView({ behavior: 'smooth' })">
+                                <i class="fa-solid fa-compass"></i> Open Journey Planner ➔
+                            </button>
+                            <button class="sim-btn" onclick="window.location.href='routes.html'">
+                                <i class="fa-solid fa-network-wired"></i> View City Route Network
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- SLIDE 3: 24/7 Women & Commuter Safety Hub -->
+                <div class="glass-slide" style="background-image: url('https://images.unsplash.com/photo-1508873696983-2df5293cb32f?q=80&w=2000&auto=format&fit=crop');">
+                    <div class="glass-slide-content">
+                        <div class="glass-slide-badge" style="background: rgba(239, 68, 68, 0.25); color: #fca5a5;">
+                            <i class="fa-solid fa-shield-heart"></i> SAFETY FIRST &bull; 24/7 HELPLINE
+                        </div>
+                        <h2 class="glass-slide-title">
+                            Live Ride Sharing & Instant SOS Safety Shield
+                        </h2>
+                        <p class="glass-slide-desc">
+                            Share live transit vehicle coordinates and ETA directly with trusted contacts via WhatsApp or SMS. Instant 1-tap distress panic beacon for emergency assistance.
+                        </p>
+                        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                            <button class="btn-primary" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);" onclick="openSafetyModal()">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Open Safety &amp; SOS Hub ➔
+                            </button>
+                            <button class="sim-btn" onclick="openHelplineFromSlide()">
+                                <i class="fa-solid fa-phone"></i> National Helplines
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 4: Contactless Digital Passes & NFC Wallet -->
+                <div class="glass-slide" style="background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=2000&auto=format&fit=crop');">
+                    <div class="glass-slide-content">
+                        <div class="glass-slide-badge" style="background: rgba(139, 92, 246, 0.25); color: #c4b5fd;">
+                            <i class="fa-solid fa-qrcode"></i> CONTACTLESS TICKETING
+                        </div>
+                        <h2 class="glass-slide-title">
+                            Paperless E-Tickets, QR Passes &amp; Transit Card
+                        </h2>
+                        <p class="glass-slide-desc">
+                            Book contactless passes with dynamic fare calculations, recharge your digital wallet card, and export offline tax-ready PDF tickets directly to your device.
+                        </p>
+                        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                            <button class="btn-primary" onclick="window.location.href='booking.html'">
+                                <i class="fa-solid fa-ticket"></i> Book QR Pass Now ➔
+                            </button>
+                            <button class="sim-btn" onclick="window.location.href='profile.html'">
+                                <i class="fa-solid fa-wallet"></i> Manage Transit Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Slide Navigation Controls -->
+            <div class="glass-carousel-controls">
+                <button class="glass-carousel-btn" id="carousel-prev-btn" onclick="prevHeroSlide()" aria-label="Previous Slide">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="glass-carousel-dots" id="hero-carousel-dots">
+                    <span class="glass-dot active" onclick="jumpToHeroSlide(0)"></span>
+                    <span class="glass-dot" onclick="jumpToHeroSlide(1)"></span>
+                    <span class="glass-dot" onclick="jumpToHeroSlide(2)"></span>
+                    <span class="glass-dot" onclick="jumpToHeroSlide(3)"></span>
+                </div>
+                <button class="glass-carousel-btn" id="carousel-next-btn" onclick="nextHeroSlide()" aria-label="Next Slide">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
         </div>
 
@@ -430,11 +519,86 @@
             // 7. Initialize Smart Journey Planner
             initJourneyPlanner(currentCity);
 
-            // 8. Auto refresh countdown simulation every 30 seconds
+            // 8. Initialize Hero Glass Carousel
+            initHeroCarousel();
+
+            // 9. Auto refresh countdown simulation every 30 seconds
             setInterval(() => {
                 loadDepartureBoard(localStorage.getItem('spt-city') || 'Delhi');
             }, 30000);
         });
+
+        // ==============================================
+        // HERO GLASS CAROUSEL CONTROLLER
+        // ==============================================
+        let currentHeroSlideIndex = 0;
+        let heroCarouselTimer = null;
+
+        function initHeroCarousel() {
+            const slides = document.querySelectorAll('.glass-slide');
+            if (!slides || slides.length === 0) return;
+            showHeroSlide(0);
+            startHeroCarouselTimer();
+
+            const track = document.getElementById('hero-carousel-track');
+            if (track) {
+                track.addEventListener('mouseenter', pauseHeroCarouselTimer);
+                track.addEventListener('mouseleave', startHeroCarouselTimer);
+            }
+        }
+
+        function showHeroSlide(index) {
+            const slides = document.querySelectorAll('.glass-slide');
+            const dots = document.querySelectorAll('#hero-carousel-dots .glass-dot');
+            if (slides.length === 0) return;
+
+            if (index >= slides.length) index = 0;
+            if (index < 0) index = slides.length - 1;
+            currentHeroSlideIndex = index;
+
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === currentHeroSlideIndex);
+            });
+
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentHeroSlideIndex);
+            });
+        }
+
+        function nextHeroSlide() {
+            showHeroSlide(currentHeroSlideIndex + 1);
+        }
+
+        function prevHeroSlide() {
+            showHeroSlide(currentHeroSlideIndex - 1);
+        }
+
+        function jumpToHeroSlide(index) {
+            showHeroSlide(index);
+            startHeroCarouselTimer();
+        }
+
+        function startHeroCarouselTimer() {
+            pauseHeroCarouselTimer();
+            heroCarouselTimer = setInterval(() => {
+                nextHeroSlide();
+            }, 6500);
+        }
+
+        function pauseHeroCarouselTimer() {
+            if (heroCarouselTimer) {
+                clearInterval(heroCarouselTimer);
+                heroCarouselTimer = null;
+            }
+        }
+
+        function openHelplineFromSlide() {
+            if (typeof openSafetyModal === 'function') {
+                openSafetyModal();
+            } else {
+                alert('Pan-India 24/7 Helplines:\n• National Emergency: 112\n• Women Helpline: 1091\n• Transit Police: 1512\n• Senior Citizen Helpline: 14567');
+            }
+        }
 
         // ==============================================
         // SMART JOURNEY PLANNER CONTROLLER
