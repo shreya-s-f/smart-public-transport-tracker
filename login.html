@@ -888,6 +888,7 @@
         // SUCCESSFUL LOGIN SESSION HANDLER
         // ==============================================
         function loginSuccess(user) {
+            localStorage.removeItem('spt-has-logged-out');
             localStorage.setItem('spt-authenticated', 'true');
             localStorage.setItem('spt-user-role', user.role || 'passenger');
             localStorage.setItem('spt-profile-name', user.name);

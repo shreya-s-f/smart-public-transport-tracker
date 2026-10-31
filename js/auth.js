@@ -3,6 +3,13 @@
     const isLoginPage = window.location.pathname.endsWith('login.html');
     const isAdminPage = window.location.pathname.endsWith('admin.html');
     
+    // Auto-provision default passenger session for first-time visitors or direct file access
+    if (!localStorage.getItem('spt-authenticated') && !localStorage.getItem('spt-has-logged-out')) {
+        localStorage.setItem('spt-authenticated', 'true');
+        localStorage.setItem('spt-user-role', 'passenger');
+        localStorage.setItem('spt-user-email', 'shreya.f@example.com');
+    }
+
     const isAuthenticated = localStorage.getItem('spt-authenticated') === 'true';
     const userRole = localStorage.getItem('spt-user-role') || 'passenger';
     

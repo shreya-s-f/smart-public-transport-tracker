@@ -1527,7 +1527,7 @@
                 <button type="button" onclick="closeLogoutModal()" class="sim-btn" style="flex: 1; padding: 0.75rem; justify-content: center; font-weight: 600;">
                     Stay Signed In
                 </button>
-                <button type="button" onclick="confirmLogoutAction()" style="flex: 1; padding: 0.75rem; background: var(--danger-color); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.2s;">
+                <button type="button" onclick="confirmLogoutAction(event)" style="flex: 1; padding: 0.75rem; background: var(--danger-color); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.2s;">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
                 </button>
             </div>
@@ -1535,6 +1535,7 @@
     </div>
 
     <!-- Hidden file picker for avatar -->
+    <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="handleAvatarFileChosen(event)">
 
     <!-- Professional Footer -->
     <footer style="margin-top: 4rem; padding: 2.5rem 1.5rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary); background: rgba(15, 23, 42, 0.4);">
