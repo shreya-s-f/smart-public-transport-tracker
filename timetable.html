@@ -46,11 +46,38 @@
     </nav>
 
     <main>
-        <div class="glass-card animate-fade-in-up" style="margin-bottom: 2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-                <h2 id="timetable-heading">Weekly Schedule</h2>
+        <!-- Schedule Header & Offline Caching Hub -->
+        <div class="glass-card animate-fade-in-up" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                <div>
+                    <h2 id="timetable-heading" style="margin-bottom: 0.3rem;">Weekly Schedule</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0;">
+                        Terminal Bay Platforms &bull; Live Real-Time Departures &bull; Offline Ready
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <button id="offline-cache-btn" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.85rem;">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> <span id="cache-btn-text">Save for Offline Use</span>
+                    </button>
+                    <span id="offline-status-badge" style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: 600;">
+                        <i class="fa-solid fa-circle-check"></i> Online Sync
+                    </span>
+                </div>
             </div>
-            
+
+            <!-- Time-of-Day Tabs -->
+            <div class="filter-pills" id="timetable-time-filters" style="margin-bottom: 0;">
+                <button class="filter-pill active" data-time="all"><i class="fa-solid fa-clock"></i> All Day (Full Schedule)</button>
+                <button class="filter-pill" data-time="morning"><i class="fa-solid fa-sun" style="color: #f59e0b;"></i> Morning Peak (06:00 - 10:00)</button>
+                <button class="filter-pill" data-time="afternoon"><i class="fa-solid fa-cloud-sun" style="color: #3b82f6;"></i> Midday (10:00 - 16:00)</button>
+                <button class="filter-pill" data-time="evening"><i class="fa-solid fa-sunset" style="color: #ec4899;"></i> Evening Rush (16:00 - 21:00)</button>
+                <button class="filter-pill" data-time="night"><i class="fa-solid fa-moon" style="color: #8b5cf6;"></i> Night Owl (21:00 - 00:00)</button>
+            </div>
+        </div>
+
+        <!-- Timetable Body -->
+        <div class="glass-card animate-fade-in-up delay-1" style="margin-bottom: 2rem;">
             <div class="route-list" id="timetable-body">
                 <!-- Populated dynamically by notifications.js -->
             </div>
