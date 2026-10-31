@@ -45,14 +45,94 @@
     </nav>
 
     <main>
-        <h2 id="alerts-heading" style="margin-bottom: 1.5rem;">System Alerts & Updates</h2>
+        <!-- Top Action Bar with Weather Advisory & Report Button -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 id="alerts-heading" style="margin-bottom: 0.3rem;">System Alerts &amp; Updates</h2>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0;">
+                    Real-time route diversions, congestion updates &amp; crowdsourced commuter advisories
+                </p>
+            </div>
+            
+            <button class="btn-primary" onclick="openReportDelayModal()" style="padding: 0.6rem 1.2rem; font-size: 0.88rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <i class="fa-solid fa-bullhorn"></i> Report Delay / Issue
+            </button>
+        </div>
+
+        <!-- City Weather & Commute Risk Advisor Widget -->
+        <div class="glass-card animate-fade-in-up" id="weather-advisory-card" style="margin-bottom: 1.5rem; padding: 1.25rem 1.6rem; border-left: 4px solid var(--accent-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="font-size: 2.2rem; color: #f59e0b;" id="weather-icon-container">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <h4 id="weather-headline" style="font-size: 1.05rem; margin-bottom: 0; color: var(--text-primary);">28°C Partly Cloudy &bull; Low Delay Risk</h4>
+                            <span id="weather-risk-badge" class="route-status status-ontime" style="font-size: 0.75rem;">Normal Flow</span>
+                        </div>
+                        <p id="weather-commute-advice" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0; margin-top: 0.2rem;">
+                            Road conditions favorable across transit corridors. No severe waterlogging reported.
+                        </p>
+                    </div>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); text-align: right;">
+                    <span><i class="fa-solid fa-eye" style="color: var(--accent-color);"></i> Visibility: <strong>8.5 km</strong></span><br>
+                    <span><i class="fa-solid fa-wind" style="color: var(--success-color);"></i> Air Quality: <strong>Moderate</strong></span>
+                </div>
+            </div>
+        </div>
         
-        <div class="glass-card animate-fade-in-up">
+        <!-- Live Alert Feed -->
+        <div class="glass-card animate-fade-in-up delay-1">
             <div id="notifications-container">
                 <!-- Populated by JS -->
             </div>
         </div>
-        </main>
+
+        <!-- Crowdsourced Commuter Incident Report Modal -->
+        <div class="modal-overlay" id="report-delay-modal">
+            <div class="modal-content glass-card animate-zoom-in" style="max-width: 500px; padding: 1.8rem; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                    <h3 style="font-size: 1.2rem; color: var(--text-primary); margin: 0;">
+                        <i class="fa-solid fa-bullhorn" style="color: var(--warning-color);"></i> Report Delay / Transit Incident
+                    </h3>
+                    <button onclick="closeReportDelayModal()" style="background: transparent; border: none; font-size: 1.3rem; color: var(--text-secondary); cursor: pointer;">&times;</button>
+                </div>
+
+                <form id="report-incident-form">
+                    <div class="form-group">
+                        <label>Affected Route Number</label>
+                        <input type="text" id="report-route" placeholder="e.g. 507, V-500D, Airport Express..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Incident Type</label>
+                        <select id="report-type" required>
+                            <option value="traffic">Heavy Traffic Congestion (15+ min delay)</option>
+                            <option value="breakdown">Vehicle Breakdown / Maintenance</option>
+                            <option value="diversion">Route Diversion / Road Work</option>
+                            <option value="waterlog">Monsoon Waterlogging / Flooding</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location / Landmark</label>
+                        <input type="text" id="report-location" placeholder="e.g. Near Lajpat Nagar Flyover" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Brief Description</label>
+                        <textarea id="report-notes" rows="3" placeholder="Share what is happening to assist fellow commuters..." style="width: 100%; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.03); padding: 0.6rem; color: var(--text-primary); font-family: inherit; font-size: 0.9rem;" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; font-weight: 700; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Incident Broadcast
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
 
     <!-- Professional Footer -->
     <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">

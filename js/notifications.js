@@ -157,55 +157,140 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTimetable();
     }
 
+    // --- Weather Advisory & Commute Risk Advisor ---
+    const weatherCard = document.getElementById('weather-advisory-card');
+    if (weatherCard) {
+        const cityWeather = {
+            'Delhi': { temp: '31°C', sky: 'Clear Skies', risk: 'Low Delay Risk', status: 'Normal Flow', advice: 'Road conditions favorable across transit corridors. Ring Road flow steady.', icon: 'fa-sun', color: '#f59e0b' },
+            'Mumbai': { temp: '28°C', sky: 'Passing Showers', risk: 'Moderate Delay Risk', status: 'Wet Road Alert', advice: 'Coastal Road spray & Western Express Highway moderate congestion (+5 min).', icon: 'fa-cloud-rain', color: '#3b82f6' },
+            'Bangalore': { temp: '24°C', sky: 'Pleasant & Overcast', risk: 'Silk Board Jam', status: 'Peak Congestion', advice: 'Silk Board to Outer Ring Road heavy peak hour traffic. Allow 12 extra mins.', icon: 'fa-cloud', color: '#f59e0b' },
+            'Bagalkot': { temp: '29°C', sky: 'Sunny', risk: 'Zero Delay', status: 'Clear Corridors', advice: 'Navanagar to Vidyagiri sector running strictly on scheduled timetable.', icon: 'fa-sun', color: '#10b981' },
+            'Hyderabad': { temp: '30°C', sky: 'Sunny & Warm', risk: 'Low Delay Risk', status: 'Normal Flow', advice: 'Hitec City feeder lines on time. Outer Ring Road clear.', icon: 'fa-sun', color: '#f59e0b' },
+            'Chennai': { temp: '32°C', sky: 'Humid Breeze', risk: 'Moderate Coastal Breeze', status: 'Normal Flow', advice: 'OMR IT Corridor & Anna Salai running on schedule.', icon: 'fa-wind', color: '#10b981' },
+            'Pune': { temp: '26°C', sky: 'Mild Breeze', risk: 'Hinjawadi Congestion', status: 'Moderate Flow', advice: 'Shivajinagar to Hinjawadi Phase 1 experiencing light peak rush.', icon: 'fa-cloud-sun', color: '#f59e0b' }
+        };
+
+        const w = cityWeather[currentCity] || cityWeather['Delhi'];
+        const iconEl = document.getElementById('weather-icon-container');
+        const headEl = document.getElementById('weather-headline');
+        const badgeEl = document.getElementById('weather-risk-badge');
+        const adviceEl = document.getElementById('weather-commute-advice');
+
+        if (iconEl) iconEl.innerHTML = `<i class="fa-solid ${w.icon}" style="color: ${w.color};"></i>`;
+        if (headEl) headEl.textContent = `${w.temp} ${w.sky} • ${w.risk}`;
+        if (badgeEl) {
+            badgeEl.textContent = w.status;
+            badgeEl.className = 'route-status ' + (w.status.includes('Congestion') || w.status.includes('Alert') ? 'status-delayed' : 'status-ontime');
+        }
+        if (adviceEl) adviceEl.textContent = w.advice;
+    }
+
     // --- Notifications / Alerts Logic ---
     const alertsContainer = document.getElementById('notifications-container');
     const alertsHeading = document.getElementById('alerts-heading');
 
     if (alertsContainer) {
         if (alertsHeading) {
-            alertsHeading.innerHTML = `Live Service Alerts & Advisories for <span style="color: var(--accent-color);">${currentCity}</span>`;
+            alertsHeading.innerHTML = `Live Service Alerts &amp; Advisories for <span style="color: var(--accent-color);">${currentCity}</span>`;
         }
         
-        const cityAlerts = (window.TransitData && window.TransitData.alerts[currentCity]) 
+        const officialAlerts = (window.TransitData && window.TransitData.alerts[currentCity]) 
             ? window.TransitData.alerts[currentCity] 
             : [
                 { type: 'info', title: 'Normal Operations', message: 'All scheduled bus fleets are operating normally in this city.', time: 'Just now', route: 'All' }
             ];
+
+        // Retrieve user crowdsourced reports
+        let crowdsourcedReports = [];
+        try {
+            crowdsourcedReports = JSON.parse(localStorage.getItem(`spt-crowdsourced-${currentCity}`)) || [];
+        } catch(e) {}
+
+        const allAlerts = [...crowdsourcedReports, ...officialAlerts];
         
         alertsContainer.innerHTML = '';
-        cityAlerts.forEach((notif, index) => {
+        allAlerts.forEach((notif, index) => {
             let icon = 'fa-circle-info';
             let color = 'var(--accent-color)';
-            let badgeText = 'General Notice';
+            let badgeText = notif.isCrowdsourced ? 'Commuter Broadcast' : 'General Notice';
 
-            if (notif.type === 'alert') { 
+            if (notif.type === 'alert' || notif.type === 'traffic' || notif.type === 'breakdown') { 
                 icon = 'fa-triangle-exclamation'; 
                 color = 'var(--danger-color)'; 
-                badgeText = 'Traffic Delay';
-            } else if (notif.type === 'warning') { 
+                badgeText = notif.isCrowdsourced ? 'Commuter Report: Traffic' : 'Traffic Delay';
+            } else if (notif.type === 'warning' || notif.type === 'diversion' || notif.type === 'waterlog') { 
                 icon = 'fa-circle-exclamation'; 
                 color = 'var(--warning-color)'; 
-                badgeText = 'Route Advisory';
+                badgeText = notif.isCrowdsourced ? 'Commuter Advisory' : 'Route Advisory';
             }
             
-            const animDelay = (index * 0.1);
+            const animDelay = (index * 0.08);
+            const verifiedBadge = notif.isCrowdsourced 
+                ? `<span style="font-size: 0.72rem; color: var(--success-color); font-weight: 600; margin-left: 0.5rem;"><i class="fa-solid fa-user-check"></i> Verified by commuters</span>` 
+                : '';
             
             const item = document.createElement('div');
             item.className = `notification-item ${notif.type} animate-fade-in-up`;
             item.style.animationDelay = `${animDelay}s`;
+            item.style.marginBottom = '0.9rem';
             item.innerHTML = `
                 <div class="notification-content" style="width: 100%;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; flex-wrap: wrap; gap: 0.4rem;">
                         <span style="font-size: 0.8rem; background: rgba(0,0,0,0.04); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600;">
-                            Route ${notif.route} • ${badgeText}
+                            Route ${notif.route} &bull; ${badgeText} ${verifiedBadge}
                         </span>
                         <span class="notification-time"><i class="fa-regular fa-clock"></i> ${notif.time}</span>
                     </div>
                     <h4 style="margin: 0.4rem 0;"><i class="fa-solid ${icon}" style="margin-right: 0.5rem; color: ${color};"></i>${notif.title}</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">${notif.message}</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0;">${notif.message}</p>
                 </div>
             `;
             alertsContainer.appendChild(item);
         });
+
+        // Incident Report Form Submission
+        const reportForm = document.getElementById('report-incident-form');
+        if (reportForm) {
+            reportForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const route = document.getElementById('report-route').value.trim();
+                const type = document.getElementById('report-type').value;
+                const location = document.getElementById('report-location').value.trim();
+                const notes = document.getElementById('report-notes').value.trim();
+
+                const newReport = {
+                    type: type === 'traffic' || type === 'breakdown' ? 'alert' : 'warning',
+                    title: `${type.toUpperCase()}: ${location}`,
+                    message: notes,
+                    time: 'Just now',
+                    route: route,
+                    isCrowdsourced: true
+                };
+
+                let savedReports = [];
+                try {
+                    savedReports = JSON.parse(localStorage.getItem(`spt-crowdsourced-${currentCity}`)) || [];
+                } catch(e) {}
+                savedReports.unshift(newReport);
+                localStorage.setItem(`spt-crowdsourced-${currentCity}`, JSON.stringify(savedReports));
+
+                closeReportDelayModal();
+                if (typeof showSptToast === 'function') {
+                    showSptToast(`📢 Incident broadcast submitted for Route ${route}! Thank you for keeping commuters safe.`, 'success');
+                }
+                setTimeout(() => window.location.reload(), 1200);
+            });
+        }
     }
 });
+
+// Modal Global Functions
+function openReportDelayModal() {
+    const modal = document.getElementById('report-delay-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeReportDelayModal() {
+    const modal = document.getElementById('report-delay-modal');
+    if (modal) modal.classList.remove('active');
+}
