@@ -313,6 +313,120 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeStopIndicator) {
             activeStopIndicator.textContent = `Approaching: ${stopsList[approxStopIdx] || 'Next Stop'}`;
         }
+
+        // Trigger Audio Chime & Update Telemetry on new stop approach
+        if (lastChimedStopIdx !== approxStopIdx) {
+            lastChimedStopIdx = approxStopIdx;
+            if (approxStopIdx > 0 && approxStopIdx < stopsList.length) {
+                playApproachChime(stopsList[approxStopIdx]);
+            }
+            updateVehicleTelemetry(currentRoute, approxStopIdx);
+        }
+    }
+
+    // --- Audio Approach Chime Synthesizer (Web Audio API) ---
+    let isAudioChimeEnabled = true;
+    let lastChimedStopIdx = -1;
+
+    function playApproachChime(stopName) {
+        if (!isAudioChimeEnabled) return;
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            
+            // Tone 1: 587.33 Hz (D5)
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
+            gain1.gain.setValueAtTime(0, ctx.currentTime);
+            gain1.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.04);
+            gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(ctx.currentTime);
+            osc1.stop(ctx.currentTime + 0.45);
+
+            // Tone 2: 880 Hz (A5)
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.22);
+            gain2.gain.setValueAtTime(0, ctx.currentTime + 0.22);
+            gain2.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.26);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(ctx.currentTime + 0.22);
+            osc2.stop(ctx.currentTime + 0.7);
+
+            setTimeout(() => {
+                try { ctx.close(); } catch(e) {}
+            }, 850);
+
+            if (typeof showSptToast === 'function') {
+                showSptToast(`🔔 Approaching Stop: ${stopName}`, 'info');
+            }
+        } catch (e) {
+            console.warn('Audio chime error:', e);
+        }
+    }
+
+    // --- Dynamic Telemetry & Crowd Occupancy Updater ---
+    function updateVehicleTelemetry(route, stopIdx) {
+        const city = localStorage.getItem('spt-city') || 'Delhi';
+        const cityPlatePrefix = {
+            'Delhi': 'DL-01-EB',
+            'Mumbai': 'MH-02-CB',
+            'Bangalore': 'KA-01-F',
+            'Bagalkot': 'KA-29-B',
+            'Hyderabad': 'TS-09-UA',
+            'Chennai': 'TN-01-N',
+            'Pune': 'MH-12-RN'
+        };
+
+        const prefix = cityPlatePrefix[city] || 'IN-01-TR';
+        const hash = Math.abs(route.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
+        const regNum = `${prefix}-${1000 + (hash % 8999)}`;
+
+        const regEl = document.getElementById('telemetry-vehicle-reg');
+        if (regEl) regEl.textContent = regNum;
+
+        // Calculate occupancy percentage
+        const stopsCount = (route.stops && route.stops.length) || 6;
+        const baseOccupancy = 40 + ((stopIdx * 14 + hash) % 45);
+        const occupancy = Math.min(95, Math.max(20, baseOccupancy));
+        const freeSeats = Math.max(2, Math.round(48 * (1 - occupancy / 100)));
+
+        const crowdText = document.getElementById('telemetry-crowd-text');
+        const crowdFill = document.getElementById('telemetry-crowd-fill');
+
+        if (crowdText && crowdFill) {
+            crowdFill.style.width = `${occupancy}%`;
+            crowdFill.className = 'occupancy-meter-fill ' + (occupancy > 75 ? 'meter-high' : occupancy > 45 ? 'meter-mid' : 'meter-low');
+
+            let crowdLabel = occupancy > 75 ? 'Crowded' : occupancy > 45 ? 'Moderate' : 'Low Crowding';
+            let crowdColor = occupancy > 75 ? 'var(--danger-color)' : occupancy > 45 ? 'var(--warning-color)' : 'var(--success-color)';
+            crowdText.style.color = crowdColor;
+            crowdText.innerHTML = `${crowdLabel} &bull; ${occupancy}% Full (${freeSeats} Seats Free)`;
+        }
+    }
+
+    // Chime Toggle Button Handler
+    const chimeBtn = document.getElementById('audio-chime-btn');
+    const chimeLabel = document.getElementById('chime-btn-label');
+    if (chimeBtn) {
+        chimeBtn.addEventListener('click', () => {
+            isAudioChimeEnabled = !isAudioChimeEnabled;
+            if (chimeLabel) chimeLabel.textContent = `Approach Chime: ${isAudioChimeEnabled ? 'ON' : 'OFF'}`;
+            chimeBtn.style.color = isAudioChimeEnabled ? 'var(--accent-color)' : 'var(--text-secondary)';
+            if (isAudioChimeEnabled) {
+                playApproachChime('Chime Enabled');
+            } else if (typeof showSptToast === 'function') {
+                showSptToast('Audio approach alerts muted.', 'info');
+            }
+        });
     }
 
     // --- Simulation Timer ---
