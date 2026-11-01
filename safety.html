@@ -440,6 +440,7 @@
 
     <!-- Scripts -->
     <script src="js/app.js?v=8"></script>
+    <script src="js/transit-data.js?v=8"></script>
     <script src="js/backend-api.js"></script>
 
     <script>
@@ -569,12 +570,26 @@
             }
         }
 
-        // Live Journey Sharing
+        // Dynamic City Route Population for Live Journey Sharing
+        function populateSafetyRoutes(city) {
+            const select = document.getElementById('share-route-select');
+            if (!select || !window.TransitData) return;
+            const routes = TransitData.getAllRoutesForCity(city);
+            if (routes && routes.length > 0) {
+                select.innerHTML = routes.map(r => 
+                    `<option value="${r.id} (${r.name})">Route ${r.id} &bull; ${r.name} (${r.category})</option>`
+                ).join('');
+            }
+            updateSharePreview();
+        }
+
         function updateSharePreview() {
             const select = document.getElementById('share-route-select');
             const preview = document.getElementById('share-preview-url');
-            const routeCode = select.value.split(' ')[0];
-            const url = `http://localhost:5000/tracking.html?route=${encodeURIComponent(routeCode)}&live_share=true&sos_beacon=SAFE`;
+            if (!select || !preview) return;
+            const routeCode = (select.value || '507').split(' ')[0];
+            const city = localStorage.getItem('spt-city') || 'Delhi';
+            const url = `http://localhost:5000/tracking.html?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
             preview.textContent = url;
         }
 
@@ -589,7 +604,11 @@
         function copyLiveShareLink() {
             const url = document.getElementById('share-preview-url').textContent.trim();
             navigator.clipboard.writeText(url).then(() => {
-                alert('Live ride tracking link copied to clipboard!\nYou can paste and send it to your trusted contacts.');
+                if (window.toast) {
+                    window.toast('Live tracking link copied to clipboard!', 'circle-check');
+                } else {
+                    alert('Live ride tracking link copied to clipboard!\nYou can paste and send it to your trusted contacts.');
+                }
             }).catch(() => {
                 prompt('Copy this live ride tracking link:', url);
             });
@@ -605,6 +624,18 @@
 
         // Sync Contact with Commuter Profile
         document.addEventListener('DOMContentLoaded', () => {
+            const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+            populateSafetyRoutes(currentCity);
+
+            const citySelector = document.querySelector('.city-selector');
+            if (citySelector) {
+                citySelector.value = currentCity;
+                citySelector.addEventListener('change', (e) => {
+                    localStorage.setItem('spt-city', e.target.value);
+                    populateSafetyRoutes(e.target.value);
+                });
+            }
+
             try {
                 const profile = JSON.parse(localStorage.getItem('spt-user-profile-data'));
                 if (profile && profile.emergencyName) {
@@ -617,8 +648,6 @@
                     if (dialBtn && profile.emergencyPhone) dialBtn.href = `tel:${profile.emergencyPhone.replace(/\s+/g, '')}`;
                 }
             } catch(e) {}
-
-            updateSharePreview();
         });
     </script>
 </body>
