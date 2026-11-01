@@ -257,8 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 500);
 
-    // 7. Inject 24/7 SOS Emergency Safety Shield Floating Button & Modal
-    injectSafetyHub();
+    // Safety Shield is now featured as a dedicated navigation tab in navbar
+    // (no longer cluttered as a floating button at the end of the page)
 
 });
 
@@ -429,10 +429,7 @@ function injectSafetyHub() {
 }
 
 function openSafetyModal() {
-    const modal = document.getElementById('safety-shield-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-    }
+    window.location.href = 'safety.html';
 }
 
 function closeSafetyModal() {

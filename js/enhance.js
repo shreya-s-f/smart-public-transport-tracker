@@ -122,12 +122,12 @@ document.addEventListener('click', e => {
 });
 
 /* command palette (Ctrl/Cmd + K) */
-const pages = [['Dashboard', 'index.html', 'gauge'], ['Routes', 'routes.html', 'map-location-dot'], ['Live Tracking', 'tracking.html', 'satellite-dish'], ['Timetable', 'timetable.html', 'calendar-days'], ['Alerts', 'notifications.html', 'bell'], ['Book Ticket', 'booking.html', 'ticket'], ['Profile', 'profile.html', 'user']];
+const pages = [['Dashboard', 'index.html', 'gauge'], ['Routes', 'routes.html', 'map-location-dot'], ['Live Tracking', 'tracking.html', 'satellite-dish'], ['Timetable', 'timetable.html', 'calendar-days'], ['Alerts', 'notifications.html', 'bell'], ['Book Ticket', 'booking.html', 'ticket'], ['Safety Shield', 'safety.html', 'shield-heart'], ['Profile', 'profile.html', 'user']];
 const items = [
   ...pages.map(([t, u, i]) => ({ t: 'Go to ' + t, i, a: () => location.href = u })),
   ...rank.map(([c]) => ({ t: 'Switch city: ' + c, i: 'city', a: () => { localStorage.setItem('spt-city', c); location.reload(); } })),
   { t: 'Toggle dark / light mode', i: 'circle-half-stroke', a: () => $('#theme-toggle')?.click() },
-  { t: 'Open Safety & SOS hub', i: 'shield-heart', a: () => window.openSafetyModal ? openSafetyModal() : toast('Safety hub not available here', 'triangle-exclamation') }
+  { t: 'Open Safety Shield', i: 'shield-heart', a: () => location.href = 'safety.html' }
 ];
 const pal = el('<div id="pal"><div class="box"><input placeholder="Type a page, city or action…" aria-label="Command palette"><ul></ul></div></div>');
 document.body.append(pal);
