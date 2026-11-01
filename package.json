@@ -19,5 +19,9 @@
     "express"
   ],
   "author": "Shreya Fakirapur",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0"
+  }
 }

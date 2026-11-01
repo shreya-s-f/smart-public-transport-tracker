@@ -1,0 +1,54 @@
+{
+  "users": {
+    "shreya.f@example.com": {
+      "profile": {
+        "name": "shreya.f",
+        "email": "shreya.f@example.com",
+        "phone": "+91 98765 43210",
+        "city": "Bengaluru",
+        "location": "Bengaluru, India",
+        "userType": "Daily Commuter",
+        "emergencyName": "Emergency Contact",
+        "emergencyPhone": "+91 91234 56789",
+        "bio": "Transit.IN regular commuter exploring sustainable and electric public transport.",
+        "avatar": null,
+        "emailVerified": true
+      },
+      "wallet": {
+        "balance": 630,
+        "upiId": "shreya@okhdfcbank",
+        "methods": [
+          "•••• 4242"
+        ],
+        "transactions": [
+          {
+            "id": "TXN-9709",
+            "desc": "Instant Wallet Recharge (UPI/Card)",
+            "amount": 150,
+            "date": "01 Nov, 09:01 pm",
+            "type": "credit"
+          }
+        ]
+      },
+      "trips": [],
+      "tickets": [],
+      "password": null,
+      "otherSessions": 1,
+      "settings": {
+        "notifications": {
+          "delays": true,
+          "arrival": true,
+          "offers": true,
+          "email": true,
+          "emergency": true
+        },
+        "security": {
+          "twoFactor": true,
+          "highGps": true,
+          "anonymize": true
+        }
+      }
+    }
+  },
+  "feedback": []
+}

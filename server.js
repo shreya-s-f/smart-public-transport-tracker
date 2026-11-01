@@ -1,44 +1,76 @@
 /**
  * Transit.IN - Enterprise Mobility REST API & Static Web Server
- * Built with native Node.js (Zero-Dependency)
- * Run: node server.js
+ * Built with Express & CORS
+ * Run: node server.js   (http://localhost:5000)
  */
 
-const http = require('http');
+const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
+const crypto = require('crypto');
 
+const app = express();
 const PORT = process.env.PORT || 5000;
 const PUBLIC_DIR = __dirname;
 
-// In-Memory Database Store (with sample seed data)
-const db = {
-    users: [
-        {
-            name: "Shreya Fakirapur",
-            email: "shreya.f@example.com",
-            phone: "+91 98765 43210",
-            city: "Delhi",
-            role: "passenger",
-            password: "password123",
-            createdAt: new Date().toISOString()
-        },
-        {
-            name: "Transit Admin",
-            email: "admin@transit.in",
-            phone: "+91 99999 88888",
-            city: "Delhi",
-            role: "admin",
-            password: "admin",
-            createdAt: new Date().toISOString()
-        }
-    ],
-    tickets: [],
-    incidentReports: [],
-    sosDistressLogs: [],
-    customRoutes: []
+// Middleware
+app.use(cors());
+app.use(express.json({ limit: '6mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Persistent DB
+const FILE = path.join(__dirname, 'db.json');
+const db = fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, 'utf8')) : { users: {}, feedback: [] };
+const save = () => {
+    try {
+        fs.writeFileSync(FILE, JSON.stringify(db, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Error saving db.json:', err);
+    }
 };
+
+const rid = p => p + '-' + crypto.randomInt(1000, 9999);
+const hash = (pw, salt = crypto.randomBytes(16).toString('hex')) => ({
+    salt,
+    h: crypto.scryptSync(pw, salt, 32).toString('hex')
+});
+
+const newUser = email => ({
+    profile: {
+        name: email.split('@')[0],
+        email,
+        phone: '+91 98765 43210',
+        city: 'Bengaluru',
+        location: 'Bengaluru, India',
+        userType: 'Daily Commuter',
+        emergencyName: 'Emergency Contact',
+        emergencyPhone: '+91 91234 56789',
+        bio: 'Transit.IN regular commuter exploring sustainable and electric public transport.',
+        avatar: null,
+        emailVerified: true
+    },
+    wallet: { balance: 480, upiId: 'shreya@okhdfcbank', methods: ['•••• 4242'], transactions: [] },
+    trips: [],
+    tickets: [],
+    password: null,
+    otherSessions: 1,
+    settings: {
+        notifications: { delays: true, arrival: true, offers: true, email: true, emergency: true },
+        security: { twoFactor: true, highGps: true, anonymize: true }
+    }
+});
+
+// Seed default user if not exists
+if (!db.users['shreya.f@example.com']) {
+    db.users['shreya.f@example.com'] = newUser('shreya.f@example.com');
+    save();
+}
+
+// In-Memory Seed Data for Global Platform
+const globalTickets = [];
+const incidentReports = [];
+const sosDistressLogs = [];
 
 // Supported Cities Route Catalog
 const cityRoutesCatalog = {
@@ -81,353 +113,421 @@ const cityRoutesCatalog = {
     ]
 };
 
-// MIME types for static assets
-const MIME_TYPES = {
-    '.html': 'text/html; charset=utf-8',
-    '.css': 'text/css; charset=utf-8',
-    '.js': 'application/javascript; charset=utf-8',
-    '.json': 'application/json; charset=utf-8',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.pdf': 'application/pdf'
+// Response Helpers
+const ok = (res, d = { ok: true }) => { save(); res.json(d); };
+const bad = (res, m, c = 400) => res.status(c).json({ error: m });
+
+// Commuter Authentication & Context Middleware
+const commuterContext = (req, res, next) => {
+    let email = (req.header('x-user-email') || req.query.email || '').trim().toLowerCase();
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        email = 'shreya.f@example.com';
+    }
+    if (!db.users[email]) {
+        db.users[email] = newUser(email);
+        save();
+    }
+    req.u = db.users[email];
+    next();
 };
 
-// Helper: parse JSON body from request
-function parseRequestBody(req) {
-    return new Promise((resolve, reject) => {
-        let body = '';
-        req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', () => {
-            try {
-                resolve(body ? JSON.parse(body) : {});
-            } catch (err) {
-                resolve({});
-            }
-        });
-        req.on('error', err => reject(err));
+// ============================================================================
+// PROFILE & ACCOUNT ENDPOINTS (from profile-backend.js / extracted server.js)
+// ============================================================================
+
+app.get('/api/profile', commuterContext, (req, res) => res.json(req.u.profile));
+
+app.put('/api/profile', commuterContext, (req, res) => {
+    const b = req.body, p = req.u.profile;
+    if (!b.name || !String(b.name).trim()) return bad(res, 'Name is required');
+    if (!/^\S+@\S+\.\S+$/.test(b.email || '')) return bad(res, 'Enter a valid email');
+    for (const k of ['name', 'email', 'phone', 'city', 'userType', 'location', 'emergencyName', 'emergencyPhone', 'bio']) {
+        if (b[k] !== undefined) p[k] = String(b[k]).slice(0, 300);
+    }
+    ok(res, p);
+});
+
+app.put('/api/profile/avatar', commuterContext, (req, res) => {
+    const a = req.body.avatar;
+    if (!/^data:image\/(png|jpe?g|webp|gif);base64,/.test(a || '')) return bad(res, 'Invalid image');
+    req.u.profile.avatar = a;
+    ok(res, req.u.profile);
+});
+
+app.delete('/api/profile/avatar', commuterContext, (req, res) => {
+    req.u.profile.avatar = null;
+    ok(res, req.u.profile);
+});
+
+// Trips
+app.get('/api/trips', commuterContext, (req, res) => res.json(req.u.trips));
+
+app.post('/api/trips/seed', commuterContext, (req, res) => {
+    if (!req.u.trips.length && Array.isArray(req.body)) {
+        req.u.trips = req.body.slice(0, 50);
+    }
+    ok(res, req.u.trips);
+});
+
+// Wallet
+app.get('/api/wallet', commuterContext, (req, res) => res.json(req.u.wallet));
+
+app.post('/api/wallet/recharge', commuterContext, (req, res) => {
+    const a = Number(req.body.amount);
+    if (!(a > 0) || a > 10000) return bad(res, 'Enter an amount between ₹1 and ₹10,000');
+    const w = req.u.wallet;
+    w.balance = +(w.balance + a).toFixed(2);
+    w.transactions.unshift({
+        id: rid('TXN'),
+        desc: 'Instant Wallet Recharge (UPI/Card)',
+        amount: a,
+        date: new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        type: 'credit'
+    });
+    w.transactions = w.transactions.slice(0, 50);
+    ok(res, w);
+});
+
+app.post('/api/wallet/methods', commuterContext, (req, res) => {
+    const v = String(req.body.value || '').trim();
+    if (!v) return bad(res, 'Enter a UPI ID or card number');
+    const w = req.u.wallet;
+    if (v.includes('@')) {
+        w.upiId = v;
+    } else if (/^\d{12,19}$/.test(v.replace(/\s/g, ''))) {
+        w.methods.push('•••• ' + v.replace(/\s/g, '').slice(-4));
+    } else {
+        return bad(res, 'Not a valid UPI ID or card number');
+    }
+    ok(res, w);
+});
+
+// Settings (Notifications & Security)
+for (const k of ['notifications', 'security']) {
+    app.get('/api/settings/' + k, commuterContext, (req, res) => res.json(req.u.settings[k]));
+    app.put('/api/settings/' + k, commuterContext, (req, res) => {
+        for (const f of Object.keys(req.u.settings[k])) {
+            if (typeof req.body[f] === 'boolean') req.u.settings[k][f] = req.body[f];
+        }
+        ok(res, req.u.settings[k]);
     });
 }
 
-// Helper: send JSON response
-function sendJson(res, statusCode, data) {
-    const jsonStr = JSON.stringify(data);
-    res.writeHead(statusCode, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Content-Length': Buffer.byteLength(jsonStr),
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-    });
-    res.end(jsonStr);
-}
-
-// Create HTTP Server
-const server = http.createServer(async (req, res) => {
-    const parsedUrl = url.parse(req.url, true);
-    const pathname = parsedUrl.pathname;
-    const method = req.method;
-
-    // Handle CORS preflight
-    if (method === 'OPTIONS') {
-        res.writeHead(204, {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400'
-        });
-        res.end();
-        return;
+app.post('/api/security/password', commuterContext, (req, res) => {
+    const { current, next } = req.body, u = req.u;
+    if (!next || next.length < 6) return bad(res, 'Password must be at least 6 characters');
+    if (u.password && hash(current || '', u.password.salt).h !== u.password.h) {
+        return bad(res, 'Current password is incorrect', 401);
     }
+    u.password = hash(next);
+    ok(res);
+});
 
-    // ========================================================================
-    // BACKEND REST API ENDPOINTS
-    // ========================================================================
+app.post('/api/security/sessions/terminate', commuterContext, (req, res) => {
+    req.u.otherSessions = 0;
+    ok(res);
+});
 
-    // 1. Health & Server Status Check
-    if (pathname === '/api/health' && method === 'GET') {
-        return sendJson(res, 200, {
-            status: "online",
-            connected: true,
-            server: "Transit.IN Enterprise Mobility Backend API",
-            version: "3.0.0",
-            uptimeSeconds: Math.round(process.uptime()),
-            timestamp: new Date().toISOString(),
-            port: PORT,
-            activeCities: Object.keys(cityRoutesCatalog),
-            totalUsersRegistered: db.users.length,
-            totalBookingsCount: db.tickets.length
-        });
-    }
+app.delete('/api/history', commuterContext, (req, res) => ok(res));
 
-    // 2. Get Routes (by City or All)
-    if (pathname === '/api/routes' && method === 'GET') {
-        const city = parsedUrl.query.city || 'Delhi';
-        const routes = cityRoutesCatalog[city] || cityRoutesCatalog['Delhi'];
-        return sendJson(res, 200, {
-            success: true,
-            city: city,
-            count: routes.length,
-            routes: routes
-        });
-    }
+// Support Tickets & Community Feedback
+app.get('/api/tickets', commuterContext, (req, res) => res.json(req.u.tickets));
 
-    // 3. Get Route by ID
-    if (pathname.startsWith('/api/routes/') && method === 'GET') {
-        const routeId = decodeURIComponent(pathname.replace('/api/routes/', ''));
-        let found = null;
-        for (const city of Object.keys(cityRoutesCatalog)) {
-            const r = cityRoutesCatalog[city].find(x => x.id.toLowerCase() === routeId.toLowerCase());
-            if (r) {
-                found = { ...r, city };
-                break;
-            }
-        }
-        if (found) {
-            return sendJson(res, 200, { success: true, route: found });
-        } else {
-            return sendJson(res, 404, { success: false, error: `Route ${routeId} not found` });
-        }
-    }
+app.post('/api/tickets', commuterContext, (req, res) => {
+    const { category, route, description } = req.body;
+    if (!category || !route || !description) return bad(res, 'All fields are required');
+    const t = {
+        id: rid('TKT'),
+        category,
+        route,
+        description: String(description).slice(0, 1000),
+        status: 'Under Review',
+        createdAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    };
+    req.u.tickets.unshift(t);
+    ok(res, t);
+});
 
-    // 4. Live Vehicle Telemetry & GPS Stream
-    if (pathname.startsWith('/api/track/') && method === 'GET') {
-        const routeId = decodeURIComponent(pathname.replace('/api/track/', ''));
-        const hash = Math.abs(routeId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
-        const occupancy = 35 + (hash % 50);
-        return sendJson(res, 200, {
-            success: true,
-            routeId: routeId,
-            telemetry: {
-                vehicleReg: `IN-01-EB-${1000 + (hash % 8999)}`,
-                pilot: "Vikram Singh (Rating: 4.95 ⭐)",
-                speedKmH: 38 + (hash % 8),
-                crowdOccupancy: occupancy,
-                crowdStatus: occupancy > 75 ? 'Crowded' : occupancy > 45 ? 'Moderate' : 'Seats Available',
-                seatsAvailable: Math.max(2, Math.round(48 * (1 - occupancy / 100))),
-                gpsSignal: "Active Real-Time Stream",
-                lastPing: new Date().toISOString()
-            }
-        });
-    }
+app.get('/api/feedback', (req, res) => res.json(db.feedback.slice(0, 20)));
 
-    // 5. Auth: Login
-    if (pathname === '/api/auth/login' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        const user = db.users.find(u => u.email.toLowerCase() === (payload.email || '').toLowerCase());
-        
-        if (user && user.password === payload.password) {
-            return sendJson(res, 200, {
-                success: true,
-                message: "Authentication successful",
-                token: "JWT-TOKEN-" + Math.random().toString(36).substr(2, 10).toUpperCase(),
-                user: {
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    city: user.city || 'Delhi',
-                    phone: user.phone
-                }
-            });
-        } else {
-            // Permissive fallback for passenger demo
-            if (payload.role !== 'admin' && payload.email) {
-                return sendJson(res, 200, {
-                    success: true,
-                    message: "Welcome commuter (demo verified)",
-                    token: "JWT-COMMUTER-DEMO",
-                    user: {
-                        name: payload.email.split('@')[0],
-                        email: payload.email,
-                        role: "passenger",
-                        city: "Delhi"
-                    }
-                });
-            }
-            return sendJson(res, 401, { success: false, error: "Invalid credentials. Please verify your email and password." });
-        }
-    }
+app.post('/api/feedback', (req, res) => {
+    const { stars, category, author, comment } = req.body;
+    if (!(stars >= 1 && stars <= 5) || !comment) return bad(res, 'Rating and comment are required');
+    const f = {
+        id: rid('REV'),
+        stars: +stars,
+        category,
+        author: String(author || 'Commuter').slice(0, 60),
+        comment: String(comment).slice(0, 500),
+        date: 'Just Now'
+    };
+    db.feedback.unshift(f);
+    ok(res, f);
+});
 
-    // 6. Auth: Signup
-    if (pathname === '/api/auth/signup' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        if (!payload.email || !payload.name) {
-            return sendJson(res, 400, { success: false, error: "Name and email are required" });
-        }
+app.post('/api/auth/logout', (req, res) => ok(res));
 
-        const existing = db.users.find(u => u.email.toLowerCase() === payload.email.toLowerCase());
-        if (existing) {
-            return sendJson(res, 409, { success: false, error: "An account with this email already exists" });
-        }
+// ============================================================================
+// CORE TRANSIT PLATFORM REST API ENDPOINTS
+// ============================================================================
 
-        const newUser = {
-            name: payload.name,
-            email: payload.email,
-            phone: payload.phone || '+91 98765 43210',
-            city: payload.city || 'Delhi',
-            role: payload.role || 'passenger',
-            password: payload.password || 'password123',
-            createdAt: new Date().toISOString()
-        };
-        db.users.push(newUser);
-
-        return sendJson(res, 201, {
-            success: true,
-            message: "User registered successfully",
-            user: { name: newUser.name, email: newUser.email, role: newUser.role, city: newUser.city }
-        });
-    }
-
-    // 7. Auth: Email OTP Dispatch & Verification
-    if (pathname === '/api/auth/send-otp' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        return sendJson(res, 200, {
-            success: true,
-            message: `OTP dispatched to ${payload.email}`,
-            otp: otp, // Returned for simulated offline display
-            validitySeconds: 300
-        });
-    }
-
-    // 8. Book Ticket
-    if (pathname === '/api/tickets/book' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        const ticketId = 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-        const newTicket = {
-            id: ticketId,
-            city: payload.city || 'Delhi',
-            route: payload.route || '507',
-            passType: payload.passType || 'single',
-            boarding: payload.boarding || 'Origin',
-            drop: payload.drop || 'Destination',
-            seat: payload.seat || '1A',
-            passengers: payload.passengers || 1,
-            name: payload.name || 'Commuter',
-            email: payload.email || 'commuter@example.com',
-            total: payload.total || '₹45.00',
-            status: 'Confirmed',
-            bookedAt: new Date().toISOString()
-        };
-        db.tickets.push(newTicket);
-
-        return sendJson(res, 201, {
-            success: true,
-            message: "E-Ticket created and confirmed",
-            ticket: newTicket
-        });
-    }
-
-    // 9. Get User Tickets
-    if (pathname === '/api/tickets' && method === 'GET') {
-        const email = parsedUrl.query.email;
-        const results = email 
-            ? db.tickets.filter(t => t.email.toLowerCase() === email.toLowerCase())
-            : db.tickets;
-        return sendJson(res, 200, { success: true, count: results.length, tickets: results });
-    }
-
-    // 10. Commuter Service Alerts & Crowdsourced Reporting
-    if (pathname === '/api/alerts' && method === 'GET') {
-        const city = parsedUrl.query.city || 'Delhi';
-        const sampleAlerts = [
-            { type: 'info', title: 'Normal Operations', message: `All scheduled bus fleets are operating normally in ${city}.`, time: 'Just now', route: 'All Network' },
-            { type: 'warning', title: 'Peak Rush Congestion', message: 'Moderate traffic delay (+8m) on main arterial corridors.', time: '12 min ago', route: 'Primary Lines' }
-        ];
-        const crowdsourced = db.incidentReports.filter(r => (r.city || 'Delhi').toLowerCase() === city.toLowerCase());
-        return sendJson(res, 200, { success: true, city: city, alerts: [...crowdsourced, ...sampleAlerts] });
-    }
-
-    if (pathname === '/api/alerts/report' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        const report = {
-            id: 'REP-' + Date.now().toString().slice(-4),
-            route: payload.route || 'Line',
-            type: payload.type || 'traffic',
-            title: payload.title || 'Commuter Incident',
-            message: payload.message || 'Reported delay',
-            location: payload.location || 'Roadway',
-            city: payload.city || 'Delhi',
-            time: 'Just now',
-            isCrowdsourced: true,
-            reportedAt: new Date().toISOString()
-        };
-        db.incidentReports.unshift(report);
-        return sendJson(res, 201, { success: true, message: "Report broadcasted to commuters", report: report });
-    }
-
-    // 11. Safety SOS Distress Logging
-    if (pathname === '/api/safety/sos' && method === 'POST') {
-        const payload = await parseRequestBody(req);
-        const distressLog = {
-            id: 'SOS-' + Date.now(),
-            city: payload.city || 'Delhi',
-            route: payload.route || 'Transit',
-            timestamp: new Date().toISOString(),
-            status: 'DISPATCHED_TO_CONTROL_ROOM'
-        };
-        db.sosDistressLogs.push(distressLog);
-        return sendJson(res, 200, {
-            success: true,
-            message: `🚨 Emergency Beacon Transmitted. ${payload.city || 'Delhi'} Transit Police Control Room Alerted.`,
-            dispatchId: distressLog.id
-        });
-    }
-
-    // 12. City Weather Advisory
-    if (pathname === '/api/weather' && method === 'GET') {
-        const city = parsedUrl.query.city || 'Delhi';
-        return sendJson(res, 200, {
-            success: true,
-            city: city,
-            temperature: '28°C',
-            condition: 'Clear to Partly Cloudy',
-            delayRisk: 'Low (0-4 min)',
-            roadVisibility: '8.5 km',
-            waterlogging: 'None Reported'
-        });
-    }
-
-    // ========================================================================
-    // STATIC FILE SERVING
-    // ========================================================================
-    let safePath = path.normalize(decodeURIComponent(pathname)).replace(/^(\.\.[\/\\])+/, '');
-    if (safePath === '/' || safePath === '\\') {
-        safePath = '/index.html';
-    }
-
-    const filePath = path.join(PUBLIC_DIR, safePath);
-
-    fs.stat(filePath, (err, stats) => {
-        if (err || !stats.isFile()) {
-            // Not a file, return 404
-            res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(`<h1>404 - Not Found</h1><p>The requested file ${safePath} was not found on Transit.IN.</p><a href="/">Return to Dashboard</a>`);
-            return;
-        }
-
-        const ext = path.extname(filePath).toLowerCase();
-        const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-        res.writeHead(200, {
-            'Content-Type': contentType,
-            'Cache-Control': 'no-cache, must-revalidate'
-        });
-
-        const stream = fs.createReadStream(filePath);
-        stream.pipe(res);
+// Health Check
+app.get('/api/health', (req, res) => {
+    res.json({
+        ok: true,
+        status: "online",
+        connected: true,
+        server: "Transit.IN Enterprise Mobility Backend API",
+        version: "3.5.0",
+        uptimeSeconds: Math.round(process.uptime()),
+        timestamp: new Date().toISOString(),
+        port: PORT,
+        activeCities: Object.keys(cityRoutesCatalog),
+        totalUsersRegistered: Object.keys(db.users).length,
+        totalFeedbackReviews: db.feedback.length
     });
 });
 
-server.listen(PORT, () => {
+// Routes Catalog
+app.get('/api/routes', (req, res) => {
+    const city = req.query.city || 'Delhi';
+    const routes = cityRoutesCatalog[city] || cityRoutesCatalog['Delhi'];
+    res.json({
+        success: true,
+        city: city,
+        count: routes.length,
+        routes: routes
+    });
+});
+
+app.get('/api/routes/:id', (req, res) => {
+    const routeId = req.params.id;
+    let found = null;
+    for (const city of Object.keys(cityRoutesCatalog)) {
+        const r = cityRoutesCatalog[city].find(x => x.id.toLowerCase() === routeId.toLowerCase());
+        if (r) {
+            found = { ...r, city };
+            break;
+        }
+    }
+    if (found) {
+        res.json({ success: true, route: found });
+    } else {
+        res.status(404).json({ success: false, error: `Route ${routeId} not found` });
+    }
+});
+
+// Live GPS Telemetry
+app.get('/api/track/:id', (req, res) => {
+    const routeId = req.params.id;
+    const hashVal = Math.abs(routeId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
+    const occupancy = 35 + (hashVal % 50);
+    res.json({
+        success: true,
+        routeId: routeId,
+        telemetry: {
+            vehicleReg: `IN-01-EB-${1000 + (hashVal % 8999)}`,
+            pilot: "Vikram Singh (Rating: 4.95 ⭐)",
+            speedKmH: 38 + (hashVal % 8),
+            crowdOccupancy: occupancy,
+            crowdStatus: occupancy > 75 ? 'Crowded' : occupancy > 45 ? 'Moderate' : 'Seats Available',
+            seatsAvailable: Math.max(2, Math.round(48 * (1 - occupancy / 100))),
+            gpsSignal: "Active Real-Time Stream",
+            lastPing: new Date().toISOString()
+        }
+    });
+});
+
+// Auth Login
+app.post('/api/auth/login', (req, res) => {
+    const { email, password, role } = req.body;
+    const em = (email || '').trim().toLowerCase();
+    const user = db.users[em];
+
+    if (user && user.password && user.password.h) {
+        if (hash(password, user.password.salt).h === user.password.h) {
+            return res.json({
+                success: true,
+                message: "Authentication successful",
+                token: "JWT-TOKEN-" + Math.random().toString(36).substr(2, 10).toUpperCase(),
+                user: user.profile
+            });
+        }
+    }
+
+    // Permissive demo login for commuters
+    if (role !== 'admin' && em) {
+        if (!db.users[em]) {
+            db.users[em] = newUser(em);
+            save();
+        }
+        return res.json({
+            success: true,
+            message: "Welcome commuter (demo verified)",
+            token: "JWT-COMMUTER-DEMO",
+            user: db.users[em].profile
+        });
+    }
+
+    res.status(401).json({ success: false, error: "Invalid credentials. Please verify your email and password." });
+});
+
+// Auth Signup
+app.post('/api/auth/signup', (req, res) => {
+    const { name, email, password, phone, city } = req.body;
+    if (!email || !name) return bad(res, "Name and email are required");
+    const em = email.trim().toLowerCase();
+    if (db.users[em]) return res.status(409).json({ success: false, error: "An account with this email already exists" });
+
+    const u = newUser(em);
+    u.profile.name = name;
+    if (phone) u.profile.phone = phone;
+    if (city) u.profile.city = city;
+    if (password) u.password = hash(password);
+    db.users[em] = u;
+    save();
+
+    res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        user: u.profile
+    });
+});
+
+// Auth OTP
+app.post('/api/auth/send-otp', (req, res) => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    res.json({
+        success: true,
+        message: `OTP dispatched to ${req.body.email || 'user'}`,
+        otp: otp,
+        validitySeconds: 300
+    });
+});
+
+// Book Ticket
+app.post('/api/tickets/book', commuterContext, (req, res) => {
+    const payload = req.body;
+    const ticketId = 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    const newTicket = {
+        id: ticketId,
+        city: payload.city || 'Delhi',
+        route: payload.route || '507',
+        passType: payload.passType || 'single',
+        boarding: payload.boarding || 'Origin',
+        drop: payload.drop || 'Destination',
+        seat: payload.seat || '1A',
+        passengers: payload.passengers || 1,
+        name: payload.name || req.u.profile.name,
+        email: payload.email || req.u.profile.email,
+        total: payload.total || '₹45.00',
+        status: 'Confirmed',
+        bookedAt: new Date().toISOString()
+    };
+    globalTickets.push(newTicket);
+    req.u.trips.unshift({
+        id: newTicket.id,
+        route: newTicket.route,
+        city: newTicket.city,
+        date: 'Today',
+        fare: newTicket.total,
+        status: 'Completed',
+        from: newTicket.boarding,
+        to: newTicket.drop
+    });
+    save();
+
+    res.status(201).json({
+        success: true,
+        message: "E-Ticket created and confirmed",
+        ticket: newTicket
+    });
+});
+
+// Alerts
+app.get('/api/alerts', (req, res) => {
+    const city = req.query.city || 'Delhi';
+    const sampleAlerts = [
+        { type: 'info', title: 'Normal Operations', message: `All scheduled bus fleets are operating normally in ${city}.`, time: 'Just now', route: 'All Network' },
+        { type: 'warning', title: 'Peak Rush Congestion', message: 'Moderate traffic delay (+8m) on main arterial corridors.', time: '12 min ago', route: 'Primary Lines' }
+    ];
+    const crowdsourced = incidentReports.filter(r => (r.city || 'Delhi').toLowerCase() === city.toLowerCase());
+    res.json({ success: true, city: city, alerts: [...crowdsourced, ...sampleAlerts] });
+});
+
+app.post('/api/alerts/report', (req, res) => {
+    const report = {
+        id: 'REP-' + Date.now().toString().slice(-4),
+        route: req.body.route || 'Line',
+        type: req.body.type || 'traffic',
+        title: req.body.title || 'Commuter Incident',
+        message: req.body.message || 'Reported delay',
+        location: req.body.location || 'Roadway',
+        city: req.body.city || 'Delhi',
+        time: 'Just now',
+        isCrowdsourced: true,
+        reportedAt: new Date().toISOString()
+    };
+    incidentReports.unshift(report);
+    res.status(201).json({ success: true, message: "Report broadcasted to commuters", report: report });
+});
+
+// Emergency SOS
+app.post('/api/safety/sos', (req, res) => {
+    const distressLog = {
+        id: 'SOS-' + Date.now(),
+        city: req.body.city || 'Delhi',
+        route: req.body.route || 'Transit',
+        timestamp: new Date().toISOString(),
+        status: 'DISPATCHED_TO_CONTROL_ROOM'
+    };
+    sosDistressLogs.push(distressLog);
+    res.json({
+        success: true,
+        message: `🚨 Emergency Beacon Transmitted. ${req.body.city || 'Delhi'} Transit Police Control Room Alerted.`,
+        dispatchId: distressLog.id
+    });
+});
+
+// Weather
+app.get('/api/weather', (req, res) => {
+    const city = req.query.city || 'Delhi';
+    res.json({
+        success: true,
+        city: city,
+        temperature: '28°C',
+        condition: 'Clear to Partly Cloudy',
+        delayRisk: 'Low (0-4 min)',
+        roadVisibility: '8.5 km',
+        waterlogging: 'None Reported'
+    });
+});
+
+// ============================================================================
+// STATIC FILE SERVING
+// ============================================================================
+
+app.use(express.static(PUBLIC_DIR, {
+    maxAge: 0,
+    etag: false
+}));
+
+app.use((req, res) => {
+    const target = path.join(PUBLIC_DIR, req.path);
+    if (fs.existsSync(target) && fs.statSync(target).isFile()) {
+        return res.sendFile(target);
+    }
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// Start Server
+app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`🚆 Transit.IN Enterprise Mobility Server is RUNNING!`);
     console.log(`🔗 Local Web App:     http://localhost:${PORT}/index.html`);
+    console.log(`🔗 Profile Dashboard: http://localhost:${PORT}/profile.html`);
     console.log(`🔗 Backend Health:    http://localhost:${PORT}/api/health`);
-    console.log(`🔗 Routes REST API:   http://localhost:${PORT}/api/routes?city=Delhi`);
-    console.log(`📡 Backend Status:    CONNECTED & READY FOR REQUESTS`);
+    console.log(`🔗 Profile REST API:  http://localhost:${PORT}/api/profile`);
+    console.log(`📡 Backend Status:    CONNECTED & PERSISTING TO db.json`);
     console.log(`=======================================================`);
 });
