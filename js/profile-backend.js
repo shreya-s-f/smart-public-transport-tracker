@@ -86,36 +86,62 @@ window.removeAvatarPhoto = () => run(async () => {
   const p = await api('/profile/avatar', 'DELETE'); LS('spt-user-profile-data', p); O.loadUserProfile(); notify('Profile photo removed.');
 }, () => O.removeAvatarPhoto());
 
+const show = id => {
+  if (typeof window.showModal === 'function') window.showModal(id);
+  else {
+    const el = $(id);
+    if (el) { el.style.display = 'flex'; el.classList.add('active'); el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
+  }
+};
+const hide = id => {
+  if (typeof window.hideModal === 'function') window.hideModal(id);
+  else {
+    const el = $(id);
+    if (el) { el.style.display = 'none'; el.classList.remove('active'); el.style.opacity = '0'; el.style.pointerEvents = 'none'; }
+  }
+};
+
 /* ---------- wallet & payments ---------- */
-async function refreshWallet() { const w = await api('/wallet'); LS('spt-payment-wallet', w); O.loadWalletDisplay(); return w; }
-window.openPaymentModal = () => { O.loadWalletDisplay(); $('payment-modal').style.display = 'flex'; refreshWallet().catch(() => {}); };
+async function refreshWallet() { const w = await api('/wallet'); LS('spt-payment-wallet', w); if (O.loadWalletDisplay) O.loadWalletDisplay(); return w; }
+window.openPaymentModal = () => { 
+  if (O.loadWalletDisplay) O.loadWalletDisplay(); 
+  show('payment-modal'); 
+  refreshWallet().catch(() => {}); 
+};
 window.quickRechargeWallet = amount => run(async () => {
-  const w = await api('/wallet/recharge', 'POST', { amount }); LS('spt-payment-wallet', w); O.loadWalletDisplay();
+  const w = await api('/wallet/recharge', 'POST', { amount }); LS('spt-payment-wallet', w); if (O.loadWalletDisplay) O.loadWalletDisplay();
   notify(`₹${amount} added. New balance ₹${w.balance.toFixed(2)}`);
-}, () => O.quickRechargeWallet(amount));
+}, () => O.quickRechargeWallet && O.quickRechargeWallet(amount));
 window.saveNewPaymentMethod = () => {
   const input = $('new-payment-input'), val = input.value.trim();
   run(async () => {
-    const w = await api('/wallet/methods', 'POST', { value: val }); LS('spt-payment-wallet', w); O.loadWalletDisplay();
+    const w = await api('/wallet/methods', 'POST', { value: val }); LS('spt-payment-wallet', w); if (O.loadWalletDisplay) O.loadWalletDisplay();
     input.value = ''; toggleAddPaymentMethod(); notify('Payment method linked.');
-  }, () => O.saveNewPaymentMethod());
+  }, () => O.saveNewPaymentMethod && O.saveNewPaymentMethod());
 };
 
 /* ---------- notification + security settings ---------- */
-const loadSetting = async (name, key, open) => { try { LS(key, await api('/settings/' + name)); } catch (e) {} open(); };
-window.openNotificationSettingsModal = () => loadSetting('notifications', 'spt-notification-settings', O.openNotificationSettingsModal);
-window.openPrivacyModal = () => loadSetting('security', 'spt-security-settings', O.openPrivacyModal);
+window.openNotificationSettingsModal = () => {
+  if (O.openNotificationSettingsModal) O.openNotificationSettingsModal();
+  else show('notification-settings-modal');
+  api('/settings/notifications').then(d => LS('spt-notification-settings', d)).catch(() => {});
+};
+window.openPrivacyModal = () => {
+  if (O.openPrivacyModal) O.openPrivacyModal();
+  else show('privacy-modal');
+  api('/settings/security').then(d => LS('spt-security-settings', d)).catch(() => {});
+};
 
 window.saveNotificationSettings = e => {
   e.preventDefault();
   const b = { delays: $('notif-toggle-delays').checked, arrival: $('notif-toggle-arrival').checked, offers: $('notif-toggle-offers').checked, email: $('notif-toggle-email').checked, emergency: $('notif-toggle-emergency').checked };
-  run(async () => { LS('spt-notification-settings', await api('/settings/notifications', 'PUT', b)); closeNotificationSettingsModal(); notify('Notification preferences saved.'); },
-    () => O.saveNotificationSettings({ preventDefault() {} }));
+  run(async () => { LS('spt-notification-settings', await api('/settings/notifications', 'PUT', b)); hide('notification-settings-modal'); notify('Notification preferences saved.'); },
+    () => O.saveNotificationSettings && O.saveNotificationSettings({ preventDefault() {} }));
 };
 window.saveSecurityPreferences = () => {
   const b = { twoFactor: $('sec-toggle-2fa').checked, highGps: $('sec-toggle-gps').checked, anonymize: $('sec-toggle-anonymize').checked };
-  run(async () => { LS('spt-security-settings', await api('/settings/security', 'PUT', b)); closePrivacyModal(); notify('Security settings saved.'); },
-    () => O.saveSecurityPreferences());
+  run(async () => { LS('spt-security-settings', await api('/settings/security', 'PUT', b)); hide('privacy-modal'); notify('Security settings saved.'); },
+    () => O.saveSecurityPreferences && O.saveSecurityPreferences());
 };
 window.terminateOtherSessions = () => run(async () => {
   await api('/security/sessions/terminate', 'POST'); const r = $('session-mobile-row'); if (r) r.style.display = 'none'; notify('Other sessions signed out.');
@@ -131,34 +157,36 @@ window.handleChangePassword = e => {
   if (nw !== cf) { err.textContent = 'New passwords do not match.'; err.style.display = 'block'; return; }
   run(async () => {
     await api('/security/password', 'POST', { current: cur, next: nw });
-    err.style.display = 'none'; $('change-password-form').reset(); switchSecurityTab('settings'); notify('Password updated.');
-  }, () => O.handleChangePassword(e));
+    err.style.display = 'none'; $('change-password-form').reset(); if (window.switchSecurityTab) switchSecurityTab('settings'); notify('Password updated.');
+  }, () => O.handleChangePassword && O.handleChangePassword(e));
 };
 
 /* ---------- help desk + feedback ---------- */
-window.openHelpModal = async () => {
-  try { LS('spt-support-tickets', await api('/tickets')); } catch (e) {}
-  switchHelpTab('faqs'); O.renderUserTickets(); $('help-modal').style.display = 'flex';
+window.openHelpModal = () => {
+  if (O.openHelpModal) O.openHelpModal();
+  else { if (window.switchHelpTab) switchHelpTab('faqs'); if (O.renderUserTickets) O.renderUserTickets(); show('help-modal'); }
+  api('/tickets').then(t => { LS('spt-support-tickets', t); if (O.renderUserTickets) O.renderUserTickets(); }).catch(() => {});
 };
 window.handleRaiseTicket = e => {
   e.preventDefault();
   const b = { category: $('ticket-category').value, route: $('ticket-route').value.trim(), description: $('ticket-description').value.trim() };
   run(async () => {
     const t = await api('/tickets', 'POST', b); LS('spt-support-tickets', await api('/tickets'));
-    $('raise-ticket-form').reset(); O.renderUserTickets(); notify(`Ticket ${t.id} created. We will reply within 24 hours.`);
-  }, () => O.handleRaiseTicket(e));
+    $('raise-ticket-form').reset(); if (O.renderUserTickets) O.renderUserTickets(); notify(`Ticket ${t.id} created. We will reply within 24 hours.`);
+  }, () => O.handleRaiseTicket && O.handleRaiseTicket(e));
 };
-window.openFeedbackModal = async () => {
-  try { LS('spt-user-feedbacks', await api('/feedback')); } catch (e) {}
-  O.openFeedbackModal();
+window.openFeedbackModal = () => {
+  if (O.openFeedbackModal) O.openFeedbackModal();
+  else show('feedback-modal');
+  api('/feedback').then(f => { LS('spt-user-feedbacks', f); if (O.renderCommunityFeedbacks) O.renderCommunityFeedbacks(); }).catch(() => {});
 };
 window.submitFeedback = e => {
   e.preventDefault();
-  const b = { stars: feedbackRating, category: $('feedback-category').value, author: $('feedback-author-name').value.trim(), comment: $('feedback-comment').value.trim() };
+  const b = { stars: window.feedbackRating || 5, category: $('feedback-category').value, author: $('feedback-author-name').value.trim(), comment: $('feedback-comment').value.trim() };
   run(async () => {
     await api('/feedback', 'POST', b); LS('spt-user-feedbacks', await api('/feedback'));
-    $('feedback-comment').value = ''; closeFeedbackModal(); notify(`Thanks for your ${b.stars}-star feedback.`);
-  }, () => O.submitFeedback(e));
+    $('feedback-comment').value = ''; hide('feedback-modal'); notify(`Thanks for your ${b.stars}-star feedback.`);
+  }, () => O.submitFeedback && O.submitFeedback(e));
 };
 
 /* ---------- logout ---------- */
