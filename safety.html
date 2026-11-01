@@ -424,6 +424,48 @@
                 </div>
             </div>
 
+            <!-- SECTION 5: CITY TRANSIT CONTROL ROOM & NIGHT COMMUTER PROTOCOL -->
+            <div class="safety-grid" style="margin-bottom: 2.5rem;">
+                <div class="glass-card animate-fade-in-up">
+                    <h3 style="margin-top: 0; font-size: 1.15rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-headset" style="color: var(--accent-color);"></i> <span id="city-control-title">Delhi</span> Transit Control Room Hotline
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">
+                        Dedicated municipal transit command center for bus route emergencies, lost property recovery, and onboard assistance.
+                    </p>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.2rem;">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.2rem;">Direct Helpline:</div>
+                        <strong style="font-size: 1.4rem; color: var(--accent-color);" id="city-control-number">1512 / 112</strong>
+                        <div style="font-size: 0.8rem; color: var(--success-color); margin-top: 0.4rem; font-weight: 600;">
+                            ● Operating 24 Hours / 7 Days a Week
+                        </div>
+                    </div>
+                    <a id="city-control-dial-btn" href="tel:1512" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.85rem; font-weight: 700;">
+                        <i class="fa-solid fa-phone"></i> Dial City Control Room
+                    </a>
+                </div>
+
+                <div class="glass-card animate-fade-in-up">
+                    <h3 style="margin-top: 0; font-size: 1.15rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-shield-heart" style="color: #10b981;"></i> Late-Night Commuter Safety Checklist
+                    </h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+                        <li style="margin-bottom: 0.6rem; display: flex; gap: 0.6rem;">
+                            <i class="fa-solid fa-check" style="color: var(--success-color); margin-top: 3px;"></i>
+                            <span><strong>Board near the driver:</strong> On late-night trips, prefer seats closer to the vehicle operator or conductor bay.</span>
+                        </li>
+                        <li style="margin-bottom: 0.6rem; display: flex; gap: 0.6rem;">
+                            <i class="fa-solid fa-check" style="color: var(--success-color); margin-top: 3px;"></i>
+                            <span><strong>Keep live tracking active:</strong> Share your journey beacon with family before departure using the link above.</span>
+                        </li>
+                        <li style="margin-bottom: 0.6rem; display: flex; gap: 0.6rem;">
+                            <i class="fa-solid fa-check" style="color: var(--success-color); margin-top: 3px;"></i>
+                            <span><strong>Wait in lit shelters:</strong> Stand under operational CCTV light corridors at designated public transit stops.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -622,10 +664,31 @@
             window.location.href = `sms:?body=${text}`;
         }
 
+        const CITY_HOTLINES = {
+            'Delhi': { name: 'Delhi (DTC & Metro)', num: '1512 / 112', tel: '1512' },
+            'Mumbai': { name: 'Mumbai (BEST & Suburban)', num: '022-2418-4000', tel: '02224184000' },
+            'Bangalore': { name: 'Bengaluru (BMTC / Metro)', num: '1800-425-1663', tel: '18004251663' },
+            'Bagalkot': { name: 'Bagalkot (NWKRTC Control)', num: '08354-220033', tel: '08354220033' },
+            'Hyderabad': { name: 'Hyderabad (TSRTC & Metro)', num: '040-2345-0033', tel: '04023450033' },
+            'Chennai': { name: 'Chennai (MTC & Metro)', num: '044-2345-5801', tel: '04423455801' },
+            'Pune': { name: 'Pune (PMPML & Metro)', num: '020-2450-3355', tel: '02024503355' }
+        };
+
+        function updateCityControlRoom(city) {
+            const hot = CITY_HOTLINES[city] || CITY_HOTLINES['Delhi'];
+            const title = document.getElementById('city-control-title');
+            const num = document.getElementById('city-control-number');
+            const dialBtn = document.getElementById('city-control-dial-btn');
+            if (title) title.textContent = hot.name;
+            if (num) num.textContent = hot.num;
+            if (dialBtn) dialBtn.href = `tel:${hot.tel}`;
+        }
+
         // Sync Contact with Commuter Profile
         document.addEventListener('DOMContentLoaded', () => {
             const currentCity = localStorage.getItem('spt-city') || 'Delhi';
             populateSafetyRoutes(currentCity);
+            updateCityControlRoom(currentCity);
 
             const citySelector = document.querySelector('.city-selector');
             if (citySelector) {
@@ -633,6 +696,7 @@
                 citySelector.addEventListener('change', (e) => {
                     localStorage.setItem('spt-city', e.target.value);
                     populateSafetyRoutes(e.target.value);
+                    updateCityControlRoom(e.target.value);
                 });
             }
 
