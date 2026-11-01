@@ -1,0 +1,23 @@
+{
+  "name": "smart-public-transport-tracker",
+  "version": "3.0.0",
+  "description": "Transit.IN - Intelligent Public Transport Tracking, Intermodal Planning & Contactless Ticketing Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "server": "node server.js"
+  },
+  "keywords": [
+    "transit",
+    "public-transport",
+    "leaflet",
+    "osrm",
+    "smart-city",
+    "india-transit",
+    "real-time-tracking",
+    "express"
+  ],
+  "author": "Shreya Fakirapur",
+  "license": "MIT"
+}
