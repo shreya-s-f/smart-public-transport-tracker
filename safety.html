@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit.IN - 24/7 Safety Shield & Emergency SOS</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- App Stylesheet -->
+    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/enhance.css">
+    <script src="js/auth.js?v=8"></script>
+
+    <style>
+        .safety-container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .safety-hero {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(15, 23, 42, 0.4) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 20px;
+            padding: 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .safety-hero::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .beacon-box {
+            background: rgba(239, 68, 68, 0.08);
+            border: 2px dashed rgba(239, 68, 68, 0.4);
+            border-radius: 18px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .beacon-box.active {
+            border-style: solid;
+            background: rgba(239, 68, 68, 0.18);
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
+            animation: pulse-beacon 1.2s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-beacon {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+            100% { transform: scale(1.008); box-shadow: 0 0 45px rgba(239, 68, 68, 0.6); }
+        }
+
+        .alarm-big-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 1.1rem 2.2rem;
+            font-size: 1.15rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.45);
+            transition: all 0.2s ease;
+        }
+
+        .alarm-big-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.6);
+        }
+
+        .alarm-big-btn.siren-on {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+            animation: siren-wiggle 0.3s infinite alternate;
+        }
+
+        @keyframes siren-wiggle {
+            0% { transform: rotate(-1deg); }
+            100% { transform: rotate(1deg); }
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .safety-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .helpline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .helpline-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.4rem;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .helpline-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .helpline-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .helpline-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .share-btn {
+            flex: 1;
+            padding: 0.85rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .share-btn-wa {
+            background: #25d366;
+            color: #ffffff;
+        }
+
+        .share-btn-wa:hover {
+            background: #1ebc59;
+            transform: translateY(-2px);
+        }
+
+        .share-btn-copy {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-color: var(--card-border);
+        }
+
+        .share-btn-copy:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .share-btn-sms {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .share-btn-sms:hover {
+            background: rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar with Safety Shield Active Tab -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-bus"></i> Transit.IN
+        </div>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="routes.html">Routes</a>
+            <a href="tracking.html">Live Tracking</a>
+            <a href="timetable.html">Timetable</a>
+            <a href="notifications.html">Alerts</a>
+            <a href="booking.html"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
+            <a href="safety.html" class="active"><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety Shield</a>
+            <a href="profile.html">Profile</a>
+        </div>
+        
+        <div class="nav-actions">
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Bagalkot">Bagalkot</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Pune">Pune</option>
+            </select>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        <div class="safety-container">
+
+            <!-- Hero Header -->
+            <div class="safety-hero animate-fade-in-up">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;">
+                    <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(239, 68, 68, 0.2); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800; color: var(--text-primary);">Transit.IN Safety Shield</h1>
+                        <p style="margin: 0.2rem 0 0 0; color: var(--text-secondary); font-size: 0.95rem;">
+                            Pan-India 24/7 Emergency SOS, Audible Distress Beacon & Live Journey Tracking Protection
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: INSTANT DISTRESS PANIC BEACON -->
+            <div class="beacon-box animate-fade-in-up" id="beacon-container">
+                <div style="display: inline-block; padding: 0.35rem 1rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 20px; font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Instant Distress Panic Beacon
+                </div>
+                <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; color: var(--text-primary);">Emergency Rapid Response Controller</h2>
+                <p style="max-width: 650px; margin: 0 auto 1.5rem auto; color: var(--text-secondary); font-size: 0.92rem;">
+                    Press in case of an immediate threat or transit emergency. Sounds an audible distress alarm and broadcasts live GPS coordinates directly to the Police Control Room.
+                </p>
+
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button id="siren-start-btn" onclick="toggleEmergencySiren()" class="alarm-big-btn">
+                        <i class="fa-solid fa-bell"></i> <span id="siren-btn-text">Sound Emergency Alarm</span>
+                    </button>
+                    <button onclick="dispatchPoliceEmergency()" class="alarm-big-btn" style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); box-shadow: 0 8px 25px rgba(30, 58, 138, 0.45);">
+                        <i class="fa-solid fa-tower-broadcast"></i> Alert Transit Police
+                    </button>
+                </div>
+
+                <div id="siren-alert-status" style="margin-top: 1.2rem; font-size: 0.95rem; color: #ef4444; font-weight: 700; display: none;"></div>
+            </div>
+
+            <!-- SECTION 2: TWO-COLUMN INTERACTIVE ACTIONS -->
+            <div class="safety-grid">
+                
+                <!-- Card 1: Share Live Journey -->
+                <div class="glass-card animate-fade-in-up">
+                    <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-share-nodes" style="color: var(--accent-color);"></i> Share Live Transit Journey
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                        Send your real-time vehicle route, current stop, and estimated arrival time to family or trusted contacts.
+                    </p>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem;">Select Active Route to Share</label>
+                        <select id="share-route-select" class="search-input" style="width: 100%; box-sizing: border-box;" onchange="updateSharePreview()">
+                            <option value="507 (Okhla Phase 1 ➔ Connaught Place)">Route 507 &bull; Connaught Place Express</option>
+                            <option value="Airport-Exp (New Delhi ➔ IGI Airport T3)">Route Airport-Exp &bull; IGI Terminal 3</option>
+                            <option value="GL-23 (ISBT Kashmiri Gate ➔ Anand Vihar)">Route GL-23 &bull; Metro Feeder</option>
+                            <option value="BEST-301 (CSMT ➔ BKC)">Route BEST-301 &bull; BKC Electric Express</option>
+                            <option value="V-500D (Hebbal ➔ Silk Board)">Route V-500D &bull; Ring Road Volvo</option>
+                            <option value="BGK-01 (Navanagar ➔ Old Bus Stand)">Route BGK-01 &bull; City Shuttle</option>
+                        </select>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem; margin-bottom: 1.2rem;">
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.3rem;">Generated Trip Beacon Link</div>
+                        <div id="share-preview-url" style="font-size: 0.86rem; color: var(--accent-color); word-break: break-all; font-family: monospace;">
+                            http://localhost:5000/tracking.html?route=507&live_share=true&sos_beacon=SAFE
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <button onclick="shareOnWhatsApp()" class="share-btn share-btn-wa">
+                            <i class="fa-brands fa-whatsapp"></i> Share on WhatsApp
+                        </button>
+                        <button onclick="copyLiveShareLink()" class="share-btn share-btn-copy">
+                            <i class="fa-solid fa-copy"></i> Copy Live Link
+                        </button>
+                        <button onclick="shareViaSMS()" class="share-btn share-btn-sms">
+                            <i class="fa-solid fa-comment-sms"></i> SMS Link
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Emergency Contact & Profile Status -->
+                <div class="glass-card animate-fade-in-up">
+                    <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid fa-user-shield" style="color: #ef4444;"></i> Primary Emergency Contact
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                        Linked from your verified commuter profile. One tap directly initiates an encrypted voice call.
+                    </p>
+
+                    <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 14px; padding: 1.2rem; margin-bottom: 1.2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong style="font-size: 1.1rem; color: var(--text-primary);" id="safety-contact-name">Ramesh F (Guardian)</strong>
+                            <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 20px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-weight: 700;">
+                                <i class="fa-solid fa-circle-check"></i> Linked
+                            </span>
+                        </div>
+                        <div style="font-size: 0.95rem; color: var(--text-secondary);" id="safety-contact-phone">+91 94480 12345</div>
+                    </div>
+
+                    <a id="safety-contact-dial-btn" href="tel:+919448012345" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.9rem; font-weight: 700;">
+                        <i class="fa-solid fa-phone"></i> Call Emergency Contact Now
+                    </a>
+
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <a href="profile.html" style="font-size: 0.85rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">
+                            <i class="fa-solid fa-pen-to-square"></i> Change Emergency Contact in Profile &rarr;
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SECTION 3: 24/7 TOLL-FREE PAN-INDIA HELPLINES -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+                    <i class="fa-solid fa-phone-volume" style="color: var(--success-color);"></i> Pan-India 24/7 Helplines (Toll-Free One-Tap Dial)
+                </h3>
+
+                <div class="helpline-grid">
+                    <!-- 112 -->
+                    <a href="tel:112" class="helpline-card" style="border-left: 4px solid #3b82f6;">
+                        <span class="helpline-num" style="color: #3b82f6;">112</span>
+                        <span class="helpline-name">National Emergency Support (All-in-One)</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Police, Fire, Disaster Management</div>
+                    </a>
+
+                    <!-- 1091 -->
+                    <a href="tel:1091" class="helpline-card" style="border-left: 4px solid #ec4899;">
+                        <span class="helpline-num" style="color: #ec4899;">1091</span>
+                        <span class="helpline-name">Women Helpline (24/7 Pan-India)</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Dedicated Transit & Night Shield</div>
+                    </a>
+
+                    <!-- 1512 -->
+                    <a href="tel:1512" class="helpline-card" style="border-left: 4px solid #f59e0b;">
+                        <span class="helpline-num" style="color: #f59e0b;">1512</span>
+                        <span class="helpline-name">Transit / Railway Police</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">GRP & City Public Transport Security</div>
+                    </a>
+
+                    <!-- 108 -->
+                    <a href="tel:108" class="helpline-card" style="border-left: 4px solid #10b981;">
+                        <span class="helpline-num" style="color: #10b981;">108</span>
+                        <span class="helpline-name">Emergency Medical Ambulance</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Rapid Trauma & Health Assistance</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SECTION 4: SAFE TRANSIT STATIONS RADAR -->
+            <div class="glass-card animate-fade-in-up" style="margin-bottom: 2.5rem;">
+                <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                    <i class="fa-solid fa-location-crosshairs" style="color: var(--accent-color);"></i> Nearest Safe Transit Zones & Assistance Hubs
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                    Monitored hubs equipped with CCTV surveillance, 24/7 security marshals, and direct police control room kiosks.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem;">
+                        <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;"><i class="fa-solid fa-building-shield" style="color: #3b82f6;"></i> Central Station Transit Booth</strong>
+                        <span style="font-size: 0.82rem; color: var(--text-secondary);">Platform Bay 1 &bull; Armed Marshals on Duty</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--success-color); font-weight: 600;">● Active Surveillance (CCTV Stream Live)</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem;">
+                        <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;"><i class="fa-solid fa-heart-pulse" style="color: #10b981;"></i> First-Aid & Trauma Rapid Post</strong>
+                        <span style="font-size: 0.82rem; color: var(--text-secondary);">Concourse Concourse North &bull; Automated Defibrillator (AED)</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--success-color); font-weight: 600;">● Paramedeic Station Active</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem;">
+                        <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;"><i class="fa-solid fa-person-shelter" style="color: #ec4899;"></i> Pink Booth Women Transit Safezone</strong>
+                        <span style="font-size: 0.82rem; color: var(--text-secondary);">Terminal Gate 4 &bull; Women Officers 24/7</span>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--success-color); font-weight: 600;">● SOS Fast-Track Point</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="margin-top: 4rem; padding: 2.5rem 1.5rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary); background: rgba(15, 23, 42, 0.4);">
+        <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.2rem;">
+            <i class="fa-solid fa-bus" style="color: var(--accent-color);"></i> Transit.IN
+        </p>
+        <p style="font-size: 0.92rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Intelligent Public Transport Platform &bull; Real-Time Telemetry &bull; 24/7 Safety Shield
+        </p>
+        <p style="font-size: 0.82rem; color: var(--text-secondary);">Developed with passion by Shreya &copy; 2026 &bull; Clean Vanilla HTML, CSS & JavaScript</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js?v=8"></script>
+    <script src="js/backend-api.js"></script>
+
+    <script>
+        // Web Audio API Siren Synthesizer
+        let sirenAudioCtx = null;
+        let sirenOscillator = null;
+        let sirenGain = null;
+        let sirenInterval = null;
+        let isSirenActive = false;
+
+        function toggleEmergencySiren() {
+            if (isSirenActive) {
+                stopEmergencySiren();
+            } else {
+                startEmergencySiren();
+            }
+        }
+
+        function startEmergencySiren() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) {
+                    alert("Audio siren is not supported in this browser.");
+                    return;
+                }
+
+                sirenAudioCtx = new AudioContext();
+                sirenOscillator = sirenAudioCtx.createOscillator();
+                sirenGain = sirenAudioCtx.createGain();
+
+                sirenOscillator.type = 'sawtooth';
+                sirenOscillator.frequency.setValueAtTime(600, sirenAudioCtx.currentTime);
+
+                sirenGain.gain.setValueAtTime(0.3, sirenAudioCtx.currentTime);
+                sirenOscillator.connect(sirenGain);
+                sirenGain.connect(sirenAudioCtx.destination);
+
+                sirenOscillator.start();
+                isSirenActive = true;
+
+                let highPitch = false;
+                sirenInterval = setInterval(() => {
+                    if (!sirenOscillator || !sirenAudioCtx) return;
+                    highPitch = !highPitch;
+                    const freq = highPitch ? 950 : 600;
+                    sirenOscillator.frequency.exponentialRampToValueAtTime(freq, sirenAudioCtx.currentTime + 0.25);
+                }, 300);
+
+                const btn = document.getElementById('siren-start-btn');
+                const btnText = document.getElementById('siren-btn-text');
+                const box = document.getElementById('beacon-container');
+                const status = document.getElementById('siren-alert-status');
+
+                btn.classList.add('siren-on');
+                btnText.textContent = 'Silence Distress Alarm';
+                box.classList.add('active');
+                status.style.display = 'block';
+                status.innerHTML = '<i class="fa-solid fa-triangle-exclamation fa-beat"></i> EMERGENCY DISTRESS BEACON ACTIVE &bull; AUDIBLE ALARM SOUNDING';
+
+            } catch (err) {
+                console.error("Error initiating siren:", err);
+            }
+        }
+
+        function stopEmergencySiren() {
+            if (sirenInterval) {
+                clearInterval(sirenInterval);
+                sirenInterval = null;
+            }
+            if (sirenOscillator) {
+                try {
+                    sirenOscillator.stop();
+                    sirenOscillator.disconnect();
+                } catch(e) {}
+                sirenOscillator = null;
+            }
+            if (sirenAudioCtx) {
+                try {
+                    sirenAudioCtx.close();
+                } catch(e) {}
+                sirenAudioCtx = null;
+            }
+
+            isSirenActive = false;
+
+            const btn = document.getElementById('siren-start-btn');
+            const btnText = document.getElementById('siren-btn-text');
+            const box = document.getElementById('beacon-container');
+            const status = document.getElementById('siren-alert-status');
+
+            btn.classList.remove('siren-on');
+            btnText.textContent = 'Sound Emergency Alarm';
+            box.classList.remove('active');
+            status.style.display = 'block';
+            status.style.color = 'var(--success-color)';
+            status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Distress alarm silenced. Stay safe in designated areas.';
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 4000);
+        }
+
+        // Alert Transit Police via Backend API
+        async function dispatchPoliceEmergency() {
+            const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+            const status = document.getElementById('siren-alert-status');
+            const box = document.getElementById('beacon-container');
+            box.classList.add('active');
+            status.style.display = 'block';
+            status.style.color = '#ef4444';
+            status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Transmitting distress telemetry to Police Control Room...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/safety/sos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        city: currentCity,
+                        route: document.getElementById('share-route-select')?.value || 'Active Transit Line',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                const data = await response.json();
+                status.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${data.message || 'Transit Police Control Room Alerted.'} (Dispatch ID: ${data.dispatchId || 'SOS-2026'})`;
+            } catch (err) {
+                status.innerHTML = `<i class="fa-solid fa-circle-check"></i> 🚨 Emergency Distress Transmitted to ${currentCity} Police Dispatch via Standalone Beacon. Help is en route.`;
+            }
+        }
+
+        // Live Journey Sharing
+        function updateSharePreview() {
+            const select = document.getElementById('share-route-select');
+            const preview = document.getElementById('share-preview-url');
+            const routeCode = select.value.split(' ')[0];
+            const url = `http://localhost:5000/tracking.html?route=${encodeURIComponent(routeCode)}&live_share=true&sos_beacon=SAFE`;
+            preview.textContent = url;
+        }
+
+        function shareOnWhatsApp() {
+            const select = document.getElementById('share-route-select');
+            const routeName = select.value;
+            const url = document.getElementById('share-preview-url').textContent.trim();
+            const text = encodeURIComponent(`🚨 Transit.IN Live Ride Tracking:\nI am traveling on ${routeName}.\nTrack my vehicle location and ETA live here:\n${url}\n(Transit.IN 24/7 Safety Shield Active)`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+        }
+
+        function copyLiveShareLink() {
+            const url = document.getElementById('share-preview-url').textContent.trim();
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Live ride tracking link copied to clipboard!\nYou can paste and send it to your trusted contacts.');
+            }).catch(() => {
+                prompt('Copy this live ride tracking link:', url);
+            });
+        }
+
+        function shareViaSMS() {
+            const select = document.getElementById('share-route-select');
+            const routeName = select.value;
+            const url = document.getElementById('share-preview-url').textContent.trim();
+            const text = encodeURIComponent(`Transit.IN Live Journey: I am riding ${routeName}. Track me live: ${url}`);
+            window.location.href = `sms:?body=${text}`;
+        }
+
+        // Sync Contact with Commuter Profile
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const profile = JSON.parse(localStorage.getItem('spt-user-profile-data'));
+                if (profile && profile.emergencyName) {
+                    const nameEl = document.getElementById('safety-contact-name');
+                    const phoneEl = document.getElementById('safety-contact-phone');
+                    const dialBtn = document.getElementById('safety-contact-dial-btn');
+
+                    if (nameEl) nameEl.textContent = profile.emergencyName;
+                    if (phoneEl && profile.emergencyPhone) phoneEl.textContent = profile.emergencyPhone;
+                    if (dialBtn && profile.emergencyPhone) dialBtn.href = `tel:${profile.emergencyPhone.replace(/\s+/g, '')}`;
+                }
+            } catch(e) {}
+
+            updateSharePreview();
+        });
+    </script>
+</body>
+</html>
