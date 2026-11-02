@@ -61,20 +61,13 @@
   - **Quick Links & Care:** Commuter FAQ articles, Grievance / Ticket submission, 5-Star Feedback rating, and About Transit+ membership perks.
   - **Safety Shield Hub:** Instant Distress Panic Beacon with synthesized audible siren, Police Control Room dispatch, WhatsApp/SMS live trip sharing, and clickable 24/7 helplines (**112**, **1091**, **1512**, **108**).
 
-### 4. 🧭 Driver Cabin Console (`driver.html`)
-- Mobile-first, high-contrast touch interface designed specifically for bus cockpit mounting.
-- Live Trip State Controller (`Standby`, `Boarding`, `In Transit`, `Arriving`, `Completed`).
-- Tactile Occupancy Stepper (`-5`, `-1`, `+1`, `+5`) synchronized in real-time with passenger tracking maps.
-- Turn-by-turn next stop announcer with automated route progression.
-- Cabin SOS emergency distress trigger transmitting vehicle coordinates to headquarters.
-
-### 5. 🏢 Centralized Fleet Management Admin Portal (`admin.html`)
+### 4. 🏢 Centralized Fleet Management Admin Portal (`admin.html`)
 - **Fleet Control Radar:** Real-time operational map with status tags (`Active`, `Maintenance`, `Off Route`).
 - **Driver Roster & Shift Allocator:** Active pilot duty hours, vehicle assignments, and license validity tracker.
 - **Predictive Maintenance Telemetry:** AI health index, brake pad wear sensors, and battery coolant indicators.
 - **Grievance Resolution Desk:** Live ticket resolver for passenger complaints and lost-and-found property claims.
 
-### 6. 🎙️ Multilingual TransitVoice AI Assistant (`js/voice-assistant.js`)
+### 5. 🎙️ Multilingual TransitVoice AI Assistant (`js/voice-assistant.js`)
 - Interactive floating microphone button with pulsing soundwave visualizer.
 - Speech Recognition supporting English, Hindi, and regional phrases (*"Where is route 500D?", "How much is fare to Airport?", "Show my pass"*).
 - Web Speech Synthesis with audible route directions and high-priority transit announcements.
@@ -93,7 +86,6 @@
 | `/api/track/:id` | GET | Real-time vehicle telemetry, coordinates, and occupancy |
 | `/api/complaints` | GET / POST / PATCH | Grievance submission and admin resolution workflow |
 | `/api/lost-found` | GET / POST / PATCH | Passenger lost items registry and depot claim tracking |
-| `/api/driver/status`| GET / POST | Live driver cockpit occupancy and door status sync |
 | `/api/maintenance` | GET / POST | Fleet vehicle health scores and service alerts |
 | `/api/safety/sos` | POST | Emergency distress beacon dispatch with GPS coordinates |
 | `/api/alerts` | GET / POST | Crowdsourced disruption reports and weather advisories |
@@ -121,7 +113,6 @@ npm start
 
 ### 3. Demo Role Accounts
 - **Passenger:** `shreya.f@example.com` / `password123` &rarr; Navigates to Commuter Hub
-- **Driver:** `driver@transit.in` / `driver123` &rarr; Navigates to Cabin Console (`driver.html`)
 - **Fleet Admin:** `admin@transit` / `admin123` &rarr; Navigates to Admin Portal (`admin.html`)
 
 ### 4. Global Keyboard Shortcuts

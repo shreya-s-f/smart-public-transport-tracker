@@ -281,9 +281,6 @@
                 <button type="button" id="role-pill-passenger" class="role-pill active" onclick="selectRole('passenger')">
                     <i class="fa-solid fa-user"></i> Passenger
                 </button>
-                <button type="button" id="role-pill-driver" class="role-pill" onclick="selectRole('driver')">
-                    <i class="fa-solid fa-id-card-clip"></i> Driver
-                </button>
                 <button type="button" id="role-pill-admin" class="role-pill" onclick="selectRole('admin')">
                     <i class="fa-solid fa-user-shield"></i> Admin
                 </button>
@@ -525,14 +522,13 @@
         function selectRole(role) {
             currentRole = role;
             const passPill = document.getElementById('role-pill-passenger');
-            const driverPill = document.getElementById('role-pill-driver');
             const adminPill = document.getElementById('role-pill-admin');
             const emailInput = document.getElementById('signin-email');
             const passInput = document.getElementById('signin-password');
             const submitBtn = document.getElementById('signin-submit-btn');
             const methodBar = document.getElementById('signin-method-bar');
 
-            [passPill, driverPill, adminPill].forEach(p => { if (p) p.classList.remove('active'); });
+            [passPill, adminPill].forEach(p => { if (p) p.classList.remove('active'); });
 
             if (role === 'admin') {
                 if (adminPill) adminPill.classList.add('active');
@@ -540,14 +536,6 @@
                 passInput.value = "admin123";
                 submitBtn.innerHTML = 'Sign In as Fleet Admin <i class="fa-solid fa-shield-halved"></i>';
                 submitBtn.style.background = 'var(--warning-color)';
-                methodBar.style.display = 'none';
-                toggleSigninMethod('password');
-            } else if (role === 'driver') {
-                if (driverPill) driverPill.classList.add('active');
-                emailInput.value = "driver@transit.in";
-                passInput.value = "driver123";
-                submitBtn.innerHTML = 'Launch Driver Cabin Console <i class="fa-solid fa-id-card-clip"></i>';
-                submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                 methodBar.style.display = 'none';
                 toggleSigninMethod('password');
             } else {
@@ -623,16 +611,6 @@
             const password = document.getElementById('signin-password').value.trim();
 
             // Admin Logic
-            
-            if (currentRole === 'driver' || email.includes('driver')) {
-                finishAuthLogin({
-                    id: 'usr_driver_01',
-                    name: 'Rajesh Kumar (Pilot)',
-                    email: email,
-                    role: 'driver'
-                });
-                return;
-            }
     
             if (currentRole === 'admin') {
                 if (email === 'admin@transit' && password === 'admin123') {
@@ -943,8 +921,6 @@
             setTimeout(() => {
                 if (user.role === 'admin') {
                     window.location.href = 'admin.html';
-                } else if (user.role === 'driver' || currentRole === 'driver') {
-                    window.location.href = 'driver.html';
                 } else {
                     window.location.href = 'index.html';
                 }

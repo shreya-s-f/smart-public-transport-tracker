@@ -84,19 +84,6 @@ db.maintenance = db.maintenance || [
     { busId: 'MH-01-BT-301', route: 'BEST-301', healthScore: 96, batteryBrake: 'Battery Cell 98%', nextService: 'In 28 days', status: 'Optimal' }
 ];
 
-db.driverStatus = db.driverStatus || {
-    driverId: 'DRV-KA-9912',
-    name: 'Rajesh Kumar',
-    vehicleNumber: 'KA-01-FA-4421',
-    routeId: '500D',
-    status: 'In Transit',
-    occupancy: 38,
-    maxCapacity: 45,
-    doorStatus: 'Closed',
-    airConditioning: 'Active (22°C)',
-    lastPing: new Date().toISOString()
-};
-
 // In-Memory Seed Data for Global Platform
 const globalTickets = [];
 const incidentReports = [];
@@ -598,20 +585,6 @@ app.patch('/api/lost-found/:id', (req, res) => {
     if (req.body.status) item.status = req.body.status;
     save();
     res.json({ success: true, message: 'Lost item status updated', data: item });
-});
-
-// ============================================================================
-// DRIVER TELEMETRY & IN-CABIN CONSOLE ENDPOINTS
-// ============================================================================
-app.get('/api/driver/status', (req, res) => {
-    res.json({ success: true, data: db.driverStatus });
-});
-
-app.post('/api/driver/status', (req, res) => {
-    const updates = req.body || {};
-    db.driverStatus = { ...db.driverStatus, ...updates, lastPing: new Date().toISOString() };
-    save();
-    res.json({ success: true, message: 'Driver telemetry updated', data: db.driverStatus });
 });
 
 // ============================================================================

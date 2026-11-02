@@ -108,7 +108,6 @@
       { title: 'BGK-01 (Navanagar - College Cross)', category: 'Route', icon: 'fa-route', url: 'tracking.html?route=BGK-01' },
       { title: 'Book Contactless QR Pass', category: 'Ticketing', icon: 'fa-ticket', url: 'booking.html' },
       { title: 'Safety Shield & Emergency SOS', category: 'Safety', icon: 'fa-shield-heart', url: 'safety.html' },
-      { title: 'Driver Cabin Console Mode', category: 'Driver', icon: 'fa-id-card-clip', url: 'driver.html' },
       { title: 'Central Admin Management', category: 'Admin', icon: 'fa-sliders', url: 'admin.html' },
       { title: 'Commuter Profile & Wallet', category: 'Account', icon: 'fa-user-astronaut', url: 'profile.html' },
       { title: 'Browse Pan-India Route Network', category: 'Navigation', icon: 'fa-network-wired', url: 'routes.html' },
