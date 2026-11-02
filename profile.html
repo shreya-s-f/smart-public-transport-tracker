@@ -477,61 +477,7 @@
         }
 
         
-        /* Main Profile Tab Navigation System */
-        .profile-main-tabs {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(16, 23, 42, 0.88);
-            border: 1px solid rgba(139, 92, 246, 0.38);
-            border-radius: 9999px;
-            padding: 0.35rem;
-            margin: 0 auto 1.8rem auto;
-            max-width: 920px;
-            width: 100%;
-            box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(139, 92, 246, 0.25);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            gap: 0.35rem;
-            box-sizing: border-box;
-            flex-wrap: nowrap;
-            position: sticky;
-            top: 76px;
-            z-index: 100;
-        }
-        .profile-main-tab-btn {
-            flex: 1;
-            padding: 0.75rem 1.2rem;
-            border-radius: 9999px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 0.92rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
-            white-space: nowrap;
-        }
-        .profile-main-tab-btn:hover {
-            color: #FFFFFF;
-            background: rgba(139, 92, 246, 0.18);
-            transform: translateY(-1px);
-        }
-        .profile-main-tab-btn.active {
-            background: linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%);
-            color: #FFFFFF;
-            box-shadow: 0 4px 18px rgba(139, 92, 246, 0.45);
-        }
-
-        .profile-tab-pane {
-            animation: fadeInTab 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(8px); }
+        /* Profile Navigation delegated to top middle navbar */
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -741,26 +687,31 @@
 <body>
 
     <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <a href="index.html" class="nav-brand" style="text-decoration:none;" aria-label="Transit.IN Home">
+        <!-- Top Navigation Bar (One-Bar Centered) -->
+    <nav class="navbar" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="nav-brand" aria-label="Transit.IN Home">
             <i class="fa-solid fa-bus-simple"></i> TRANSIT<span class="brand-dot">.</span>IN
         </a>
         
         <div class="nav-links" id="nav-links">
-            <a href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
-            <a href="routes.html"><i class="fa-solid fa-route"></i> Routes</a>
-            <a href="tracking.html"><i class="fa-solid fa-map-location-dot"></i> Live Tracking</a>
-            <a href="timetable.html"><i class="fa-solid fa-clock"></i> Timetable</a>
-            <a href="notifications.html"><i class="fa-solid fa-bell"></i> Alerts</a>
-            <a href="booking.html"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
-            <a href="safety.html"><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety</a>
-            <a href="admin.html"><i class="fa-solid fa-sliders"></i> Admin</a>
-            <a href="profile.html" class="active"><i class="fa-solid fa-user-astronaut"></i> Profile</a>
+            <a href="index.html" class=""><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="routes.html" class=""><i class="fa-solid fa-route"></i> Routes</a>
+            <a href="tracking.html" class=""><i class="fa-solid fa-map-location-dot"></i> Tracking</a>
+            <a href="timetable.html" class=""><i class="fa-solid fa-clock"></i> Timetable</a>
+            <a href="notifications.html" class=""><i class="fa-solid fa-bell"></i> Alerts</a>
+            <a href="booking.html" class=""><i class="fa-solid fa-ticket"></i> Booking</a>
+            <a href="safety.html" class=""><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety</a>
+            <a href="voice.html" class=""><i class="fa-solid fa-microphone" style="color: #38bdf8;"></i> Voice AI</a>
+            <a href="admin.html" class=""><i class="fa-solid fa-sliders"></i> Admin</a>
+            <a href="profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a>
         </div>
         
         <div class="nav-actions">
-            <button class="kbd-shortcut" id="navCmdKBtn" title="Search Everything (Ctrl + K)" style="cursor: pointer; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); padding: 0.35rem 0.65rem;">
-                <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem;"></i> <span>Ctrl K</span>
+            <div id="backend-status-pill" class="backend-status-pill online" title="Backend: Online (Port 5000)">
+                <span class="backend-dot-live"></span>
+            </div>
+            <button class="kbd-shortcut" id="navCmdKBtn" title="Search Everything (Ctrl + K)">
+                <i class="fa-solid fa-magnifying-glass"></i> <span>Ctrl K</span>
             </button>
             <select class="city-selector" aria-label="Select City">
                 <option value="Delhi">Delhi</option>
@@ -784,45 +735,7 @@
     <main>
         <div class="profile-container">
 
-            <!-- ============================================== -->
-            <!-- TOP MIDDLE UNIFIED PROFILE TAB NAVIGATION BAR  -->
-            <!-- ============================================== -->
-            <div class="profile-main-tabs animate-fade-in-up">
-                <button type="button" class="profile-main-tab-btn active" id="pnav-overview" onclick="switchProfileMainTab('overview')">
-                    <i class="fa-solid fa-gauge-high"></i> <span>Dashboard &amp; Trips</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-settings" onclick="switchProfileMainTab('settings')">
-                    <i class="fa-solid fa-sliders" style="color: var(--accent-color);"></i> <span>Account Settings</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-quicklinks" onclick="switchProfileMainTab('quicklinks')">
-                    <i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> <span>Quick Links &amp; Care</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-safety" onclick="switchProfileMainTab('safety')">
-                    <i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> <span>Safety Shield Hub</span>
-                </button>
-            </div>
-
-            <!-- Alert Toast Feedback -->
-            <div id="save-toast" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: var(--success-color); padding: 1rem 1.4rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;" class="animate-fade-in-up">
-                <i class="fa-solid fa-circle-check"></i> Profile information updated successfully!
-            </div>
-
-            <!-- ============================================== -->
-            <!-- TAB CONTAINER 1: DASHBOARD & TRIPS OVERVIEW    -->
-            <!-- ============================================== -->
-            <div id="tab-pane-overview" class="profile-tab-pane active">
-
-            <!-- ============================================== -->
-            <!-- 1. PROFILE HEADER CARD (BANNER + AVATAR + BIO) -->
-            <!-- ============================================== -->
-            <div class="profile-card animate-fade-in-up">
-                
-                <!-- Panoramic Cover Banner with Sunset Train View & Script Text -->
-                <div class="cover-banner">
-                    <div class="cover-banner-script">
-                        Explore<br>Travel<br>Repeat ✈
-                    </div>
-                </div>
+            
 
                 <!-- Header Info Body -->
                 <div class="profile-header-body">

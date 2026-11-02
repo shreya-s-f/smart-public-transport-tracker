@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit.IN - Voice Transit Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/voice-assistant.css">
+    <script src="js/auth.js"></script>
+    <script src="js/voice-assistant.js" defer></script>
+    <script src="js/interactions.js" defer></script>
+    <style>
+        .voice-page-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .voice-console-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.8));
+            border: 1px solid var(--card-border, rgba(139, 92, 246, 0.3));
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(56, 189, 248, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+        }
+        .voice-mic-main {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%);
+            color: #ffffff;
+            font-size: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.45);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            border: none;
+            outline: none;
+            margin-bottom: 1.5rem;
+        }
+        .voice-mic-main:hover {
+            transform: scale(1.06);
+            box-shadow: 0 14px 40px rgba(56, 189, 248, 0.6);
+        }
+        .voice-mic-main.listening {
+            animation: pulseWave 1.4s infinite ease-in-out;
+            background: linear-gradient(135deg, #EF4444 0%, #F59E0B 100%);
+        }
+        @keyframes pulseWave {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            70% { box-shadow: 0 0 0 25px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .quick-voice-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        .voice-prompt-chip {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .voice-prompt-chip:hover {
+            background: rgba(139, 92, 246, 0.25);
+            border-color: #38BDF8;
+            transform: translateY(-2px);
+        }
+        .transcript-history-box {
+            background: rgba(15, 23, 42, 0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.4rem;
+            max-height: 320px;
+            overflow-y: auto;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .transcript-msg {
+            padding: 0.8rem 1.1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 85%;
+        }
+        .transcript-user {
+            background: rgba(139, 92, 246, 0.15);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            color: var(--text-primary);
+        }
+        .transcript-bot {
+            background: rgba(56, 189, 248, 0.15);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar (One-Bar Centered) -->
+        <!-- Top Navigation Bar (One-Bar Centered) -->
+    <nav class="navbar" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="nav-brand" aria-label="Transit.IN Home">
+            <i class="fa-solid fa-bus-simple"></i> TRANSIT<span class="brand-dot">.</span>IN
+        </a>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class=""><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="routes.html" class=""><i class="fa-solid fa-route"></i> Routes</a>
+            <a href="tracking.html" class=""><i class="fa-solid fa-map-location-dot"></i> Tracking</a>
+            <a href="timetable.html" class=""><i class="fa-solid fa-clock"></i> Timetable</a>
+            <a href="notifications.html" class=""><i class="fa-solid fa-bell"></i> Alerts</a>
+            <a href="booking.html" class=""><i class="fa-solid fa-ticket"></i> Booking</a>
+            <a href="safety.html" class=""><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety</a>
+            <a href="voice.html" class="active"><i class="fa-solid fa-microphone" style="color: #38bdf8;"></i> Voice AI</a>
+            <a href="admin.html" class=""><i class="fa-solid fa-sliders"></i> Admin</a>
+            <a href="profile.html" class=""><i class="fa-solid fa-user"></i> Profile</a>
+        </div>
+        
+        <div class="nav-actions">
+            <div id="backend-status-pill" class="backend-status-pill online" title="Backend: Online (Port 5000)">
+                <span class="backend-dot-live"></span>
+            </div>
+            <button class="kbd-shortcut" id="navCmdKBtn" title="Search Everything (Ctrl + K)">
+                <i class="fa-solid fa-magnifying-glass"></i> <span>Ctrl K</span>
+            </button>
+            <select class="city-selector" aria-label="Select City">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Bagalkot">Bagalkot</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Pune">Pune</option>
+            </select>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Voice Assistant Module -->
+    <main>
+        <div class="voice-page-container animate-fade-in-up">
+            
+            <div class="voice-console-card">
+                <span class="pill-badge pill-badge-blue" style="margin-bottom: 1rem;">
+                    <i class="fa-solid fa-microphone-lines"></i> TRANSITVOICE AI 3.2
+                </span>
+                <h1 style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0 0.8rem 0; color: var(--text-primary);">
+                    Multilingual Voice Transit Assistant
+                </h1>
+                <p style="color: var(--text-secondary); max-width: 620px; margin: 0 auto 2rem auto; font-size: 0.95rem;">
+                    Ask natural questions in English, Hindi, or regional languages. Get spoken arrival predictions, route options, fare breakdown, and real-time guidance.
+                </p>
+
+                <!-- Voice Mic Controller -->
+                <div>
+                    <button type="button" class="voice-mic-main" id="standaloneVoiceBtn" onclick="toggleStandaloneVoice()" title="Tap to Speak">
+                        <i class="fa-solid fa-microphone" id="voiceBtnIcon"></i>
+                    </button>
+                    <div id="voiceStatusText" style="font-size: 1rem; font-weight: 700; color: var(--accent-color); margin-bottom: 0.5rem;">
+                        Tap microphone to speak
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                        Supports Web Speech Recognition &bull; Voice Chimes &bull; Multi-City Data
+                    </div>
+                </div>
+
+                <!-- Quick Prompts -->
+                <div class="quick-voice-prompts">
+                    <div class="voice-prompt-chip" onclick="askPresetVoice('Where is Route 507 right now?')">
+                        <i class="fa-solid fa-bus"></i> Where is Route 507?
+                    </div>
+                    <div class="voice-prompt-chip" onclick="askPresetVoice('How much is the fare to Airport?')">
+                        <i class="fa-solid fa-indian-rupee-sign"></i> Fare to Airport?
+                    </div>
+                    <div class="voice-prompt-chip" onclick="askPresetVoice('Is Route 500D running on time?')">
+                        <i class="fa-solid fa-clock"></i> Is Route 500D on time?
+                    </div>
+                    <div class="voice-prompt-chip" onclick="askPresetVoice('Show my active bus pass')">
+                        <i class="fa-solid fa-qrcode"></i> Show my bus pass
+                    </div>
+                    <div class="voice-prompt-chip" onclick="askPresetVoice('Emergency police help')">
+                        <i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Emergency SOS help
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dialogue History & Results -->
+            <div class="glass-card" style="padding: 1.8rem; border-radius: 20px;">
+                <h3 style="margin-top: 0; font-size: 1.15rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                    <i class="fa-solid fa-comments" style="color: #38BDF8;"></i> Voice Conversation Transcript
+                </h3>
+                <div class="transcript-history-box" id="voiceTranscriptBox">
+                    <div class="transcript-msg transcript-bot">
+                        👋 <strong>TransitVoice:</strong> Hello Shreya! I am your AI Transit Assistant. Tap the microphone and ask me anything about routes, bus arrival times, tickets, or emergency safety.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary);">
+        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-bus"></i> Transit.IN</p>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Smart Public Transport Tracker &bull; TransitVoice AI</p>
+        <p style="font-size: 0.8rem;">Developed by Shreya &copy; 2026</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/transit-data.js"></script>
+    <script src="js/backend-api.js"></script>
+    <script>
+        let isListeningStandalone = false;
+        let recognitionStandalone = null;
+
+        function toggleStandaloneVoice() {
+            if (isListeningStandalone) {
+                stopListeningStandalone();
+            } else {
+                startListeningStandalone();
+            }
+        }
+
+        function startListeningStandalone() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                alert('Speech Recognition not supported in this browser. Please use Google Chrome or Microsoft Edge.');
+                return;
+            }
+
+            recognitionStandalone = new SpeechRec();
+            recognitionStandalone.continuous = false;
+            recognitionStandalone.interimResults = false;
+            recognitionStandalone.lang = 'en-IN';
+
+            recognitionStandalone.onstart = function() {
+                isListeningStandalone = true;
+                const btn = document.getElementById('standaloneVoiceBtn');
+                const status = document.getElementById('voiceStatusText');
+                if (btn) btn.classList.add('listening');
+                if (status) status.innerHTML = '<span style="color: #ef4444;">🎙️ Listening to your voice... Speak now!</span>';
+            };
+
+            recognitionStandalone.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                handleVoiceQuestion(transcript);
+            };
+
+            recognitionStandalone.onerror = function(event) {
+                console.error('Speech error:', event);
+                stopListeningStandalone();
+            };
+
+            recognitionStandalone.onend = function() {
+                stopListeningStandalone();
+            };
+
+            recognitionStandalone.start();
+        }
+
+        function stopListeningStandalone() {
+            isListeningStandalone = false;
+            const btn = document.getElementById('standaloneVoiceBtn');
+            const status = document.getElementById('voiceStatusText');
+            if (btn) btn.classList.remove('listening');
+            if (status) status.textContent = 'Tap microphone to speak';
+        }
+
+        function askPresetVoice(query) {
+            handleVoiceQuestion(query);
+        }
+
+        function handleVoiceQuestion(query) {
+            const box = document.getElementById('voiceTranscriptBox');
+            if (!box) return;
+
+            // Append user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'transcript-msg transcript-user';
+            userMsg.innerHTML = '🗣️ <strong>You:</strong> ' + query;
+            box.appendChild(userMsg);
+
+            // Generate answer
+            let answer = "I found route information for your destination. Buses are arriving every 10 to 12 minutes.";
+            const q = query.toLowerCase();
+
+            if (q.includes('507') || q.includes('okhla')) {
+                answer = "Route 507 (Okhla Phase 1 to Connaught Place) is currently ON TIME. Vehicle DL-01-EXP-507 is 4 minutes away from Nehru Place.";
+            } else if (q.includes('airport') || q.includes('fare')) {
+                answer = "The Airport Express line departs every 8 minutes. Single adult fare is ₹60 for AC Express service.";
+            } else if (q.includes('500d') || q.includes('time') || q.includes('hebbal')) {
+                answer = "Route V-500D (Hebbal to Silk Board) has a 12-minute delay near Marathahalli due to ring road congestion. Next bus is 8 minutes away.";
+            } else if (q.includes('pass') || q.includes('ticket')) {
+                answer = "Your All-Corridor Digital Transit Pass TRN-2026-KA-8821 is ACTIVE and valid across all city routes with unlimited boarding.";
+            } else if (q.includes('sos') || q.includes('police') || q.includes('emergency')) {
+                answer = "EMERGENCY SAFETY SHIELD ACTIVE: Dial 112 for National Emergency or 1512 for Railway & Transit Police. Live GPS link is ready to share.";
+            }
+
+            const botMsg = document.createElement('div');
+            botMsg.className = 'transcript-msg transcript-bot';
+            botMsg.innerHTML = '🤖 <strong>TransitVoice:</strong> ' + answer;
+            box.appendChild(botMsg);
+            box.scrollTop = box.scrollHeight;
+
+            // Speak answer using Web Speech API
+            try {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(answer);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

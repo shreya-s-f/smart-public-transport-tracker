@@ -18,37 +18,45 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="index.html" class="nav-brand" style="text-decoration:none;" aria-label="Transit.IN Home">
+        <!-- Top Navigation Bar (One-Bar Centered) -->
+    <nav class="navbar" role="navigation" aria-label="Main Navigation">
+        <a href="index.html" class="nav-brand" aria-label="Transit.IN Home">
             <i class="fa-solid fa-bus-simple"></i> TRANSIT<span class="brand-dot">.</span>IN
         </a>
         
         <div class="nav-links" id="nav-links">
-            <a href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
-            <a href="routes.html"><i class="fa-solid fa-route"></i> Routes</a>
-            <a href="tracking.html"><i class="fa-solid fa-map-location-dot"></i> Live Tracking</a>
-            <a href="timetable.html"><i class="fa-solid fa-clock"></i> Timetable</a>
-            <a href="notifications.html"><i class="fa-solid fa-bell"></i> Alerts</a>
-            <a href="booking.html" class="active"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
-            <a href="safety.html"><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety</a>
-            <a href="admin.html"><i class="fa-solid fa-sliders"></i> Admin</a>
-            <a href="profile.html"><i class="fa-solid fa-user-astronaut"></i> Profile</a>
+            <a href="index.html" class=""><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <a href="routes.html" class=""><i class="fa-solid fa-route"></i> Routes</a>
+            <a href="tracking.html" class=""><i class="fa-solid fa-map-location-dot"></i> Tracking</a>
+            <a href="timetable.html" class=""><i class="fa-solid fa-clock"></i> Timetable</a>
+            <a href="notifications.html" class=""><i class="fa-solid fa-bell"></i> Alerts</a>
+            <a href="booking.html" class="active"><i class="fa-solid fa-ticket"></i> Booking</a>
+            <a href="safety.html" class=""><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety</a>
+            <a href="voice.html" class=""><i class="fa-solid fa-microphone" style="color: #38bdf8;"></i> Voice AI</a>
+            <a href="admin.html" class=""><i class="fa-solid fa-sliders"></i> Admin</a>
+            <a href="profile.html" class=""><i class="fa-solid fa-user"></i> Profile</a>
         </div>
         
         <div class="nav-actions">
-            <button class="kbd-shortcut" id="navCmdKBtn" title="Search Everything (Ctrl + K)" style="cursor: pointer; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); padding: 0.35rem 0.65rem;">
-                <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem;"></i> <span>Ctrl K</span>
+            <div id="backend-status-pill" class="backend-status-pill online" title="Backend: Online (Port 5000)">
+                <span class="backend-dot-live"></span>
+            </div>
+            <button class="kbd-shortcut" id="navCmdKBtn" title="Search Everything (Ctrl + K)">
+                <i class="fa-solid fa-magnifying-glass"></i> <span>Ctrl K</span>
             </button>
-            <!-- City Selector -->
             <select class="city-selector" aria-label="Select City">
                 <option value="Delhi">Delhi</option>
                 <option value="Mumbai">Mumbai</option>
                 <option value="Bangalore">Bangalore</option>
+                <option value="Bagalkot">Bagalkot</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Pune">Pune</option>
             </select>
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
-            <button id="mobile-menu-btn" class="mobile-menu-btn">
+            <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
