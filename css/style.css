@@ -3,6 +3,7 @@
    Imports Official Global Design System
    ========================================================================== */
 @import url('design-system.css');
+@import url('voice-assistant.css');
 
 /* --- CSS VARIABLES & THEMING --- */
 :root {
