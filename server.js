@@ -67,6 +67,36 @@ if (!db.users['shreya.f@example.com']) {
     save();
 }
 
+
+db.complaints = db.complaints || [
+    { id: 'CMP-2026-9041', commuter: 'Shreya F', category: 'AC Temperature', busNumber: 'KA-01-FA-4421', status: 'In Review', priority: 'Medium', timestamp: '2026-11-02 11:20 AM', notes: 'Cabin temperature reported warm on Route 500D.' },
+    { id: 'CMP-2026-8812', commuter: 'Aditya V', category: 'Rash Driving', busNumber: 'DL-01-EXP-507', status: 'Under Investigation', priority: 'High', timestamp: '2026-11-02 09:45 AM', notes: 'Speeding reported on Ring Road curve.' }
+];
+
+db.lostFound = db.lostFound || [
+    { id: 'LF-2026-114', item: 'Black Dell Laptop Bag', busNumber: 'KA-01-FA-4421', route: '500D (Hebbal to Silk Board)', status: 'Safeguarded at Depot 4', claimed: false, date: '2026-11-02' },
+    { id: 'LF-2026-098', item: 'Titan Automatic Wristwatch', busNumber: 'MH-01-BT-301', route: 'BEST-301 (CSMT to BKC)', status: 'Claimed by Owner', claimed: true, date: '2026-11-01' }
+];
+
+db.maintenance = db.maintenance || [
+    { busId: 'KA-01-FA-4421', route: '500D', healthScore: 92, batteryBrake: 'Brake Pad Wear 22%', nextService: 'In 14 days', status: 'Healthy' },
+    { busId: 'DL-01-EXP-507', route: '507', healthScore: 78, batteryBrake: 'Coolant Flow Low', nextService: 'In 3 days', status: 'Attention Needed' },
+    { busId: 'MH-01-BT-301', route: 'BEST-301', healthScore: 96, batteryBrake: 'Battery Cell 98%', nextService: 'In 28 days', status: 'Optimal' }
+];
+
+db.driverStatus = db.driverStatus || {
+    driverId: 'DRV-KA-9912',
+    name: 'Rajesh Kumar',
+    vehicleNumber: 'KA-01-FA-4421',
+    routeId: '500D',
+    status: 'In Transit',
+    occupancy: 38,
+    maxCapacity: 45,
+    doorStatus: 'Closed',
+    airConditioning: 'Active (22°C)',
+    lastPing: new Date().toISOString()
+};
+
 // In-Memory Seed Data for Global Platform
 const globalTickets = [];
 const incidentReports = [];
@@ -504,6 +534,106 @@ app.get('/api/weather', (req, res) => {
 });
 
 // ============================================================================
+
+// ============================================================================
+// COMPLAINTS & GRIEVANCE ENDPOINTS
+// ============================================================================
+app.get('/api/complaints', (req, res) => {
+    res.json({ success: true, count: db.complaints.length, data: db.complaints });
+});
+
+app.post('/api/complaints', (req, res) => {
+    const { category, busNumber, notes, commuter } = req.body || {};
+    const newComplaint = {
+        id: 'CMP-' + Date.now().toString().slice(-4),
+        commuter: commuter || 'Commuter',
+        category: category || 'General Grievance',
+        busNumber: busNumber || 'Unspecified',
+        status: 'Submitted',
+        priority: 'Normal',
+        timestamp: new Date().toLocaleString(),
+        notes: notes || 'No details provided'
+    };
+    db.complaints.unshift(newComplaint);
+    save();
+    res.status(201).json({ success: true, message: 'Complaint filed successfully', data: newComplaint });
+});
+
+app.patch('/api/complaints/:id', (req, res) => {
+    const item = db.complaints.find(c => c.id === req.params.id);
+    if (!item) return res.status(404).json({ success: false, error: 'Complaint not found' });
+    if (req.body.status) item.status = req.body.status;
+    if (req.body.priority) item.priority = req.body.priority;
+    save();
+    res.json({ success: true, message: 'Complaint updated', data: item });
+});
+
+// ============================================================================
+// LOST & FOUND REPOSITORY ENDPOINTS
+// ============================================================================
+app.get('/api/lost-found', (req, res) => {
+    res.json({ success: true, count: db.lostFound.length, data: db.lostFound });
+});
+
+app.post('/api/lost-found', (req, res) => {
+    const { item, busNumber, route } = req.body || {};
+    const newLF = {
+        id: 'LF-' + Date.now().toString().slice(-4),
+        item: item || 'Unspecified Item',
+        busNumber: busNumber || 'N/A',
+        route: route || 'N/A',
+        status: 'Safeguarded at Depot Hub',
+        claimed: false,
+        date: new Date().toISOString().split('T')[0]
+    };
+    db.lostFound.unshift(newLF);
+    save();
+    res.status(201).json({ success: true, message: 'Lost property registered', data: newLF });
+});
+
+app.patch('/api/lost-found/:id', (req, res) => {
+    const item = db.lostFound.find(l => l.id === req.params.id);
+    if (!item) return res.status(404).json({ success: false, error: 'Record not found' });
+    if (req.body.claimed !== undefined) item.claimed = req.body.claimed;
+    if (req.body.status) item.status = req.body.status;
+    save();
+    res.json({ success: true, message: 'Lost item status updated', data: item });
+});
+
+// ============================================================================
+// DRIVER TELEMETRY & IN-CABIN CONSOLE ENDPOINTS
+// ============================================================================
+app.get('/api/driver/status', (req, res) => {
+    res.json({ success: true, data: db.driverStatus });
+});
+
+app.post('/api/driver/status', (req, res) => {
+    const updates = req.body || {};
+    db.driverStatus = { ...db.driverStatus, ...updates, lastPing: new Date().toISOString() };
+    save();
+    res.json({ success: true, message: 'Driver telemetry updated', data: db.driverStatus });
+});
+
+// ============================================================================
+// PREDICTIVE FLEET MAINTENANCE ENDPOINTS
+// ============================================================================
+app.get('/api/maintenance', (req, res) => {
+    res.json({ success: true, count: db.maintenance.length, data: db.maintenance });
+});
+
+app.post('/api/maintenance', (req, res) => {
+    const record = req.body;
+    if (!record || !record.busId) return res.status(400).json({ success: false, error: 'busId required' });
+    const existing = db.maintenance.findIndex(m => m.busId === record.busId);
+    if (existing >= 0) {
+        db.maintenance[existing] = { ...db.maintenance[existing], ...record };
+    } else {
+        db.maintenance.unshift(record);
+    }
+    save();
+    res.json({ success: true, message: 'Maintenance record saved', data: record });
+});
+
 // STATIC FILE SERVING
 // ============================================================================
 
