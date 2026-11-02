@@ -1,65 +1,90 @@
 /* ==========================================================================
-   TRANSIT.IN — Premium Micro-Interactions, 3D Tilt, & Custom Cursor
+   TRANSIT.IN — Ultra-Fast Quantum Plasma Spotlight & Micro-Interactions
    ========================================================================== */
 
-/* Custom Futuristic Cursor (Desktop Only) */
+/* Native pointer is ALWAYS visible with 0ms hardware response */
+html, body {
+  cursor: default !important;
+}
+
+a, button, input, select, textarea, [role="button"], .clickable, .filter-pill, .trip-filter-tab, .profile-main-tab-btn {
+  cursor: pointer !important;
+}
+
+/* Special Type: Quantum Electric Plasma Aura (GPU Accelerated, Zero-Lag) */
 @media (hover: hover) and (pointer: fine) {
-  body.has-custom-cursor {
-    cursor: none !important;
-  }
-
-  body.has-custom-cursor a,
-  body.has-custom-cursor button,
-  body.has-custom-cursor input,
-  body.has-custom-cursor select,
-  body.has-custom-cursor .clickable {
-    cursor: none !important;
-  }
-
-  .transit-cursor-dot {
+  .transit-plasma-aura {
     position: fixed;
     top: 0;
     left: 0;
-    width: 8px;
-    height: 8px;
-    background-color: #38BDF8;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 9999999;
+    z-index: 99998;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px #38BDF8, 0 0 20px #8B5CF6;
-    transition: width 0.15s ease, height 0.15s ease, background-color 0.15s ease;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(139, 92, 246, 0.09) 38%, transparent 70%);
+    transition: opacity 0.15s ease, width 0.12s cubic-bezier(0.16, 1, 0.3, 1), height 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    will-change: transform, left, top;
   }
 
-  .transit-cursor-ring {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 32px;
-    height: 32px;
-    border: 1.5px solid rgba(139, 92, 246, 0.6);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999998;
-    transform: translate(-50%, -50%);
-    transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.22s ease,
-                background-color 0.22s ease;
+  .transit-plasma-aura.active {
+    opacity: 1;
   }
 
-  .transit-cursor-ring.hovering {
-    width: 48px;
-    height: 48px;
-    border-color: #38BDF8;
-    background-color: rgba(56, 189, 248, 0.08);
+  .transit-plasma-aura.hovering {
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(139, 92, 246, 0.16) 42%, transparent 70%);
+  }
+
+  /* Ultra-Fast Responsive Hover on All Interactive Elements (0.09s - 0.1s) */
+  a, button, .glass-panel, .glass-card, .btn-primary, .btn-primary-gradient,
+  .btn-secondary-glass, .filter-pill, .settings-item-row, .profile-main-tab-btn,
+  .trip-filter-tab, .nav-links a, .share-pill-btn, .alarm-big-btn, .police-big-btn {
+    transition: transform 0.09s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.09s ease,
+                background 0.09s ease,
+                border-color 0.09s ease,
+                color 0.09s ease !important;
+  }
+
+  /* Special Type Hover: Instant Tactile Pop & Luminous Electric Border Glow */
+  .btn-primary:hover, .btn-primary-gradient:hover, .alarm-big-btn:hover {
+    transform: translateY(-2px) scale(1.025) !important;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.5), 0 6px 20px rgba(139, 92, 246, 0.4) !important;
+  }
+
+  .btn-secondary-glass:hover, .share-pill-btn:hover, .police-big-btn:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.3) !important;
+    color: #FFFFFF !important;
+  }
+
+  .glass-card:hover, .glass-panel:hover {
+    border-color: rgba(139, 92, 246, 0.45) !important;
+    box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.4), 0 0 25px rgba(139, 92, 246, 0.2) !important;
+  }
+
+  .settings-item-row:hover {
+    transform: translateX(4px) !important;
+    background: rgba(139, 92, 246, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.35) !important;
+  }
+
+  /* Instant Tactile Press Response */
+  button:active, a:active, .profile-main-tab-btn:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.04s ease !important;
   }
 }
 
 /* 3D Tilt Utility Container */
 .tilt-card {
   transform-style: preserve-3d;
-  transition: transform 0.15s ease-out;
+  transition: transform 0.1s ease-out;
   will-change: transform;
 }
 
@@ -67,7 +92,7 @@
 .cmd-palette-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(8, 13, 32, 0.8);
+  background: rgba(8, 13, 32, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 999995;
@@ -77,7 +102,7 @@
   padding-top: 12vh;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.2s ease;
 }
 
 .cmd-palette-backdrop.active {
@@ -94,7 +119,7 @@
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(139, 92, 246, 0.3);
   overflow: hidden;
   transform: translateY(-20px) scale(0.97);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cmd-palette-backdrop.active .cmd-palette-box {
@@ -141,12 +166,12 @@
   color: #E2E8F0;
   text-decoration: none;
   font-size: 0.9rem;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
   cursor: pointer;
 }
 
 .cmd-item:hover, .cmd-item.selected {
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(139, 92, 246, 0.22);
   color: #FFFFFF;
   transform: translateX(4px);
 }
@@ -191,16 +216,16 @@
   min-width: 280px;
   max-width: 420px;
   pointer-events: auto;
-  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  animation: toastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 @keyframes toastSlideIn {
-  from { opacity: 0; transform: translateX(50px); }
+  from { opacity: 0; transform: translateX(40px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 .transit-toast.toast-exit {
   opacity: 0;
-  transform: translateX(60px);
+  transform: translateX(50px);
 }

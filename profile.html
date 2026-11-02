@@ -480,39 +480,48 @@
         /* Main Profile Tab Navigation System */
         .profile-main-tabs {
             display: flex;
-            gap: 0.8rem;
-            margin: 1.8rem 0;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-            scrollbar-width: thin;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 23, 42, 0.72);
+            border: 1px solid rgba(139, 92, 246, 0.32);
+            border-radius: 9999px;
+            padding: 0.35rem;
+            margin: 2rem auto;
+            max-width: 960px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), 0 0 20px rgba(139, 92, 246, 0.12);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            gap: 0.35rem;
+            box-sizing: border-box;
+            flex-wrap: nowrap;
         }
         .profile-main-tab-btn {
-            padding: 0.85rem 1.6rem;
-            border-radius: 14px;
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
+            flex: 1;
+            padding: 0.75rem 1.2rem;
+            border-radius: 9999px;
+            border: none;
+            background: transparent;
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
             white-space: nowrap;
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
         }
         .profile-main-tab-btn:hover {
-            color: var(--text-primary);
-            border-color: rgba(139, 92, 246, 0.4);
-            transform: translateY(-2px);
+            color: #FFFFFF;
+            background: rgba(139, 92, 246, 0.18);
+            transform: translateY(-1px);
         }
         .profile-main-tab-btn.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(56, 189, 248, 0.2) 100%);
-            border-color: #8B5CF6;
+            background: linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%);
             color: #FFFFFF;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 4px 18px rgba(139, 92, 246, 0.45);
         }
 
         .profile-tab-pane {
