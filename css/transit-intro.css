@@ -1,0 +1,352 @@
+/* ==========================================================================
+   TRANSIT.IN — Cinematic Animated Intro Screen
+   Sequence:
+   1. Deep Navy background (#10172A) & Midnight gradient
+   2. Purple (#8B5CF6) and Blue (#38BDF8) glowing gradient waves
+   3. Animated transportation beacon & location pin
+   4. Letter-by-letter TRANSIT.IN typography with light-sweep
+   5. Glowing dot in .IN
+   6. Tagline "SMARTER JOURNEYS. CONNECTED CITIES."
+   7. Animated transit route line with glowing stops
+   8. Subtle futuristic skyline
+   9. Loading progress bar with counter
+   10. Cinematic fade & scale transition
+   ========================================================================== */
+
+#transit-intro-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background-color: #10172A;
+  background-image: 
+    radial-gradient(circle at 50% 35%, rgba(139, 92, 246, 0.28) 0%, transparent 60%),
+    radial-gradient(circle at 75% 65%, rgba(56, 189, 248, 0.22) 0%, transparent 55%),
+    radial-gradient(circle at 25% 70%, rgba(196, 181, 253, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #080D20 0%, #10172A 50%, #080D20 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#transit-intro-screen.intro-exit {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Ambient Animated Gradient Waves */
+.intro-ambient-waves {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(56, 189, 248, 0.1) 40%, transparent 70%);
+  animation: introWaveDrift 14s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes introWaveDrift {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Futuristic City Skyline Silhouette */
+.intro-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 180px;
+  background-repeat: repeat-x;
+  background-position: bottom center;
+  background-size: 800px 180px;
+  opacity: 0.25;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 180' fill='%2338BDF8'%3E%3Cpath d='M0,180 L0,150 L20,150 L20,110 L45,110 L45,150 L70,150 L70,90 L95,90 L95,80 L105,80 L105,90 L130,90 L130,150 L160,150 L160,60 L185,60 L185,150 L210,150 L210,130 L230,130 L230,70 L240,50 L250,70 L250,130 L280,130 L280,150 L310,150 L310,40 L315,30 L320,40 L320,150 L350,150 L350,100 L380,100 L380,150 L410,150 L410,80 L440,80 L440,150 L470,150 L470,120 L490,120 L490,150 L520,150 L520,50 L550,50 L550,150 L580,150 L580,110 L610,110 L610,150 L640,150 L640,90 L670,90 L670,150 L700,150 L700,130 L730,130 L730,150 L760,150 L760,70 L790,70 L790,150 L800,150 L800,180 Z' opacity='0.5'/%3E%3C/svg%3E");
+  filter: drop-shadow(0 -5px 20px rgba(56, 189, 248, 0.3));
+}
+
+/* Skip Button */
+.intro-skip-btn {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #C4B5FD;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+.intro-skip-btn:hover {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #38BDF8;
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+/* Main Intro Content Stage */
+.intro-stage {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 650px;
+  padding: 0 1.5rem;
+}
+
+/* Step 3: Transportation Icon & Location Beacon */
+.intro-beacon-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin-bottom: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-beacon-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #8B5CF6;
+  opacity: 0;
+  animation: introBeaconPulse 2.4s infinite ease-out;
+}
+
+.intro-beacon-ring:nth-child(2) {
+  animation-delay: 0.8s;
+  border-color: #38BDF8;
+}
+
+@keyframes introBeaconPulse {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.intro-beacon-core {
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 2.1rem;
+  box-shadow: 0 0 35px rgba(139, 92, 246, 0.6), 0 0 15px rgba(56, 189, 248, 0.5);
+  animation: introCoreFloat 3s infinite ease-in-out;
+}
+
+@keyframes introCoreFloat {
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.7)); }
+  50% { transform: translateY(-6px); filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.9)); }
+}
+
+/* Step 5: TRANSIT.IN Letter-by-Letter Animation */
+.intro-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  padding: 0.2rem 1rem;
+}
+
+.intro-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(25px) scale(0.85);
+  background: linear-gradient(180deg, #FFFFFF 20%, #C4B5FD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: introCharReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes introCharReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Glowing dot in .IN */
+.intro-dot {
+  color: #38BDF8;
+  -webkit-text-fill-color: #38BDF8;
+  display: inline-block;
+  margin: 0 0.05em;
+  text-shadow: 0 0 18px #38BDF8, 0 0 30px #8B5CF6;
+  animation: introDotPulse 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes introDotPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 6px #38BDF8); }
+  100% { transform: scale(1.3); filter: drop-shadow(0 0 16px #8B5CF6); }
+}
+
+/* Step 6: Light Sweep Across Logo */
+.intro-light-sweep {
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: introSweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) 1.2s infinite;
+}
+
+@keyframes introSweep {
+  0% { left: -120%; }
+  60%, 100% { left: 160%; }
+}
+
+/* Step 7: Tagline */
+.intro-tagline {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(0.78rem, 2vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: introFadeUp 0.8s ease 0.9s forwards;
+}
+
+@keyframes introFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Step 8: Animated Route Line Underneath Tagline */
+.intro-route-line-wrap {
+  width: 260px;
+  height: 28px;
+  position: relative;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: introFadeUp 0.8s ease 1.1s forwards;
+}
+
+.intro-route-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.intro-route-track {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.intro-route-animated {
+  stroke: url(#introRouteGrad);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: introRouteTrace 2.2s cubic-bezier(0.4, 0, 0.2, 1) 1.2s infinite;
+}
+
+@keyframes introRouteTrace {
+  0% { stroke-dashoffset: 260; }
+  60%, 100% { stroke-dashoffset: 0; }
+}
+
+.intro-stop-node {
+  fill: #38BDF8;
+  filter: drop-shadow(0 0 5px #38BDF8);
+}
+
+/* Step 10: Smooth Animated Loading Bar */
+.intro-progress-container {
+  width: 280px;
+  max-width: 80vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  animation: introFadeUp 0.8s ease 1.2s forwards;
+}
+
+.intro-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.intro-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #8B5CF6, #38BDF8, #C4B5FD);
+  border-radius: 9999px;
+  box-shadow: 0 0 10px #38BDF8;
+  transition: width 0.1s linear;
+}
+
+.intro-progress-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.72rem;
+  color: #94A3B8;
+  letter-spacing: 0.05em;
+}
+
+.intro-progress-text {
+  color: #C4B5FD;
+}
+
+/* Reduced Motion Compliance */
+@media (prefers-reduced-motion: reduce) {
+  #transit-intro-screen {
+    transition: opacity 0.3s ease;
+  }
+  .intro-char, .intro-tagline, .intro-route-line-wrap, .intro-progress-container {
+    animation-duration: 0.1s !important;
+    animation-delay: 0s !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .intro-light-sweep, .intro-beacon-ring, .intro-ambient-waves {
+    display: none !important;
+  }
+}
