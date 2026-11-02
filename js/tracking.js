@@ -395,8 +395,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate occupancy percentage
         const stopsCount = (route.stops && route.stops.length) || 6;
-        const baseOccupancy = 40 + ((stopIdx * 14 + hash) % 45);
-        const occupancy = Math.min(95, Math.max(20, baseOccupancy));
+        let occupancy = Math.min(95, Math.max(20, 40 + ((stopIdx * 14 + hash) % 45)));
+
+        // Live Driver Console Sync check
+        try {
+            const driverLive = JSON.parse(localStorage.getItem('driver_live_occupancy'));
+            if (driverLive && (driverLive.routeId === route.id || route.id.includes('500'))) {
+                occupancy = driverLive.percentage;
+            }
+        } catch (e) {}
+
         const freeSeats = Math.max(2, Math.round(48 * (1 - occupancy / 100)));
 
         const crowdText = document.getElementById('telemetry-crowd-text');
@@ -410,6 +418,22 @@ document.addEventListener('DOMContentLoaded', () => {
             let crowdColor = occupancy > 75 ? 'var(--danger-color)' : occupancy > 45 ? 'var(--warning-color)' : 'var(--success-color)';
             crowdText.style.color = crowdColor;
             crowdText.innerHTML = `${crowdLabel} &bull; ${occupancy}% Full (${freeSeats} Seats Free)`;
+        }
+
+        // AI Arrival Prediction Calculations
+        const schedEl = document.getElementById('ai-scheduled-time');
+        const predEl = document.getElementById('ai-predicted-time');
+        const trafficEl = document.getElementById('ai-traffic-factor');
+        if (schedEl || predEl) {
+            const now = new Date();
+            const estMins = Math.max(2, Math.round(totalDistanceKm * 1.8));
+            const delayFactor = (stopIdx % 3) + 1;
+            const schedTime = new Date(now.getTime() + estMins * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const predTime = new Date(now.getTime() + (estMins + delayFactor) * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (schedEl) schedEl.textContent = schedTime;
+            if (predEl) predEl.textContent = predTime;
+            if (trafficEl) trafficEl.textContent = delayFactor > 2 ? `Moderate (+${delayFactor}m)` : `Low Delay (+${delayFactor}m)`;
         }
     }
 
