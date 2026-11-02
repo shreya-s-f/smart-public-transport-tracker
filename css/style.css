@@ -4,6 +4,7 @@
    ========================================================================== */
 @import url('design-system.css');
 @import url('voice-assistant.css');
+@import url('interactions.css');
 
 /* --- CSS VARIABLES & THEMING --- */
 :root {
