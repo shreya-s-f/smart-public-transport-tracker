@@ -476,6 +476,191 @@
             color: var(--accent-color);
         }
 
+        
+        /* Main Profile Tab Navigation System */
+        .profile-main-tabs {
+            display: flex;
+            gap: 0.8rem;
+            margin: 1.8rem 0;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+        }
+        .profile-main-tab-btn {
+            padding: 0.85rem 1.6rem;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+        .profile-main-tab-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        .profile-main-tab-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(56, 189, 248, 0.2) 100%);
+            border-color: #8B5CF6;
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+        }
+
+        .profile-tab-pane {
+            animation: fadeInTab 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Safety Shield & Helplines styling */
+        .safety-card-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .beacon-panic-box {
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .alarm-big-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            transition: all 0.2s;
+        }
+        .alarm-big-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+        }
+        .police-big-btn {
+            background: var(--card-bg);
+            color: #ef4444;
+            border: 1.5px solid rgba(239, 68, 68, 0.4);
+            padding: 0.85rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.2s;
+        }
+        .police-big-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+        .share-btn-row {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .share-pill-btn {
+            padding: 0.65rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .share-btn-green {
+            background: #25D366;
+            color: #ffffff;
+        }
+        .share-btn-green:hover {
+            background: #1eb956;
+        }
+        .share-btn-outline {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-color: var(--card-border);
+        }
+        .share-btn-outline:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .helpline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .helpline-item {
+            padding: 0.9rem;
+            border-radius: 14px;
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.2s;
+            display: block;
+        }
+        .helpline-item:hover {
+            transform: translateY(-2px);
+        }
+        .helpline-item-blue {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+        .helpline-item-pink {
+            background: rgba(236, 72, 153, 0.12);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: #ec4899;
+        }
+        .helpline-item-amber {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+        .helpline-item-emerald {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        .helpline-item-num {
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+        .helpline-item-sub {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
         /* Modal Styles (Fully Visible & Interactive in Dark & Light Modes) */
         .modal-overlay {
             position: fixed !important;
@@ -697,6 +882,29 @@
             </div>
 
             <!-- ============================================== -->
+            <!-- 2.3 MAIN PROFILE TAB NAVIGATION BAR            -->
+            <!-- ============================================== -->
+            <div class="profile-main-tabs animate-fade-in-up">
+                <button type="button" class="profile-main-tab-btn active" id="pnav-overview" onclick="switchProfileMainTab('overview')">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Dashboard &amp; Trips</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-settings" onclick="switchProfileMainTab('settings')">
+                    <i class="fa-solid fa-sliders" style="color: var(--accent-color);"></i> <span>Account Settings</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-quicklinks" onclick="switchProfileMainTab('quicklinks')">
+                    <i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> <span>Quick Links &amp; Care</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-safety" onclick="switchProfileMainTab('safety')">
+                    <i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> <span>Safety Shield Hub</span>
+                </button>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- TAB CONTAINER 1: DASHBOARD & TRIPS OVERVIEW    -->
+            <!-- ============================================== -->
+            <div id="tab-pane-overview" class="profile-tab-pane active">
+
+            <!-- ============================================== -->
             <!-- 2.5 PASSENGER SMART MOBILITY HUB CARDS         -->
             <!-- ============================================== -->
             <div class="bento-grid" style="margin-bottom: 2rem;">
@@ -737,9 +945,9 @@
                         <button type="button" class="btn-secondary-glass" onclick="openLostFoundModal()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
                             <i class="fa-solid fa-box-archive"></i> Lost &amp; Found Portal
                         </button>
-                        <a href="safety.html" class="btn-secondary-glass" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: #F87171; text-decoration: none;">
-                            <i class="fa-solid fa-shield-heart"></i> Safety Shield
-                        </a>
+                        <button type="button" class="btn-secondary-glass" onclick="openSafetyModal()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: #F87171;">
+        <i class="fa-solid fa-shield-heart"></i> Safety Shield
+    </button>
                     </div>
                 </div>
             </div>
@@ -871,6 +1079,97 @@
 
         </div>
     </main>
+
+    
+    <!-- ============================================== -->
+    <!-- MODAL: TRANSIT.IN SAFETY SHIELD (IMAGE 2)      -->
+    <!-- ============================================== -->
+    <div id="safety-shield-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 540px; padding: 1.8rem; border-radius: 20px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.8rem;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.3rem; font-weight: 800; color: var(--text-primary);">Transit.IN Safety Shield</h3>
+                        <p style="margin: 0.15rem 0 0 0; color: var(--text-secondary); font-size: 0.84rem;">
+                            Pan-India 24/7 Emergency SOS &amp; Live Trip Sharing
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSafetyModal()" style="background: transparent; border: none; font-size: 1.3rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Instant Distress Panic Beacon -->
+            <div class="beacon-panic-box" style="margin-bottom: 1.2rem; padding: 1.2rem;">
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; color: #ef4444; font-weight: 800; font-size: 0.92rem; margin-bottom: 0.4rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Instant Distress Panic Beacon
+                </div>
+                <p style="margin: 0 0 1rem 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">
+                    Press in case of an immediate emergency. Sounds an audible distress alarm and broadcasts simulated GPS distress coordinates.
+                </p>
+                <div style="display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" id="modal-siren-btn" onclick="toggleEmergencySirenProfile()" class="alarm-big-btn" style="padding: 0.7rem 1.4rem; font-size: 0.9rem;">
+                        <i class="fa-solid fa-bell"></i> <span id="modal-siren-btn-text">Sound Emergency Alarm</span>
+                    </button>
+                    <button type="button" onclick="dispatchPoliceEmergencyProfile()" class="police-big-btn" style="padding: 0.7rem 1.4rem; font-size: 0.9rem;">
+                        <i class="fa-solid fa-tower-broadcast"></i> Alert Transit Police
+                    </button>
+                </div>
+            </div>
+
+            <!-- Share Live Transit Journey -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: 14px; padding: 1.1rem; margin-bottom: 1.2rem;">
+                <h4 style="margin: 0 0 0.3rem 0; font-size: 0.98rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-share-nodes" style="color: var(--accent-color);"></i> Share Live Transit Journey
+                </h4>
+                <p style="margin: 0 0 0.8rem 0; color: var(--text-secondary); font-size: 0.82rem;">
+                    Send your real-time vehicle route, current stop, and estimated arrival time to family or trusted contacts.
+                </p>
+                <div class="share-btn-row" style="margin-top: 0.5rem;">
+                    <button type="button" onclick="shareOnWhatsAppProfile()" class="share-pill-btn share-btn-green" style="padding: 0.55rem 1rem; font-size: 0.82rem;">
+                        <i class="fa-brands fa-whatsapp"></i> Share on WhatsApp
+                    </button>
+                    <button type="button" onclick="copyLiveShareLinkProfile()" class="share-pill-btn share-btn-outline" style="padding: 0.55rem 1rem; font-size: 0.82rem;">
+                        <i class="fa-solid fa-copy"></i> Copy Live Link
+                    </button>
+                    <button type="button" onclick="shareViaSMSProfile()" class="share-pill-btn share-btn-outline" style="padding: 0.55rem 1rem; font-size: 0.82rem;">
+                        <i class="fa-solid fa-comment-sms"></i> SMS Link
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAN-INDIA 24/7 HELPLINES -->
+            <div>
+                <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.6rem;">
+                    <i class="fa-solid fa-phone" style="color: #10B981;"></i> PAN-INDIA 24/7 HELPLINES (TOLL-FREE)
+                </div>
+                <div class="helpline-grid" style="gap: 0.6rem;">
+                    <a href="tel:112" class="helpline-item helpline-item-blue" style="padding: 0.7rem;">
+                        <div class="helpline-item-num" style="font-size: 1.2rem;">112</div>
+                        <div class="helpline-item-sub">National Emergency</div>
+                    </a>
+                    <a href="tel:1091" class="helpline-item helpline-item-pink" style="padding: 0.7rem;">
+                        <div class="helpline-item-num" style="font-size: 1.2rem;">1091</div>
+                        <div class="helpline-item-sub">Women Helpline</div>
+                    </a>
+                    <a href="tel:1512" class="helpline-item helpline-item-amber" style="padding: 0.7rem;">
+                        <div class="helpline-item-num" style="font-size: 1.2rem;">1512</div>
+                        <div class="helpline-item-sub">Transit / Railway Police</div>
+                    </a>
+                    <a href="tel:108" class="helpline-item helpline-item-emerald" style="padding: 0.7rem;">
+                        <div class="helpline-item-num" style="font-size: 1.2rem;">108</div>
+                        <div class="helpline-item-sub">Medical Ambulance</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <!-- ============================================== -->
     <!-- MODAL 1: TRIP DETAIL / DIGITAL E-TICKET MODAL  -->
@@ -3040,5 +3339,223 @@
         }
     </script>
     <script src="js/profile-backend.js"></script>
+<script>
+
+    // ==============================================
+    // MAIN PROFILE TAB SWITCHER
+    // ==============================================
+    function switchProfileMainTab(tabKey) {
+        const tabs = ['overview', 'settings', 'quicklinks', 'safety'];
+        tabs.forEach(t => {
+            const btn = document.getElementById('pnav-' + t);
+            const pane = document.getElementById('tab-pane-' + t);
+            if (btn) btn.classList.remove('active');
+            if (pane) pane.style.display = 'none';
+        });
+
+        const activeBtn = document.getElementById('pnav-' + tabKey);
+        const activePane = document.getElementById('tab-pane-' + tabKey);
+        if (activeBtn) activeBtn.classList.add('active');
+        if (activePane) {
+            activePane.style.display = 'block';
+            activePane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Safety Modal Open / Close
+    function openSafetyModal() {
+        if (window.showModal) {
+            window.showModal('safety-shield-modal');
+        } else {
+            const m = document.getElementById('safety-shield-modal');
+            if (m) m.classList.add('active');
+        }
+    }
+    function closeSafetyModal() {
+        if (window.hideModal) {
+            window.hideModal('safety-shield-modal');
+        } else {
+            const m = document.getElementById('safety-shield-modal');
+            if (m) m.classList.remove('active');
+        }
+    }
+
+    // Web Audio Siren Generator
+    let profileSirenAudioCtx = null;
+    let profileSirenOsc = null;
+    let profileSirenGain = null;
+    let profileSirenInterval = null;
+    let isProfileSirenActive = false;
+
+    function toggleEmergencySirenProfile() {
+        if (isProfileSirenActive) {
+            stopProfileSiren();
+        } else {
+            startProfileSiren();
+        }
+    }
+
+    function startProfileSiren() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            profileSirenAudioCtx = new AudioCtx();
+            profileSirenOsc = profileSirenAudioCtx.createOscillator();
+            profileSirenGain = profileSirenAudioCtx.createGain();
+
+            profileSirenOsc.type = 'sawtooth';
+            profileSirenOsc.frequency.setValueAtTime(650, profileSirenAudioCtx.currentTime);
+
+            profileSirenGain.gain.setValueAtTime(0.3, profileSirenAudioCtx.currentTime);
+            profileSirenOsc.connect(profileSirenGain);
+            profileSirenGain.connect(profileSirenAudioCtx.destination);
+            profileSirenOsc.start();
+
+            let high = false;
+            profileSirenInterval = setInterval(() => {
+                if (!profileSirenOsc) return;
+                const freq = high ? 650 : 950;
+                profileSirenOsc.frequency.setValueAtTime(freq, profileSirenAudioCtx.currentTime);
+                high = !high;
+            }, 300);
+
+            isProfileSirenActive = true;
+            updateSirenUI(true);
+        } catch (e) {
+            console.error('AudioContext error:', e);
+            alert('🚨 EMERGENCY ALARM SOUNDING (Audio simulated on this device)');
+            isProfileSirenActive = true;
+            updateSirenUI(true);
+        }
+    }
+
+    function stopProfileSiren() {
+        if (profileSirenInterval) clearInterval(profileSirenInterval);
+        if (profileSirenOsc) {
+            try { profileSirenOsc.stop(); } catch(e){}
+            profileSirenOsc.disconnect();
+            profileSirenOsc = null;
+        }
+        if (profileSirenAudioCtx) {
+            try { profileSirenAudioCtx.close(); } catch(e){}
+            profileSirenAudioCtx = null;
+        }
+        isProfileSirenActive = false;
+        updateSirenUI(false);
+    }
+
+    function updateSirenUI(active) {
+        const text = active ? 'Stop Emergency Alarm' : 'Sound Emergency Alarm';
+        const tabBtn = document.getElementById('tab-siren-btn-text');
+        const modalBtn = document.getElementById('modal-siren-btn-text');
+        if (tabBtn) tabBtn.textContent = text;
+        if (modalBtn) modalBtn.textContent = text;
+
+        const stat = document.getElementById('tab-siren-alert-status');
+        if (stat) {
+            stat.style.display = active ? 'block' : 'none';
+            stat.textContent = active ? '🚨 AUDIBLE ALARM ACTIVE: Pulsing emergency siren signal across local audio channel.' : '';
+        }
+    }
+
+    // Police Dispatch Alert
+    function dispatchPoliceEmergencyProfile() {
+        const coords = '15.1983° N, 75.6416° E';
+        const msg = '🚨 SOS BEACON DISPATCHED to Transit Police & City Control Room.\nCoordinates: ' + coords + '\nStatus: Vehicle Unit Alerted. Stay calm, assistance is dispatched.';
+        alert(msg);
+        if (window.TransitInteractions) {
+            TransitInteractions.showToast('Police distress beacon broadcasted successfully', 'error');
+        }
+    }
+
+    // Share Actions
+    function shareOnWhatsAppProfile() {
+        const text = encodeURIComponent('🚨 Transit.IN Live Ride Tracking:\nI am traveling on Route 500D (Bengaluru Ring Road Volvo).\nTrack my vehicle live here: ' + window.location.origin + '/tracking.html?route=500D&sos_beacon=SAFE\nTransit.IN 24/7 Safety Shield Active.');
+        window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
+    }
+
+    function copyLiveShareLinkProfile() {
+        const url = window.location.origin + '/tracking.html?route=500D&sos_beacon=SAFE';
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Live Journey Link copied to clipboard! Share with family or friends.');
+        }).catch(() => {
+            prompt('Copy this live journey link:', url);
+        });
+    }
+
+    function shareViaSMSProfile() {
+        const body = encodeURIComponent('Transit.IN Live Ride Tracking: I am traveling on Route 500D. Track here: ' + window.location.origin + '/tracking.html?route=500D');
+        window.location.href = 'sms:?body=' + body;
+    }
+
+    // Tab Settings Personal Info Save
+    function saveTabPersonalInfo() {
+        const name = document.getElementById('tab-setting-name').value.trim();
+        const email = document.getElementById('tab-setting-email').value.trim();
+        const phone = document.getElementById('tab-setting-phone').value.trim();
+        const city = document.getElementById('tab-setting-city').value.trim();
+        const em = document.getElementById('tab-setting-emergency').value.trim();
+
+        if (name) {
+            const nameEl = document.getElementById('display-user-name');
+            if (nameEl) nameEl.textContent = name;
+        }
+        if (email) {
+            const emailEl = document.getElementById('display-user-email');
+            if (emailEl) emailEl.textContent = email;
+        }
+        if (phone) {
+            const phoneEl = document.getElementById('display-user-phone');
+            if (phoneEl) phoneEl.textContent = phone;
+        }
+        if (city) {
+            const locEl = document.getElementById('display-user-location');
+            if (locEl) locEl.textContent = city;
+        }
+
+        const profileData = { name, email, phone, city, emergencyContact: em };
+        localStorage.setItem('spt-user-profile', JSON.stringify(profileData));
+        alert('Personal Information saved successfully!');
+        if (window.TransitInteractions) {
+            TransitInteractions.showToast('Profile information updated', 'success');
+        }
+    }
+
+    function saveNotificationQuickPref() {
+        if (window.TransitInteractions) {
+            TransitInteractions.showToast('Notification preferences saved', 'info');
+        }
+    }
+
+    function exportUserDataJSON() {
+        const data = {
+            profile: JSON.parse(localStorage.getItem('spt-user-profile') || '{}'),
+            trips: JSON.parse(localStorage.getItem('spt-user-trips') || '[]'),
+            wallet: JSON.parse(localStorage.getItem('spt-payment-wallet') || '{}'),
+            exportedAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'transit_in_commuter_export.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function selectStarRating(n) {
+        const container = document.getElementById('star-rating-row');
+        if (!container) return;
+        const stars = container.querySelectorAll('i');
+        stars.forEach((s, idx) => {
+            if (idx < n) {
+                s.className = 'fa-solid fa-star';
+            } else {
+                s.className = 'fa-regular fa-star';
+            }
+        });
+        alert('Thank you for rating us ' + n + ' out of 5 stars!');
+    }
+
+</script>
 </body>
 </html>
