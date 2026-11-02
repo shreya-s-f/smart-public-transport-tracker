@@ -274,6 +274,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 savedReports.unshift(newReport);
                 localStorage.setItem(`spt-crowdsourced-${currentCity}`, JSON.stringify(savedReports));
 
+                // Dispatch to Backend REST API
+                try {
+                    fetch('/api/alerts/report', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            city: currentCity,
+                            route: route,
+                            type: type,
+                            location: location,
+                            notes: notes
+                        })
+                    }).catch(() => {});
+                } catch(e) {}
+
                 closeReportDelayModal();
                 if (typeof showSptToast === 'function') {
                     showSptToast(`📢 Incident broadcast submitted for Route ${route}! Thank you for keeping commuters safe.`, 'success');
