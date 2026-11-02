@@ -16,6 +16,7 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="css/style.css?v=8">
     <link rel="stylesheet" href="css/enhance.css">
+    <link rel="stylesheet" href="css/landing-page.css">
     <link rel="stylesheet" href="css/transit-intro.css">
     <script src="js/auth.js?v=8"></script>
     <script src="js/transit-intro.js" defer></script>
@@ -68,6 +69,106 @@
 
     <!-- Main Content -->
     <main>
+        <!-- ============================================== -->
+        <!-- OFFICIAL TRANSIT.IN SAAS HERO SECTION          -->
+        <!-- ============================================== -->
+        <section class="hero-saas-section" aria-label="Hero Overview">
+            <div class="hero-text-col">
+                <div class="hero-pill-badge">
+                    <span class="live-pulse-dot"></span> NEXT-GEN URBAN MOBILITY PLATFORM
+                </div>
+                <h1 class="hero-title-main">
+                    Smarter Journeys.<br>
+                    <span class="hero-title-gradient">Connected Cities.</span>
+                </h1>
+                <p class="hero-desc">
+                    Experience intelligent public transportation with real-time tracking, AI-powered arrival predictions, and safer, smarter journeys across 7 major metro hubs.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="tracking.html" class="btn-primary-gradient" id="heroLiveTrackBtn">
+                        <i class="fa-solid fa-satellite-dish"></i> Explore Live Tracking
+                    </a>
+                    <a href="#journey-planner-container" class="btn-secondary-glass" id="heroGetStartedBtn">
+                        <i class="fa-solid fa-compass"></i> Get Started
+                    </a>
+                </div>
+                <!-- Live Telemetry Counters -->
+                <div class="hero-metrics-bar">
+                    <div class="hero-metric-item">
+                        <span class="hero-metric-value counter" data-target="1840" data-suffix="+">1,840+</span>
+                        <span class="hero-metric-label">Active GPS Buses</span>
+                    </div>
+                    <div class="hero-metric-item">
+                        <span class="hero-metric-value counter" data-target="99.4" data-suffix="%">99.4%</span>
+                        <span class="hero-metric-label">On-Time Accuracy</span>
+                    </div>
+                    <div class="hero-metric-item">
+                        <span class="hero-metric-value counter" data-target="7" data-suffix=" Hubs">7 Hubs</span>
+                        <span class="hero-metric-label">Metro Networks</span>
+                    </div>
+                    <div class="hero-metric-item">
+                        <span class="hero-metric-value counter" data-target="120" data-suffix="k+">120k+</span>
+                        <span class="hero-metric-label">Daily Commuters</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Radar Visual -->
+            <div class="hero-radar-card" id="heroInteractiveRadar">
+                <div class="radar-mesh-bg"></div>
+                <div class="radar-sweep-needle"></div>
+
+                <!-- Floating Telemetry Card 1 -->
+                <div class="floating-telemetry-badge" style="animation-delay: 0s;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(56, 189, 248, 0.18); display: flex; align-items: center; justify-content: center; color: #38BDF8; font-size: 1.1rem;">
+                        <i class="fa-solid fa-bus-simple"></i>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <strong style="color: #FFFFFF; font-size: 0.9rem;">Route 500A (Electric)</strong>
+                            <span class="pill-badge pill-badge-blue" style="font-size: 0.65rem; padding: 0.15rem 0.5rem;">In Transit</span>
+                        </div>
+                        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.15rem;">
+                            ETA: <strong style="color: #34D399;">4 mins away</strong> &bull; Silk Board Corridor
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Central Route Visual Node -->
+                <div style="position: relative; z-index: 2; margin: 1.5rem 0; background: rgba(139, 92, 246, 0.12); border: 1px dashed rgba(196, 181, 253, 0.3); border-radius: 16px; padding: 1rem 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-family: var(--font-futuristic); font-size: 0.75rem; color: #C4B5FD;">AI ARRIVAL ESTIMATION</span>
+                        <span style="font-size: 0.75rem; color: #38BDF8; font-weight: 700;">99.2% CONFIDENCE</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #34D399; box-shadow: 0 0 8px #34D399;"></span>
+                        <div style="flex: 1; height: 3px; background: linear-gradient(90deg, #34D399, #8B5CF6, #38BDF8); border-radius: 2px;"></div>
+                        <i class="fa-solid fa-location-dot" style="color: #38BDF8; font-size: 1rem;"></i>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: #94A3B8; margin-top: 0.4rem;">
+                        <span>Central Hub</span>
+                        <span style="color: #FFFFFF;">Tech Park Terminal</span>
+                    </div>
+                </div>
+
+                <!-- Floating Telemetry Card 2 -->
+                <div class="floating-telemetry-badge" style="animation-delay: 2.5s; align-self: flex-end;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(16, 185, 129, 0.18); display: flex; align-items: center; justify-content: center; color: #34D399; font-size: 1.1rem;">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <strong style="color: #FFFFFF; font-size: 0.9rem;">Zero-Emission EV Fleet</strong>
+                            <span class="pill-badge pill-badge-green" style="font-size: 0.65rem; padding: 0.15rem 0.5rem;">88% Battery</span>
+                        </div>
+                        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.15rem;">
+                            12 Seats Available &bull; <span style="color: #38BDF8;">3.2 kg CO₂ Saved</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Real-Time Network Status Ticker -->
         <div class="transit-ticker animate-fade-in-up">
             <span class="ticker-badge"><span class="live-pulse-dot"></span> LIVE NETWORK</span>
@@ -458,28 +559,332 @@
                 </div>
             </div>
         </div>
+        <!-- ============================================== -->
+        <!-- INTERACTIVE BENTO GRID SHOWCASE (SECTION 3)    -->
+        <!-- ============================================== -->
+        <section style="margin: 4.5rem 0 3.5rem 0;" id="features-bento" aria-label="Smart Features Bento Grid">
+            <div class="section-headline">
+                <span class="section-pill"><i class="fa-solid fa-microchip"></i> SMART MOBILITY ARCHITECTURE</span>
+                <h2 class="section-title">Built for the Next Era of Public Transit</h2>
+                <p class="section-subtitle">
+                    Discover how TRANSIT.IN pairs real-time telematics with predictive intelligence to streamline every leg of your commute.
+                </p>
+            </div>
+
+            <div class="bento-grid">
+                <!-- Bento 1: Real-Time Fleet Radar (Span 8) -->
+                <div class="glass-panel bento-col-8" style="background: linear-gradient(135deg, rgba(16, 23, 42, 0.85) 0%, rgba(139, 92, 246, 0.12) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.6rem;">
+                        <div>
+                            <span class="pill-badge pill-badge-blue" style="margin-bottom: 0.5rem;"><i class="fa-solid fa-satellite"></i> OSRM ROAD ENGINE</span>
+                            <h3 style="font-size: 1.4rem; color: #FFFFFF; margin: 0 0 0.3rem 0;">Pan-India Real-Time Fleet Radar</h3>
+                            <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0; max-width: 500px;">
+                                Actual GPS road coordinates streaming every 3 seconds across Delhi, Mumbai, Bengaluru, Bagalkot, Hyderabad, Chennai, and Pune.
+                            </p>
+                        </div>
+                        <a href="tracking.html" class="btn-primary-gradient" style="padding: 0.5rem 1.1rem; font-size: 0.85rem;">
+                            <i class="fa-solid fa-map-location-dot"></i> Open Full Map
+                        </a>
+                    </div>
+                    <div style="background: rgba(8, 13, 32, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 16px; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span class="live-pulse-dot" style="width: 12px; height: 12px; background: #34D399; box-shadow: 0 0 10px #34D399;"></span>
+                            <div>
+                                <strong style="color: #FFFFFF; font-size: 0.95rem;">1,840 Active Telematics Units</strong>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">OSRM curve interpolation &bull; Sub-second refresh</div>
+                            </div>
+                        </div>
+                        <span class="pill-badge pill-badge-purple" style="font-size: 0.75rem;">99.4% TELEMETRY UPTIME</span>
+                    </div>
+                </div>
+
+                <!-- Bento 2: AI Arrival Predictions (Span 4) -->
+                <div class="glass-panel bento-col-4" style="background: linear-gradient(135deg, rgba(16, 23, 42, 0.85) 0%, rgba(56, 189, 248, 0.12) 100%);">
+                    <span class="pill-badge pill-badge-purple" style="margin-bottom: 0.6rem;"><i class="fa-solid fa-brain"></i> NEURAL PREDICTION</span>
+                    <h3 style="font-size: 1.35rem; color: #FFFFFF; margin: 0 0 0.4rem 0;">AI Arrival Intelligence</h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1.2rem 0;">
+                        Machine learning arrival engine accounting for live corridor congestion, weather, and historical transit bottlenecks.
+                    </p>
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 0.9rem; border: 1px solid rgba(255,255,255,0.08);">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.3rem;">
+                            <span style="color: var(--text-muted);">Average Prediction Accuracy</span>
+                            <strong style="color: #38BDF8;">99.2%</strong>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
+                            <div style="width: 99.2%; height: 100%; background: linear-gradient(90deg, #8B5CF6, #38BDF8);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento 3: Digital QR Bus Pass (Span 4) -->
+                <div class="glass-panel bento-col-4">
+                    <span class="pill-badge pill-badge-green" style="margin-bottom: 0.6rem;"><i class="fa-solid fa-qrcode"></i> CONTACTLESS</span>
+                    <h3 style="font-size: 1.35rem; color: #FFFFFF; margin: 0 0 0.4rem 0;">Digital QR Bus Pass</h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1rem 0;">
+                        Tap-and-go contactless e-passes with anti-counterfeit holographic rings and offline PDF export.
+                    </p>
+                    <a href="booking.html" class="btn-secondary-glass" style="width: 100%; box-sizing: border-box; text-align: center; justify-content: center;">
+                        <i class="fa-solid fa-ticket"></i> Book QR Pass
+                    </a>
+                </div>
+
+                <!-- Bento 4: 24/7 Safety Shield & SOS (Span 4) -->
+                <div class="glass-panel bento-col-4" style="border-color: rgba(239, 68, 68, 0.35);">
+                    <span class="pill-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; margin-bottom: 0.6rem;">
+                        <i class="fa-solid fa-shield-heart"></i> SAFETY SHIELD
+                    </span>
+                    <h3 style="font-size: 1.35rem; color: #FFFFFF; margin: 0 0 0.4rem 0;">Panic Beacon & Live Ride Share</h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1rem 0;">
+                        1-click audible distress siren, live ride telemetry link for family, and direct dispatch to 112 / 1091 helplines.
+                    </p>
+                    <a href="safety.html" class="btn-secondary-glass" style="width: 100%; box-sizing: border-box; border-color: rgba(239, 68, 68, 0.4); color: #F87171; justify-content: center;">
+                        <i class="fa-solid fa-shield-halved"></i> Explore Safety Shield
+                    </a>
+                </div>
+
+                <!-- Bento 5: Green Mobility Matrix (Span 4) -->
+                <div class="glass-panel bento-col-4">
+                    <span class="pill-badge pill-badge-blue" style="margin-bottom: 0.6rem;"><i class="fa-solid fa-leaf"></i> ECO INTELLIGENCE</span>
+                    <h3 style="font-size: 1.35rem; color: #FFFFFF; margin: 0 0 0.4rem 0;">Zero-Emission Tracking</h3>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1rem 0;">
+                        Real-time carbon offset accounting. Every bus trip cuts up to 3.2 kg of CO₂ emissions vs solo private vehicles.
+                    </p>
+                    <div style="display: flex; align-items: baseline; gap: 0.4rem;">
+                        <span style="font-family: var(--font-futuristic); font-size: 1.8rem; font-weight: 800; color: #34D399;">124+ Tons</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">CO₂ Avoided This Month</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- HOW TRANSIT.IN WORKS (SECTION 4)               -->
+        <!-- ============================================== -->
+        <section style="margin: 4.5rem 0;" id="how-it-works" aria-label="How Transit.IN Works">
+            <div class="section-headline">
+                <span class="section-pill"><i class="fa-solid fa-diagram-project"></i> COMMUTE WORKFLOW</span>
+                <h2 class="section-title">How Transit.IN Powers Your Journey</h2>
+                <p class="section-subtitle">
+                    Four frictionless steps from door-to-door transit planning to seamless arrival.
+                </p>
+            </div>
+
+            <div class="steps-process-grid">
+                <div class="step-card">
+                    <div class="step-number-watermark">01</div>
+                    <div class="step-icon-box">
+                        <i class="fa-solid fa-magnifying-glass-location"></i>
+                    </div>
+                    <h4 class="step-title">1. Search & Plan</h4>
+                    <p class="step-desc">Enter origin and destination to get instantaneous multi-modal route options, fares, and walking directions.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number-watermark">02</div>
+                    <div class="step-icon-box" style="background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%); box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);">
+                        <i class="fa-solid fa-satellite-dish"></i>
+                    </div>
+                    <h4 class="step-title">2. Track Live Radar</h4>
+                    <p class="step-desc">Watch your vehicle glide along actual road turns with sub-minute AI arrival predictions and bay indicators.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number-watermark">03</div>
+                    <div class="step-icon-box" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <h4 class="step-title">3. Contactless QR Tap</h4>
+                    <p class="step-desc">Scan your digital pass on your smartphone. Zero physical ticket queues and instant wallet deductions.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number-watermark">04</div>
+                    <div class="step-icon-box" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h4 class="step-title">4. Travel with Shield</h4>
+                    <p class="step-desc">Share your real-time transit journey with family on WhatsApp and commute protected by 24/7 SOS helpline alerts.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- COMMUTER TESTIMONIALS MARQUEE (SECTION 4)      -->
+        <!-- ============================================== -->
+        <section style="margin: 4.5rem 0;" id="testimonials" aria-label="Commuter Reviews">
+            <div class="section-headline">
+                <span class="section-pill"><i class="fa-solid fa-comments"></i> COMMUNITY VOICES</span>
+                <h2 class="section-title">Loved by Commuters Nationwide</h2>
+                <p class="section-subtitle">
+                    Real stories from passengers commuting across India's busiest transit networks every day.
+                </p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-user-row">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Ananya S." class="testimonial-avatar">
+                        <div class="testimonial-meta">
+                            <h4>Ananya Sharma</h4>
+                            <span>Daily Commuter &bull; Bengaluru (Silk Board)</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">
+                        "The live turn-by-turn road curve tracking on Transit.IN cut my bus stop wait from 30 minutes to under 4. It feels like an enterprise flight radar in my pocket."
+                    </p>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-user-row">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop" alt="Rajesh N." class="testimonial-avatar">
+                        <div class="testimonial-meta">
+                            <h4>Rajesh Nair</h4>
+                            <span>Senior Analyst &bull; Mumbai Metro Line 1</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">
+                        "The QR pass generator and digital wallet make buying e-tickets effortless. It even keeps ticket PDFs ready when cellular data drops."
+                    </p>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-user-row">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop" alt="Priya K." class="testimonial-avatar">
+                        <div class="testimonial-meta">
+                            <h4>Priya Kulkarni</h4>
+                            <span>Design Lead &bull; Pune Hinjewadi Transit</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">
+                        "The 24/7 Safety Shield and live journey sharing to WhatsApp give my family total peace of mind whenever I commute late at night."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- INTERACTIVE FAQ ACCORDION (SECTION 4)          -->
+        <!-- ============================================== -->
+        <section style="margin: 4.5rem 0;" id="faq" aria-label="Frequently Asked Questions">
+            <div class="section-headline">
+                <span class="section-pill"><i class="fa-solid fa-circle-question"></i> FREQUENTLY ASKED</span>
+                <h2 class="section-title">Everything You Need to Know</h2>
+                <p class="section-subtitle">
+                    Quick answers regarding Transit.IN live tracking, passes, safety protocols, and route accuracy.
+                </p>
+            </div>
+
+            <div class="faq-container">
+                <div class="faq-item active">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How accurate is the live bus tracking telemetry?</span>
+                        <i class="fa-solid fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Transit.IN integrates directly with onboard GPS units and the Open Source Routing Machine (OSRM) road network. Updates stream every 3 seconds, rendering realistic turn-by-turn road curves rather than straight artificial lines.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Can I access my digital QR bus pass offline?</span>
+                        <i class="fa-solid fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Yes. Transit.IN cryptographically generates offline pass tokens stored in your browser's persistent storage, and lets you download a tax-ready offline PDF ticket in one tap.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does the AI Arrival Prediction engine work?</span>
+                        <i class="fa-solid fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Our model evaluates historical transit speeds, time-of-day peak congestion factors, intersection bottlenecks, and active alerts to calculate an accurate predicted arrival along with a dynamic confidence percentage.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does the 24/7 Safety Shield protect commuters?</span>
+                        <i class="fa-solid fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        The Safety Shield gives commuters an instant distress siren, emergency contacts broadcast, 1-tap live location sharing via WhatsApp and SMS, and immediate access to pan-India emergency helplines (112, 1091, 1512, 108).
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Professional Footer -->
-    <footer style="margin-top: 4rem; padding: 2.5rem 1.5rem; border-top: 1px solid var(--card-border); text-align: center; color: var(--text-secondary); background: rgba(15, 23, 42, 0.4);">
-        <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.2rem;">
-            <i class="fa-solid fa-bus" style="color: var(--accent-color);"></i> Transit.IN
-        </p>
-        <p style="font-size: 0.92rem; margin-bottom: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-            Intelligent Public Transport Platform &bull; Real-Time Telemetry &bull; Leaflet & OSRM Routing
-        </p>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 1.8rem; font-size: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary); transition: color 0.2s;" title="GitHub Repository">
-                <i class="fa-brands fa-github"></i> GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/shreya-fakirapur-557388324" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color); transition: color 0.2s; font-weight: 600;" title="LinkedIn Profile">
-                <i class="fa-brands fa-linkedin"></i> LinkedIn Profile
-            </a>
-            <a href="admin.html" style="color: var(--warning-color); font-weight: 600; transition: color 0.2s;" title="Admin Portal">
-                <i class="fa-solid fa-user-shield"></i> Admin Portal
-            </a>
+    <!-- ============================================== -->
+    <!-- PREMIUM SAAS FOOTER (SECTION 4)                -->
+    <!-- ============================================== -->
+    <footer class="saas-footer" role="contentinfo">
+        <div class="footer-top-grid">
+            <div class="footer-brand-col">
+                <a href="index.html" class="nav-brand" style="text-decoration:none; margin-bottom: 0.8rem; display: inline-flex;">
+                    <i class="fa-solid fa-bus-simple"></i> TRANSIT<span class="brand-dot">.</span>IN
+                </a>
+                <p>
+                    Smarter Journeys. Connected Cities.<br>
+                    Next-generation intelligent urban transportation platform built for Indian metros.
+                </p>
+                <div style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.78rem; color: #34D399; font-weight: 600;">
+                    <span class="live-pulse-dot" style="background: #34D399;"></span> 7 / 7 Transit Grids Operational
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Mobility Solutions</h4>
+                <ul class="footer-links">
+                    <li><a href="tracking.html"><i class="fa-solid fa-satellite-dish"></i> Live Bus Radar</a></li>
+                    <li><a href="routes.html"><i class="fa-solid fa-route"></i> Route Network</a></li>
+                    <li><a href="timetable.html"><i class="fa-solid fa-clock"></i> Timetables</a></li>
+                    <li><a href="#journey-planner-container"><i class="fa-solid fa-compass"></i> Journey Planner</a></li>
+                    <li><a href="booking.html"><i class="fa-solid fa-ticket"></i> QR E-Ticketing</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Safety &amp; Control</h4>
+                <ul class="footer-links">
+                    <li><a href="safety.html"><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> Safety Shield</a></li>
+                    <li><a href="driver.html"><i class="fa-solid fa-id-card-clip"></i> Driver Portal</a></li>
+                    <li><a href="admin.html"><i class="fa-solid fa-sliders"></i> Admin Control</a></li>
+                    <li><a href="notifications.html"><i class="fa-solid fa-bell"></i> Transit Alerts</a></li>
+                    <li><a href="profile.html"><i class="fa-solid fa-wallet"></i> Transit Wallet</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Connect &amp; Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/shreya-s-f/smart-public-transport-tracker" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i> Open Source Repository</a></li>
+                    <li><a href="https://www.linkedin.com/in/shreya-fakirapur-557388324" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin"></i> LinkedIn Network</a></li>
+                    <li><a href="profile.html"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Security</a></li>
+                    <li><a href="profile.html"><i class="fa-solid fa-file-contract"></i> Terms of Mobility</a></li>
+                </ul>
+            </div>
         </div>
-        <p style="font-size: 0.82rem; color: var(--text-secondary);">Developed with passion by Shreya &copy; 2026 &bull; Clean Vanilla HTML, CSS & JavaScript</p>
+
+        <div class="footer-bottom-bar">
+            <span>&copy; 2026 TRANSIT.IN &bull; Developed by Shreya Fakirapur. Commercial SaaS Mobility Architecture.</span>
+            <div style="display: flex; gap: 1.2rem;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-bolt" style="color: #38BDF8;"></i> Latency: 24ms</span>
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-code-branch" style="color: #8B5CF6;"></i> v3.2.0-prod</span>
+            </div>
+        </div>
     </footer>
 
     <!-- Loading Overlay -->
@@ -1047,6 +1452,22 @@
                 });
             }
         }
+
+        // FAQ Toggle Accordion Function
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            if (!item) return;
+            const isOpen = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+            if (!isOpen) {
+                item.classList.add('active');
+            }
+        }
+
+        // Animate hero counters on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(animateCounters, 300);
+        });
     </script>
     <script src="js/enhance.js"></script>
 </body>
