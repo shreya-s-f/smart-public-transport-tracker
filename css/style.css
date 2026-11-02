@@ -1,3 +1,9 @@
+/* ==========================================================================
+   TRANSIT.IN — Official Core Stylesheet
+   Imports Official Global Design System
+   ========================================================================== */
+@import url('design-system.css');
+
 /* --- CSS VARIABLES & THEMING --- */
 :root {
   --bg-color: #f3f4f6;
@@ -5,8 +11,10 @@
   --text-secondary: #4b5563;
   --card-bg: rgba(255, 255, 255, 0.7);
   --card-border: rgba(255, 255, 255, 0.4);
-  --accent-color: #3b82f6;
-  --accent-hover: #2563eb;
+  --accent-color: #8B5CF6;
+  --accent-hover: #7C3AED;
+  --electric-blue: #38BDF8;
+  --brand-lavender: #C4B5FD;
   --danger-color: #ef4444;
   --success-color: #10b981;
   --warning-color: #f59e0b;

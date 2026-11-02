@@ -1,0 +1,397 @@
+/* ==========================================================================
+   TRANSIT.IN — Official Global Design System & Futuristic Identity
+   Brand Identity:
+   - Deep Navy: #10172A
+   - Midnight: #080D20
+   - Primary Purple: #8B5CF6
+   - Electric Blue: #38BDF8
+   - Lavender: #C4B5FD
+   - White: #FFFFFF
+   - Soft Grey: #94A3B8
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;800;900&family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Urbanist:wght@500;600;700;800&display=swap');
+
+:root {
+  /* Official Brand Palette */
+  --brand-deep-navy: #10172A;
+  --brand-midnight: #080D20;
+  --brand-purple: #8B5CF6;
+  --brand-purple-hover: #7C3AED;
+  --brand-electric-blue: #38BDF8;
+  --brand-electric-hover: #0EA5E9;
+  --brand-lavender: #C4B5FD;
+  --brand-white: #FFFFFF;
+  --brand-soft-grey: #94A3B8;
+  --brand-dark-grey: #1E293B;
+
+  /* Semantic Gradients */
+  --grad-primary: linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%);
+  --grad-primary-hover: linear-gradient(135deg, #7C3AED 0%, #0EA5E9 100%);
+  --grad-purple-glow: linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(56, 189, 248, 0.1) 100%);
+  --grad-dark-mesh: radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.18) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(196, 181, 253, 0.12) 0px, transparent 50%),
+                    radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.12) 0px, transparent 50%);
+  --grad-surface-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --grad-light-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.7) 100%);
+
+  /* Neon Glows */
+  --glow-purple: 0 0 25px rgba(139, 92, 246, 0.45);
+  --glow-blue: 0 0 25px rgba(56, 189, 248, 0.45);
+  --glow-accent: 0 4px 20px rgba(139, 92, 246, 0.35), 0 0 40px rgba(56, 189, 248, 0.25);
+
+  /* Typography */
+  --font-logo: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Sora', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-dashboard: 'Urbanist', sans-serif;
+  --font-futuristic: 'Orbitron', monospace;
+
+  /* Theme Defaults (Dark Theme as primary SaaS futuristic style) */
+  --bg-primary: #080D20;
+  --bg-secondary: #10172A;
+  --bg-tertiary: #1E293B;
+  --text-main: #FFFFFF;
+  --text-muted: #94A3B8;
+  --text-accent: #C4B5FD;
+
+  --card-glass-bg: rgba(16, 23, 42, 0.72);
+  --card-glass-border: rgba(196, 181, 253, 0.16);
+  --card-glass-hover-border: rgba(56, 189, 248, 0.4);
+  --card-glass-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(139, 92, 246, 0.15);
+
+  --navbar-glass-bg: rgba(8, 13, 32, 0.85);
+  --navbar-glass-border: rgba(255, 255, 255, 0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}
+
+/* Light Theme Variables */
+[data-theme="light"] {
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-tertiary: #E2E8F0;
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --text-accent: #7C3AED;
+
+  --card-glass-bg: rgba(255, 255, 255, 0.9);
+  --card-glass-border: rgba(226, 232, 240, 0.9);
+  --card-glass-hover-border: rgba(139, 92, 246, 0.5);
+  --card-glass-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+
+  --navbar-glass-bg: rgba(255, 255, 255, 0.92);
+  --navbar-glass-border: rgba(226, 232, 240, 0.8);
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+  --bg-primary: #080D20;
+  --bg-secondary: #10172A;
+  --bg-tertiary: #1E293B;
+  --text-main: #FFFFFF;
+  --text-muted: #94A3B8;
+  --text-accent: #C4B5FD;
+
+  --card-glass-bg: rgba(16, 23, 42, 0.72);
+  --card-glass-border: rgba(196, 181, 253, 0.16);
+  --card-glass-hover-border: rgba(56, 189, 248, 0.4);
+  --card-glass-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(139, 92, 246, 0.15);
+
+  --navbar-glass-bg: rgba(8, 13, 32, 0.85);
+  --navbar-glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Global Base Typography & Body --- */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  background-image: var(--grad-dark-mesh);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+[data-theme="light"] body {
+  background-image: radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+                    radial-gradient(at 50% 100%, rgba(241, 245, 249, 1) 0px, transparent 100%);
+}
+
+h1, h2, h3, h4, .brand-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+.font-logo {
+  font-family: var(--font-logo);
+}
+
+.font-dashboard {
+  font-family: var(--font-dashboard);
+}
+
+.font-futuristic {
+  font-family: var(--font-futuristic);
+}
+
+/* --- Brand Logo Styling --- */
+.transit-brand-logo {
+  font-family: var(--font-logo);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #FFFFFF 0%, #C4B5FD 70%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  position: relative;
+}
+
+.transit-brand-logo .dot-in {
+  color: #38BDF8;
+  -webkit-text-fill-color: #38BDF8;
+  text-shadow: 0 0 12px #38BDF8;
+  display: inline-block;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #38BDF8); }
+  50% { transform: scale(1.2); filter: drop-shadow(0 0 10px #8B5CF6); }
+}
+
+/* --- Floating Glass Navbar --- */
+.transit-navbar {
+  position: sticky;
+  top: 1rem;
+  z-index: 1000;
+  max-width: 1380px;
+  margin: 0.75rem auto 1.5rem auto;
+  padding: 0.75rem 1.75rem;
+  background: var(--navbar-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--navbar-glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), 0 0 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.transit-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transit-nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.93rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.transit-nav-link:hover {
+  color: #FFFFFF;
+  background: rgba(139, 92, 246, 0.12);
+}
+
+[data-theme="light"] .transit-nav-link:hover {
+  color: var(--brand-purple);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.transit-nav-link.active {
+  color: #FFFFFF;
+  background: var(--grad-primary);
+  box-shadow: var(--glow-purple);
+  font-weight: 600;
+}
+
+/* --- Futuristic Glass Cards & Bento Elements --- */
+.glass-panel {
+  background: var(--card-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-glass-shadow);
+  padding: 1.75rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel:hover {
+  border-color: var(--card-glass-hover-border);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.2);
+  transform: translateY(-3px);
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: 0.7s;
+}
+
+.glass-panel:hover::before {
+  left: 200%;
+}
+
+/* --- Gradient Buttons --- */
+.btn-primary-gradient {
+  background: var(--grad-primary);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-gradient:hover {
+  background: var(--grad-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5), var(--glow-purple);
+  color: #FFFFFF;
+}
+
+.btn-secondary-glass {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.btn-secondary-glass:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--brand-electric-blue);
+  color: var(--brand-electric-blue);
+  transform: translateY(-2px);
+}
+
+/* --- Badges & Neon Pills --- */
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.pill-badge-purple {
+  background: rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #C4B5FD;
+}
+
+.pill-badge-blue {
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38BDF8;
+}
+
+.pill-badge-green {
+  background: rgba(16, 185, 129, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34D399;
+}
+
+/* --- Command Palette Shortcut Badge --- */
+.kbd-shortcut {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 0.15rem 0.45rem;
+  font-family: var(--font-futuristic);
+  font-size: 0.75rem;
+  color: var(--brand-lavender);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- Bento Grid System --- */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.bento-col-4 { grid-column: span 4; }
+.bento-col-6 { grid-column: span 6; }
+.bento-col-8 { grid-column: span 8; }
+.bento-col-12 { grid-column: span 12; }
+
+@media (max-width: 992px) {
+  .bento-col-4, .bento-col-6, .bento-col-8 {
+    grid-column: span 12;
+  }
+  .transit-navbar {
+    margin: 0.5rem;
+    padding: 0.6rem 1.2rem;
+  }
+  .transit-nav-links {
+    display: none;
+  }
+}
