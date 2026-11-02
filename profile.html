@@ -482,19 +482,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(16, 23, 42, 0.72);
-            border: 1px solid rgba(139, 92, 246, 0.32);
+            background: rgba(16, 23, 42, 0.88);
+            border: 1px solid rgba(139, 92, 246, 0.38);
             border-radius: 9999px;
             padding: 0.35rem;
-            margin: 2rem auto;
-            max-width: 960px;
+            margin: 0 auto 1.8rem auto;
+            max-width: 920px;
             width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28), 0 0 20px rgba(139, 92, 246, 0.12);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(139, 92, 246, 0.25);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
             gap: 0.35rem;
             box-sizing: border-box;
             flex-wrap: nowrap;
+            position: sticky;
+            top: 76px;
+            z-index: 100;
         }
         .profile-main-tab-btn {
             flex: 1;
@@ -781,10 +784,33 @@
     <main>
         <div class="profile-container">
 
+            <!-- ============================================== -->
+            <!-- TOP MIDDLE UNIFIED PROFILE TAB NAVIGATION BAR  -->
+            <!-- ============================================== -->
+            <div class="profile-main-tabs animate-fade-in-up">
+                <button type="button" class="profile-main-tab-btn active" id="pnav-overview" onclick="switchProfileMainTab('overview')">
+                    <i class="fa-solid fa-gauge-high"></i> <span>Dashboard &amp; Trips</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-settings" onclick="switchProfileMainTab('settings')">
+                    <i class="fa-solid fa-sliders" style="color: var(--accent-color);"></i> <span>Account Settings</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-quicklinks" onclick="switchProfileMainTab('quicklinks')">
+                    <i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> <span>Quick Links &amp; Care</span>
+                </button>
+                <button type="button" class="profile-main-tab-btn" id="pnav-safety" onclick="switchProfileMainTab('safety')">
+                    <i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> <span>Safety Shield Hub</span>
+                </button>
+            </div>
+
             <!-- Alert Toast Feedback -->
             <div id="save-toast" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: var(--success-color); padding: 1rem 1.4rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;" class="animate-fade-in-up">
                 <i class="fa-solid fa-circle-check"></i> Profile information updated successfully!
             </div>
+
+            <!-- ============================================== -->
+            <!-- TAB CONTAINER 1: DASHBOARD & TRIPS OVERVIEW    -->
+            <!-- ============================================== -->
+            <div id="tab-pane-overview" class="profile-tab-pane active">
 
             <!-- ============================================== -->
             <!-- 1. PROFILE HEADER CARD (BANNER + AVATAR + BIO) -->
@@ -889,28 +915,7 @@
                 </div>
             </div>
 
-            <!-- ============================================== -->
-            <!-- 2.3 MAIN PROFILE TAB NAVIGATION BAR            -->
-            <!-- ============================================== -->
-            <div class="profile-main-tabs animate-fade-in-up">
-                <button type="button" class="profile-main-tab-btn active" id="pnav-overview" onclick="switchProfileMainTab('overview')">
-                    <i class="fa-solid fa-gauge-high"></i> <span>Dashboard &amp; Trips</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-settings" onclick="switchProfileMainTab('settings')">
-                    <i class="fa-solid fa-sliders" style="color: var(--accent-color);"></i> <span>Account Settings</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-quicklinks" onclick="switchProfileMainTab('quicklinks')">
-                    <i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> <span>Quick Links &amp; Care</span>
-                </button>
-                <button type="button" class="profile-main-tab-btn" id="pnav-safety" onclick="switchProfileMainTab('safety')">
-                    <i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i> <span>Safety Shield Hub</span>
-                </button>
-            </div>
 
-            <!-- ============================================== -->
-            <!-- TAB CONTAINER 1: DASHBOARD & TRIPS OVERVIEW    -->
-            <!-- ============================================== -->
-            <div id="tab-pane-overview" class="profile-tab-pane active">
 
             <!-- ============================================== -->
             <!-- 2.5 PASSENGER SMART MOBILITY HUB CARDS         -->
