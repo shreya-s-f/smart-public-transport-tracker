@@ -68,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 matchesCategory = (r.category && r.category.toLowerCase().includes('airport')) || r.id.toLowerCase().includes('airport') || r.id.toLowerCase().includes('kia');
             } else if (activeFilter === 'feeder') {
                 matchesCategory = (r.category && r.category.toLowerCase().includes('feeder')) || r.id.toLowerCase().includes('metro');
+            } else if (activeFilter === 'brts') {
+                matchesCategory = (r.category && r.category.toLowerCase().includes('brts')) || (r.name && r.name.toLowerCase().includes('corridor')) || r.id.toLowerCase().includes('brt');
             }
 
             return matchesSearch && matchesCategory;
