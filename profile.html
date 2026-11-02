@@ -695,6 +695,54 @@
             </div>
 
             <!-- ============================================== -->
+            <!-- 2.5 PASSENGER SMART MOBILITY HUB CARDS         -->
+            <!-- ============================================== -->
+            <div class="bento-grid" style="margin-bottom: 2rem;">
+                <!-- Card 1: Digital QR Bus Pass (Span 6) -->
+                <div class="glass-panel bento-col-6" style="background: linear-gradient(135deg, rgba(16, 23, 42, 0.85) 0%, rgba(139, 92, 246, 0.15) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <span class="pill-badge pill-badge-purple"><i class="fa-solid fa-qrcode"></i> CONTACTLESS PASS</span>
+                        <span style="font-size: 0.82rem; color: #34D399; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> ACTIVE &amp; VERIFIED</span>
+                    </div>
+                    <h3 style="margin: 0 0 0.4rem 0; font-size: 1.25rem; color: #FFFFFF;">All-Corridor Digital Transit Pass</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 1.2rem 0;">
+                        Pass ID: <strong style="color: #38BDF8;">TRN-2026-KA-8821</strong> &bull; Valid across BMTC, DTC, BEST, NWKRTC, and Metro Feeder lines.
+                    </p>
+                    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary-gradient" onclick="openQrBusPassModal()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem;">
+                            <i class="fa-solid fa-qrcode"></i> Show Digital QR Pass
+                        </button>
+                        <button type="button" class="btn-secondary-glass" onclick="downloadDigitalPassPDF()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem;">
+                            <i class="fa-solid fa-download"></i> Save Offline PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Commuter Services & Incident Desk (Span 6) -->
+                <div class="glass-panel bento-col-6" style="background: linear-gradient(135deg, rgba(16, 23, 42, 0.85) 0%, rgba(56, 189, 248, 0.12) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <span class="pill-badge pill-badge-blue"><i class="fa-solid fa-shield-halved"></i> COMMUTER CARE</span>
+                        <span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700;"><i class="fa-solid fa-headset"></i> 24/7 SUPPORT</span>
+                    </div>
+                    <h3 style="margin: 0 0 0.4rem 0; font-size: 1.25rem; color: #FFFFFF;">Smart Resolution &amp; Lost Items</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 1.2rem 0;">
+                        File formal transit complaints with image attachments or claim items lost onboard transit vehicles.
+                    </p>
+                    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-secondary-glass" onclick="openComplaintModal()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(139, 92, 246, 0.4); color: #C4B5FD;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> File Complaint
+                        </button>
+                        <button type="button" class="btn-secondary-glass" onclick="openLostFoundModal()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
+                            <i class="fa-solid fa-box-archive"></i> Lost &amp; Found Portal
+                        </button>
+                        <a href="safety.html" class="btn-secondary-glass" style="padding: 0.55rem 1.2rem; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: #F87171; text-decoration: none;">
+                            <i class="fa-solid fa-shield-heart"></i> Safety Shield
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================== -->
             <!-- 3. TRIPS SECTION WITH DYNAMIC VIEW ALL TOGGLE  -->
             <!-- ============================================== -->
             <div class="trips-section-card animate-fade-in-up delay-2">
@@ -1563,6 +1611,285 @@
                 <button type="button" onclick="confirmLogoutAction(event)" style="flex: 1; padding: 0.75rem; background: var(--danger-color); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: opacity 0.2s;">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 9: DIGITAL QR BUS PASS FULL MODAL        -->
+    <!-- ============================================== -->
+    <div id="qr-bus-pass-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 480px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.25rem; color: #FFFFFF; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-qrcode" style="color: #8B5CF6;"></i> Digital Commuter Pass
+                </h3>
+                <button type="button" onclick="closeQrBusPassModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Holographic Pass Container -->
+            <div id="printable-digital-pass" style="background: linear-gradient(135deg, #10172A 0%, #1E293B 100%); border: 2px solid rgba(139, 92, 246, 0.4); border-radius: 20px; padding: 1.5rem; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(139, 92, 246, 0.25); margin-bottom: 1.2rem;">
+                <!-- Hologram Security Ring -->
+                <div style="position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(139, 92, 246, 0.2) 60%, transparent 100%); pointer-events: none;"></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 800; color: #FFFFFF;">
+                        TRANSIT<span style="color: #38BDF8;">.</span>IN
+                    </div>
+                    <span class="pill-badge pill-badge-green" style="font-size: 0.72rem;">
+                        <i class="fa-solid fa-shield-check"></i> OFFICIAL AUTHENTIC
+                    </span>
+                </div>
+
+                <!-- High-Res QR Code Representation -->
+                <div style="background: #FFFFFF; border-radius: 14px; padding: 1rem; display: inline-block; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <svg viewBox="0 0 160 160" width="160" height="160" fill="#080D20">
+                        <rect width="160" height="160" fill="#FFFFFF"/>
+                        <!-- Position Detection Patterns -->
+                        <rect x="10" y="10" width="45" height="45" fill="#080D20" rx="6"/>
+                        <rect x="18" y="18" width="29" height="29" fill="#FFFFFF" rx="4"/>
+                        <rect x="24" y="24" width="17" height="17" fill="#8B5CF6" rx="2"/>
+
+                        <rect x="105" y="10" width="45" height="45" fill="#080D20" rx="6"/>
+                        <rect x="113" y="18" width="29" height="29" fill="#FFFFFF" rx="4"/>
+                        <rect x="119" y="24" width="17" height="17" fill="#8B5CF6" rx="2"/>
+
+                        <rect x="10" y="105" width="45" height="45" fill="#080D20" rx="6"/>
+                        <rect x="18" y="113" width="29" height="29" fill="#FFFFFF" rx="4"/>
+                        <rect x="24" y="119" width="17" height="17" fill="#8B5CF6" rx="2"/>
+
+                        <!-- Simulated Data Dots -->
+                        <rect x="65" y="15" width="10" height="10" fill="#080D20"/>
+                        <rect x="85" y="15" width="10" height="10" fill="#080D20"/>
+                        <rect x="65" y="35" width="10" height="10" fill="#38BDF8"/>
+                        <rect x="85" y="35" width="10" height="10" fill="#080D20"/>
+
+                        <rect x="15" y="65" width="10" height="10" fill="#080D20"/>
+                        <rect x="35" y="65" width="10" height="10" fill="#38BDF8"/>
+                        <rect x="55" y="65" width="10" height="10" fill="#080D20"/>
+                        <rect x="75" y="65" width="10" height="10" fill="#8B5CF6"/>
+                        <rect x="95" y="65" width="10" height="10" fill="#080D20"/>
+                        <rect x="115" y="65" width="10" height="10" fill="#38BDF8"/>
+                        <rect x="135" y="65" width="10" height="10" fill="#080D20"/>
+
+                        <rect x="65" y="85" width="10" height="10" fill="#080D20"/>
+                        <rect x="85" y="85" width="10" height="10" fill="#38BDF8"/>
+                        <rect x="105" y="85" width="10" height="10" fill="#080D20"/>
+                        <rect x="125" y="85" width="10" height="10" fill="#080D20"/>
+
+                        <rect x="65" y="115" width="10" height="10" fill="#8B5CF6"/>
+                        <rect x="85" y="115" width="10" height="10" fill="#080D20"/>
+                        <rect x="105" y="115" width="10" height="10" fill="#38BDF8"/>
+                        <rect x="125" y="115" width="10" height="10" fill="#080D20"/>
+
+                        <rect x="65" y="135" width="10" height="10" fill="#080D20"/>
+                        <rect x="85" y="135" width="10" height="10" fill="#080D20"/>
+                        <rect x="105" y="135" width="10" height="10" fill="#080D20"/>
+                        <rect x="135" y="135" width="10" height="10" fill="#8B5CF6"/>
+                    </svg>
+                </div>
+
+                <div style="text-align: left; background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 0.9rem 1.1rem; border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span style="font-size: 0.78rem; color: #94A3B8;">Cardholder:</span>
+                        <strong style="color: #FFFFFF; font-size: 0.88rem;" id="qr-pass-holder-name">Shreya Fakirapur</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span style="font-size: 0.78rem; color: #94A3B8;">Pass ID:</span>
+                        <strong style="color: #38BDF8; font-family: monospace;">TRN-2026-KA-8821</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span style="font-size: 0.78rem; color: #94A3B8;">Corridors:</span>
+                        <span style="color: #C4B5FD; font-size: 0.82rem; font-weight: 600;">Pan-India All Corridors</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.78rem; color: #94A3B8;">Valid Thru:</span>
+                        <span style="color: #34D399; font-size: 0.82rem; font-weight: 700;">30 Nov 2026 (28 Days Left)</span>
+                    </div>
+                </div>
+
+                <!-- Live Dynamic Anti-Screenshot Timestamp -->
+                <div style="margin-top: 0.8rem; font-family: monospace; font-size: 0.75rem; color: #94A3B8;">
+                    LIVE TOKEN TIME: <span id="pass-live-timestamp" style="color: #38BDF8; font-weight: 700;">--:--:--</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.8rem;">
+                <button type="button" onclick="closeQrBusPassModal()" class="sim-btn" style="flex: 1;">Close</button>
+                <button type="button" class="btn-primary-gradient" onclick="downloadDigitalPassPDF()" style="flex: 1;">
+                    <i class="fa-solid fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 10: SMART COMPLAINT & INCIDENT REPORTING -->
+    <!-- ============================================== -->
+    <div id="complaint-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 560px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: #FFFFFF; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #8B5CF6;"></i> Submit Incident / Complaint
+                </h3>
+                <button type="button" onclick="closeComplaintModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="incident-complaint-form" onsubmit="handleComplaintSubmit(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.9rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Issue Category</label>
+                        <select id="complaint-category" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                            <option value="Severe Route Delay">Severe Route Delay</option>
+                            <option value="Overcrowding / Capacity Breach">Overcrowding / Capacity Breach</option>
+                            <option value="Reckless Driving / Driver Rashness">Reckless Driving / Crew Rashness</option>
+                            <option value="Bus Cleanliness / Maintenance Defect">Bus Cleanliness / Maintenance Defect</option>
+                            <option value="Conductor / Ticketing Dispute">Conductor / Ticketing Dispute</option>
+                            <option value="Other Service Issue">Other Service Issue</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Route / Bus Number</label>
+                        <input type="text" id="complaint-route-number" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. 500A or KA-01-F-2024" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.9rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Date &amp; Time of Occurrence</label>
+                    <input type="datetime-local" id="complaint-datetime" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                </div>
+
+                <div style="margin-bottom: 0.9rem;">
+                    <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Detailed Description of Incident</label>
+                    <textarea id="complaint-details" class="search-input" style="width: 100%; height: 80px; box-sizing: border-box; resize: none;" placeholder="Explain exactly what happened, location, stop name, and any supporting facts..." required></textarea>
+                </div>
+
+                <div style="margin-bottom: 1.2rem; background: rgba(255,255,255,0.03); border: 1px dashed var(--card-border); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <i class="fa-solid fa-cloud-arrow-up" style="color: #38BDF8; font-size: 1.5rem; margin-bottom: 0.4rem;"></i>
+                    <div style="font-size: 0.85rem; color: #FFFFFF; font-weight: 600;">Attach Photo or Ticket Evidence (Optional)</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">Supports PNG, JPG, or PDF up to 5MB</div>
+                    <input type="file" id="complaint-attachment-file" accept="image/*,.pdf" style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                </div>
+
+                <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeComplaintModal()" class="sim-btn">Cancel</button>
+                    <button type="submit" class="btn-primary-gradient" style="padding: 0.6rem 1.4rem;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Grievance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 11: LOST & FOUND MANAGEMENT PORTAL       -->
+    <!-- ============================================== -->
+    <div id="lost-found-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 580px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; font-size: 1.3rem; color: #FFFFFF; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-box-archive" style="color: #38BDF8;"></i> Lost &amp; Found Portal
+                </h3>
+                <button type="button" onclick="closeLostFoundModal()" style="background: transparent; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs: Report Lost vs Report Found vs Active Listings -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.6rem;">
+                <button type="button" id="tab-lf-report-btn" class="trip-filter-tab active" onclick="switchLostFoundTab('report')">Report Lost / Found</button>
+                <button type="button" id="tab-lf-catalog-btn" class="trip-filter-tab" onclick="switchLostFoundTab('catalog')">Found Items Registry</button>
+            </div>
+
+            <!-- Tab 1: Form -->
+            <div id="tab-lf-report-content">
+                <form id="lost-found-form" onsubmit="handleLostFoundSubmit(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.9rem;">
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Report Type</label>
+                            <select id="lf-type" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                                <option value="Lost">I Lost an Item</option>
+                                <option value="Found">I Found an Item</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Item Category</label>
+                            <select id="lf-category" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                                <option value="Electronics & Phones">Electronics &amp; Phones</option>
+                                <option value="Wallets & Identity Cards">Wallets &amp; Identity Cards</option>
+                                <option value="Bags & Backpacks">Bags &amp; Backpacks</option>
+                                <option value="Keys & Watches">Keys &amp; Watches</option>
+                                <option value="Apparel & Umbrella">Apparel &amp; Umbrella</option>
+                                <option value="Other Personal Belonging">Other Personal Belonging</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.9rem;">
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Item Name / Brand</label>
+                            <input type="text" id="lf-item-title" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Black Lenovo ThinkPad Backpack" required>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Route or Bus No.</label>
+                            <input type="text" id="lf-bus-number" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="e.g. Route 500A (Bengaluru)" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 0.9rem;">
+                        <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Distinct Identifying Features</label>
+                        <textarea id="lf-description" class="search-input" style="width: 100%; height: 75px; box-sizing: border-box; resize: none;" placeholder="Color, stickers, case type, specific contents inside..." required></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem;">
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Contact Phone</label>
+                            <input type="tel" id="lf-contact-phone" class="search-input" style="width: 100%; box-sizing: border-box;" value="+91 98765 43210" required>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600;">Date of Loss/Recovery</label>
+                            <input type="date" id="lf-date" class="search-input" style="width: 100%; box-sizing: border-box;" required>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+                        <button type="button" onclick="closeLostFoundModal()" class="sim-btn">Cancel</button>
+                        <button type="submit" class="btn-primary-gradient" style="padding: 0.6rem 1.4rem;">
+                            <i class="fa-solid fa-check"></i> Register Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tab 2: Registry of Found Items -->
+            <div id="tab-lf-catalog-content" style="display: none;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+                    Recently recovered items securely held at Central Transit Depot Lost &amp; Found lockers:
+                </div>
+                <div id="lf-catalog-list" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.92rem;"><i class="fa-solid fa-wallet" style="color: #F59E0B;"></i> Brown Leather Wallet (ID card inside)</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem;">Found on Route 500A (Silk Board) &bull; Held at Majestic Central Office</div>
+                        </div>
+                        <button type="button" class="btn-secondary-glass" onclick="claimLostItem('Brown Leather Wallet')" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; color: #38BDF8;">
+                            Claim Item
+                        </button>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.92rem;"><i class="fa-solid fa-laptop" style="color: #38BDF8;"></i> Dell 65W USB-C Laptop Charger</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem;">Found on Delhi Route 507 &bull; Held at Okhla Depot</div>
+                        </div>
+                        <button type="button" class="btn-secondary-glass" onclick="claimLostItem('Dell 65W USB-C Charger')" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; color: #38BDF8;">
+                            Claim Item
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2558,6 +2885,156 @@
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 600);
+        }
+
+        // ==========================================
+        // PASSENGER SMART MODULE HANDLERS
+        // ==========================================
+        let passClockInterval = null;
+
+        function openQrBusPassModal() {
+            const nameEl = document.getElementById('profile-name');
+            const passHolder = document.getElementById('qr-pass-holder-name');
+            if (passHolder && nameEl) passHolder.textContent = nameEl.textContent || 'Shreya Fakirapur';
+
+            const tick = () => {
+                const clock = document.getElementById('pass-live-timestamp');
+                if (clock) clock.textContent = new Date().toLocaleTimeString() + ' (ACTIVE TOKEN)';
+            };
+            tick();
+            if (passClockInterval) clearInterval(passClockInterval);
+            passClockInterval = setInterval(tick, 1000);
+
+            window.showModal('qr-bus-pass-modal');
+        }
+
+        function closeQrBusPassModal() {
+            if (passClockInterval) clearInterval(passClockInterval);
+            window.hideModal('qr-bus-pass-modal');
+        }
+
+        function downloadDigitalPassPDF() {
+            const passEl = document.getElementById('printable-digital-pass');
+            if (!passEl) return;
+
+            if (window.html2pdf) {
+                const opt = {
+                    margin: 10,
+                    filename: 'TransitIN_Digital_Pass_TRN-8821.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+                };
+                html2pdf().set(opt).from(passEl).save();
+            } else {
+                alert('Downloading offline pass format...');
+                window.print();
+            }
+        }
+
+        function openComplaintModal() {
+            const dt = document.getElementById('complaint-datetime');
+            if (dt) {
+                const now = new Date();
+                dt.value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            }
+            window.showModal('complaint-modal');
+        }
+
+        function closeComplaintModal() {
+            window.hideModal('complaint-modal');
+        }
+
+        async function handleComplaintSubmit(e) {
+            e.preventDefault();
+            const category = document.getElementById('complaint-category')?.value;
+            const route = document.getElementById('complaint-route-number')?.value;
+            const datetime = document.getElementById('complaint-datetime')?.value;
+            const details = document.getElementById('complaint-details')?.value;
+            const ticketId = 'TKT-' + Math.floor(1000 + Math.random() * 9000);
+
+            const payload = { id: ticketId, category, route, datetime, details, status: 'Under Review', timestamp: new Date().toISOString() };
+
+            try {
+                await fetch('/api/complaints', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.log('Local offline grievance fallback mode');
+            }
+
+            const stored = JSON.parse(localStorage.getItem('transit_complaints') || '[]');
+            stored.unshift(payload);
+            localStorage.setItem('transit_complaints', JSON.stringify(stored));
+
+            closeComplaintModal();
+            alert(`Grievance [${ticketId}] logged successfully! Tracking updates will be dispatched to your phone.`);
+        }
+
+        function openLostFoundModal() {
+            const dateInput = document.getElementById('lf-date');
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            window.showModal('lost-found-modal');
+        }
+
+        function closeLostFoundModal() {
+            window.hideModal('lost-found-modal');
+        }
+
+        function switchLostFoundTab(tab) {
+            const reportBtn = document.getElementById('tab-lf-report-btn');
+            const catalogBtn = document.getElementById('tab-lf-catalog-btn');
+            const reportContent = document.getElementById('tab-lf-report-content');
+            const catalogContent = document.getElementById('tab-lf-catalog-content');
+
+            if (tab === 'report') {
+                reportBtn?.classList.add('active');
+                catalogBtn?.classList.remove('active');
+                if (reportContent) reportContent.style.display = 'block';
+                if (catalogContent) catalogContent.style.display = 'none';
+            } else {
+                reportBtn?.classList.remove('active');
+                catalogBtn?.classList.add('active');
+                if (reportContent) reportContent.style.display = 'none';
+                if (catalogContent) catalogContent.style.display = 'block';
+            }
+        }
+
+        async function handleLostFoundSubmit(e) {
+            e.preventDefault();
+            const type = document.getElementById('lf-type')?.value;
+            const category = document.getElementById('lf-category')?.value;
+            const title = document.getElementById('lf-item-title')?.value;
+            const bus = document.getElementById('lf-bus-number')?.value;
+            const desc = document.getElementById('lf-description')?.value;
+            const phone = document.getElementById('lf-contact-phone')?.value;
+            const date = document.getElementById('lf-date')?.value;
+            const refId = 'LF-' + Math.floor(1000 + Math.random() * 9000);
+
+            const payload = { id: refId, type, category, title, bus, desc, phone, date, status: 'Active In Registry' };
+
+            try {
+                await fetch('/api/lost-found', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.log('Local offline lost-found fallback mode');
+            }
+
+            const stored = JSON.parse(localStorage.getItem('transit_lost_found') || '[]');
+            stored.unshift(payload);
+            localStorage.setItem('transit_lost_found', JSON.stringify(stored));
+
+            closeLostFoundModal();
+            alert(`Lost & Found Report [${refId}] registered with Central Transit Lockers!`);
+        }
+
+        function claimLostItem(itemTitle) {
+            alert(`Claim request initiated for "${itemTitle}". Transit depot verification code sent to your registered mobile.`);
         }
     </script>
     <script src="js/profile-backend.js"></script>
