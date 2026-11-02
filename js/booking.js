@@ -373,6 +373,48 @@ document.addEventListener('DOMContentLoaded', () => {
         tickets.push(ticket);
         localStorage.setItem('spt-tickets', JSON.stringify(tickets));
 
+        // Sync with Transit Wallet Balance & Add Transaction
+        try {
+            let wallet = JSON.parse(localStorage.getItem('spt-payment-wallet')) || {
+                balance: 240,
+                upiId: 'shreya@oksbi',
+                transactions: []
+            };
+            wallet.balance = Math.max(0, parseFloat(wallet.balance) - total);
+            wallet.transactions.unshift({
+                id: 'TXN-' + ticket.id,
+                desc: 'Transit Pass: Route ' + ticket.route + ' (' + ticket.seat + ')',
+                amount: total,
+                date: 'Just Now',
+                type: 'debit'
+            });
+            localStorage.setItem('spt-payment-wallet', JSON.stringify(wallet));
+        } catch(e) { console.error('Wallet sync error:', e); }
+
+        // Sync with Commuter Trips History for Passenger Dashboard
+        try {
+            let trips = JSON.parse(localStorage.getItem('spt-user-trips')) || [];
+            trips.unshift({
+                id: ticket.id,
+                route: ticket.route,
+                from: ticket.boarding,
+                to: ticket.drop,
+                date: ticket.date,
+                fare: total,
+                status: 'active'
+            });
+            localStorage.setItem('spt-user-trips', JSON.stringify(trips));
+        } catch(e) { console.error('Trip sync error:', e); }
+
+        // Backend REST API Async Sync
+        try {
+            fetch('/api/tickets/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ticket)
+            }).catch(() => {});
+        } catch(e) {}
+
         // Render Holographic Digital Pass with Dynamic Anti-Fraud Watermark
         const holoContainer = document.getElementById('holographic-qr-container');
         if (holoContainer) {
