@@ -45,11 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- TAB SWITCHING LOGIC ---
 function switchAdminTab(tab) {
     document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`tab-${tab}`).classList.add('active');
+    const targetBtn = document.getElementById(`tab-${tab}`);
+    if (targetBtn) targetBtn.classList.add('active');
 
-    document.getElementById('section-buses').style.display = tab === 'buses' ? 'block' : 'none';
-    document.getElementById('section-cities').style.display = tab === 'cities' ? 'block' : 'none';
-    document.getElementById('section-passengers').style.display = tab === 'passengers' ? 'block' : 'none';
+    const sections = ['buses', 'drivers', 'maintenance', 'complaints', 'lostfound', 'cities'];
+    sections.forEach(s => {
+        const el = document.getElementById(`section-${s}`);
+        if (el) el.style.display = s === tab ? 'block' : 'none';
+    });
 }
 
 function renderAllAdminData() {
@@ -89,51 +92,75 @@ function getCustomRoutes() {
 }
 
 function renderAdminRoutes() {
+    const tbody = document.getElementById('admin-routes-tbody');
     const container = document.getElementById('admin-routes-container');
     const totalSpan = document.getElementById('stat-admin-buses');
-    if (!container) return;
+
+    const defaultFleet = [
+        { id: '500A', veh: 'KA-01-F-2024', path: 'Silk Board ➔ Hebbal Flyover', city: 'Bangalore', occ: '64%', occLabel: 'Moderate', status: 'Active' },
+        { id: '507', veh: 'DL-01-A-4412', path: 'Okhla Phase 1 ➔ Connaught Place', city: 'Delhi', occ: '82%', occLabel: 'Crowded', status: 'Active' },
+        { id: 'BEST-301', veh: 'MH-02-B-9910', path: 'CSMT ➔ Bandra Kurla Complex (BKC)', city: 'Mumbai', occ: '40%', occLabel: 'Available', status: 'Active' },
+        { id: 'BGK-01', veh: 'KA-29-B-5510', path: 'Navanagar ➔ College Cross (Bagalkot)', city: 'Bagalkot', occ: '30%', occLabel: 'Available', status: 'Active' },
+        { id: '100M', veh: 'TS-09-E-1200', path: 'Secunderabad ➔ Hitec City', city: 'Hyderabad', occ: '75%', occLabel: 'Moderate', status: 'Active' },
+        { id: 'MTC-21G', veh: 'TN-01-G-3390', path: 'Broadway ➔ Tambaram', city: 'Chennai', occ: '55%', occLabel: 'Moderate', status: 'Active' },
+        { id: 'Rainbow-102', veh: 'MH-12-Q-7788', path: 'Swargate ➔ Hinjawadi Phase 3', city: 'Pune', occ: '90%', occLabel: 'Crowded', status: 'Delayed' }
+    ];
 
     const customRoutes = getCustomRoutes();
-    if (totalSpan) totalSpan.textContent = customRoutes.length;
+    const allRoutes = [...defaultFleet, ...customRoutes.map(r => ({
+        id: r.id,
+        veh: 'SYS-' + (Math.floor(1000 + Math.random() * 9000)),
+        path: r.path,
+        city: r.city,
+        occ: '45%',
+        occLabel: 'Available',
+        status: r.status,
+        isCustom: true
+    }))];
 
-    if (customRoutes.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                <i class="fa-solid fa-bus-slash" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                <p>No custom bus routes created yet. Click <strong>"Add New Route"</strong> to create one!</p>
-            </div>
-        `;
-        return;
+    if (totalSpan) totalSpan.textContent = `${allRoutes.length} / 90`;
+
+    if (tbody) {
+        tbody.innerHTML = allRoutes.map((r, idx) => `
+            <tr>
+                <td><strong style="color: #8B5CF6; font-size: 1rem;">${r.id}</strong></td>
+                <td><span style="font-family: monospace; color: #38BDF8;">${r.veh}</span></td>
+                <td><strong>${r.path}</strong></td>
+                <td><span class="pill-badge pill-badge-purple" style="font-size: 0.72rem;">${r.city}</span></td>
+                <td>
+                    <span style="font-size: 0.85rem; color: #FFFFFF;">${r.occ}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">(${r.occLabel})</span>
+                </td>
+                <td>
+                    <span class="pill-badge ${r.status === 'Active' ? 'pill-badge-green' : 'pill-badge-purple'}">
+                        ${r.status}
+                    </span>
+                </td>
+                <td>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <a href="tracking.html?route=${encodeURIComponent(r.id)}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Track Live">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </a>
+                        <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="alert('Telemetry sync initiated for route ${r.id}')" title="Sync">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
     }
 
-    container.innerHTML = '';
-    customRoutes.forEach((route, index) => {
-        const card = document.createElement('div');
-        card.className = 'glass-card route-item animate-fade-in-up';
-        card.innerHTML = `
-            <div class="route-details" style="flex: 1;">
-                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
-                    <span class="route-number">${route.id}</span>
-                    <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); color: var(--accent-color); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">${route.city}</span>
-                    <span class="route-status ${route.status === 'Active' ? 'status-ontime' : 'status-delayed'}">${route.status}</span>
+    if (container) {
+        container.innerHTML = allRoutes.map(r => `
+            <div class="glass-panel" style="padding: 1rem; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="color: #8B5CF6;">${r.id}</strong> &bull; <span>${r.path}</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${r.city} &bull; Veh: ${r.veh}</div>
                 </div>
-                <p class="route-path" style="margin-bottom: 0.5rem;">${route.path}</p>
-                <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 1rem;">
-                    <span><i class="fa-solid fa-tag"></i> ${route.fare}</span>
-                    <span><i class="fa-solid fa-clock"></i> ${route.first || '06:00 AM'} - ${route.last || '10:00 PM'}</span>
-                </div>
+                <span class="pill-badge ${r.status === 'Active' ? 'pill-badge-green' : 'pill-badge-purple'}">${r.status}</span>
             </div>
-            <div class="route-actions" style="display: flex; gap: 0.5rem;">
-                <button class="btn-primary" style="padding: 0.5rem 0.8rem; font-size: 0.85rem;" onclick="editRoute(${index})">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit
-                </button>
-                <button style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); padding: 0.5rem 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="deleteRoute(${index})">
-                    <i class="fa-solid fa-trash-can"></i> Delete
-                </button>
-            </div>
-        `;
-        container.appendChild(card);
-    });
+        `).join('');
+    }
 }
 
 function openAddRouteModal() {
