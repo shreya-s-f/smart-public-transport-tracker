@@ -58,14 +58,12 @@ const TransitBackendAPI = (function() {
             badge.title = `Backend Connected (Port ${meta?.port || 5000}) - Click for API Diagnostics`;
             badge.innerHTML = `
                 <span class="backend-dot-live"></span>
-                <span>Backend: Connected</span>
             `;
         } else {
             badge.className = 'backend-status-pill offline';
             badge.title = 'Backend Offline - Running in Local Mode. Run "node server.js" to connect.';
             badge.innerHTML = `
                 <span class="backend-dot-offline"></span>
-                <span>Backend: Standalone</span>
             `;
         }
     }

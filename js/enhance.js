@@ -147,8 +147,10 @@ addEventListener('keydown', e => {
   if (e.key === 'ArrowUp') { sel = Math.max(sel - 1, 0); draw(); e.preventDefault(); }
   if (e.key === 'Enter') run(sel);
 });
-const kb = el('<button class="kbd-btn" aria-label="Open command palette"><i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl K</kbd></button>');
-kb.onclick = openP; $('.nav-actions')?.prepend(kb);
+const existingKbd = document.getElementById('navCmdKBtn');
+if (existingKbd) {
+  existingKbd.addEventListener('click', openP);
+}
 
 setTimeout(() => toast('Welcome to Transit.IN. Press Ctrl + K to jump anywhere.', 'bus'), 1500);
 })();
