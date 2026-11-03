@@ -895,6 +895,13 @@
             localStorage.setItem('spt-user-role', user.role || 'passenger');
             localStorage.setItem('spt-profile-name', user.name);
             localStorage.setItem('spt-city', user.city || 'Delhi');
+
+            // ── ONBOARDING TOUR: Mark as new user only on fresh signup ──
+            if (pendingAuthUser && pendingAuthUser.origin === 'signup') {
+                localStorage.setItem('spt-is-new-user', 'true');
+                sessionStorage.removeItem('transit-tour-active');
+                sessionStorage.removeItem('transit-tour-step');
+            }
             
             // Save active user profile data
             const profileData = {

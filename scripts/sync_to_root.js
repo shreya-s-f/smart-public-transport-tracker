@@ -1,0 +1,34 @@
+const fs = require('fs');
+const path = require('path');
+
+const root = '..';
+const src = '.';
+
+// New files to copy to root
+const newFiles = [
+  ['css/onboarding-tour.css', path.join(root, 'css/onboarding-tour.css')],
+  ['js/onboarding-tour.js',  path.join(root, 'js/onboarding-tour.js')],
+];
+
+newFiles.forEach(([from, to]) => {
+  if (fs.existsSync(from)) {
+    fs.copyFileSync(from, to);
+    console.log(`Copied ${from} -> ${to}`);
+  }
+});
+
+// Sync all HTML pages to root
+const pages = [
+  'index.html', 'routes.html', 'tracking.html', 'timetable.html',
+  'notifications.html', 'booking.html', 'safety.html', 'voice.html',
+  'admin.html', 'profile.html', 'login.html'
+];
+
+pages.forEach(f => {
+  if (fs.existsSync(f)) {
+    fs.copyFileSync(f, path.join(root, f));
+    console.log(`Synced ${f} to root`);
+  }
+});
+
+console.log('Done syncing to root.');
