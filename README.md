@@ -1,137 +1,269 @@
-# TRANSIT.IN &bull; Smart Public Transport Tracker
+# 🚍 TRANSIT.IN – Smart Public Transport Tracker
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-3.2.0-purple.svg)](https://github.com/shreya-s-f/smart-public-transport-tracker)
-[![Coverage](https://img.shields.io/badge/Cities-7%20Pan--India%20Metros-orange.svg)](#-pan-india-transit-coverage)
-[![UI: Futuristic Glassmorphism](https://img.shields.io/badge/UI-Futuristic%20Glass%20%26%20SaaS-blueviolet.svg)](#-official-brand-identity)
-[![Author](https://img.shields.io/badge/Author-Shreya%20Fakirapur-blue.svg)](https://www.linkedin.com/in/shreya-fakirapur-557388324)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Version](https://img.shields.io/badge/Version-3.2.0-purple.svg)
+![Cities](https://img.shields.io/badge/Cities-7%20Indian%20Cities-orange.svg)
+![UI](https://img.shields.io/badge/UI-Modern%20Glassmorphism-blueviolet.svg)
+![Author](https://img.shields.io/badge/Author-Shreya%20Fakirapur-blue.svg)
 
-**TRANSIT.IN** is a commercial SaaS-grade public transit and intelligent fleet mobility platform engineered for cities across India. Combining turn-by-turn road curvature calculations via OSRM, real-time GPS telemetry, AI arrival predictions, biometric passenger pass issuance, and comprehensive fleet orchestration, Transit.IN delivers an intuitive, futuristic transit ecosystem.
+**TRANSIT.IN** is a smart public transport tracking system designed to make travelling easier, safer, and more convenient.
 
-> **Tagline:** *Smarter Journeys. Connected Cities.*
+It helps passengers track buses, check arrival times, manage digital bus passes, report problems, and get emergency support.
 
----
+It also helps transport administrators manage buses, drivers, routes, and passenger complaints from one place.
 
-## 🎨 Official Brand Identity & Design System
-
-- **Deep Navy:** `#10172A` &bull; Primary atmospheric canvas
-- **Midnight:** `#080D20` &bull; Viewport & backdrop depth
-- **Primary Purple:** `#8B5CF6` &bull; Brand aura, primary glowing elements
-- **Electric Blue:** `#38BDF8` &bull; Active telematics, routes & live tracking
-- **Lavender:** `#C4B5FD` &bull; Secondary text, subtitles & accents
-- **Soft Grey:** `#94A3B8` &bull; Form labels, timestamps & secondary icons
-- **Dark Grey:** `#1E293B` &bull; Glass surface backdrops & frosted borders
-
-### Typography Architecture
-- **Space Grotesk:** Main logo `TRANSIT.IN` with glowing purple-blue accent and distinctive dot.
-- **Sora:** Section headings, dashboard cards, and hero displays.
-- **Inter:** Body copy, timetable grids, and interactive forms.
-- **Orbitron:** Telematics metrics, vehicle speeds, countdown timers, and wallet balances.
-- **Urbanist:** Passenger hubs, driver telemetry badges, and admin controls.
+**Tagline:** *Smarter Journeys. Connected Cities.*
 
 ---
 
-## 🚀 Key Modules & System Architecture
+## 🎨 Design and Branding
 
-### 1. 🎬 Cinematic Animated Intro Screen (`TransitIntro`)
-- Full-screen deep navy backdrop with animated purple/blue glowing ambient gradient waves.
-- Center transportation radar reveal with glowing vehicle and location beacon.
-- Letter-by-letter reveal of `TRANSIT.IN` accompanied by high-velocity light-sweep animation.
-- Animated route line trace beneath official tagline: *"SMARTER JOURNEYS. CONNECTED CITIES."*
-- Session-gated via `sessionStorage` with instant "Skip Intro" option and reduced-motion fallback.
+TRANSIT.IN uses a modern and attractive design with glass effects, smooth animations, and a dark theme.
 
-### 2. 🚏 Commercial SaaS Landing Page (`index.html`)
-- **Hero Radar Display:** Live pulsing radar sweep with real-time transit metrics and vehicle counter.
-- **Interactive Bento Grid:** 6 high-impact capability showcases:
-  - Turn-by-Turn GPS Radar Tracking
-  - AI Punctuality & Confidence Matrix
-  - Multilingual Voice Route Guide
-  - Holographic QR Boarding Passes
-  - 24/7 Pan-India SOS Safety Shield
-  - Enterprise Fleet & Grievance Central
-- **Dynamic How-It-Works Workflow:** Interactive 4-step rider progression with live state transitions.
-- **Testimonial Marquee:** Verified commuter reviews across 7 Indian metropolitan hubs.
-- **Interactive FAQ Accordion:** Instant answers regarding fares, concessions, passes, and EV charging.
+### Colour Theme
 
-### 3. 👤 Passenger Dashboard Hub (`profile.html`)
-- **Panoramic Cover Banner & Avatar Studio:** Profile picture selector, real-time bio preview, and verified badges.
-- **Tabbed Navigation Bar:**
-  - **Dashboard & Trips:** Contactless transit pass card, commuter care quick actions, and filterable trip history.
-  - **Account Settings:** Personal Information editor, Payment Methods & Transit Wallet top-up (+₹100, +₹250, +₹500), Notification Preferences toggles, and Privacy & 2FA controls.
-  - **Quick Links & Care:** Commuter FAQ articles, Grievance / Ticket submission, 5-Star Feedback rating, and About Transit+ membership perks.
-  - **Safety Shield Hub:** Instant Distress Panic Beacon with synthesized audible siren, Police Control Room dispatch, WhatsApp/SMS live trip sharing, and clickable 24/7 helplines (**112**, **1091**, **1512**, **108**).
+- **Deep Navy:** `#10172A` – Main background colour.
+- **Midnight:** `#080D20` – Dark background.
+- **Purple:** `#8B5CF6` – Main brand colour.
+- **Electric Blue:** `#38BDF8` – Used for live tracking and highlights.
+- **Lavender:** `#C4B5FD` – Used for text and small highlights.
+- **Soft Grey:** `#94A3B8` – Used for secondary text.
+- **Dark Grey:** `#1E293B` – Used for cards and backgrounds.
 
-### 4. 🏢 Centralized Fleet Management Admin Portal (`admin.html`)
-- **Fleet Control Radar:** Real-time operational map with status tags (`Active`, `Maintenance`, `Off Route`).
-- **Driver Roster & Shift Allocator:** Active pilot duty hours, vehicle assignments, and license validity tracker.
-- **Predictive Maintenance Telemetry:** AI health index, brake pad wear sensors, and battery coolant indicators.
-- **Grievance Resolution Desk:** Live ticket resolver for passenger complaints and lost-and-found property claims.
+### Fonts Used
 
-### 5. 🎙️ Multilingual TransitVoice AI Assistant (`js/voice-assistant.js`)
-- Interactive floating microphone button with pulsing soundwave visualizer.
-- Speech Recognition supporting English, Hindi, and regional phrases (*"Where is route 500D?", "How much is fare to Airport?", "Show my pass"*).
-- Web Speech Synthesis with audible route directions and high-priority transit announcements.
+- **Space Grotesk:** Website logo.
+- **Sora:** Main headings.
+- **Inter:** Normal text and forms.
+- **Orbitron:** Speed, timers, and live tracking numbers.
+- **Urbanist:** Dashboard and control sections.
 
 ---
 
-## 📡 REST API & Persistence Layer (`server.js`)
+## 🚀 Main Features and Modules
 
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/health` | GET | System health, uptime, and database persistence status |
-| `/api/profile` | GET / POST | Commuter profile, bio, emergency contact, and location |
-| `/api/trips` | GET / POST | Commuter trip history and recent journey logs |
-| `/api/wallet` | GET / POST | Transit wallet balance, fast recharge, and ledger |
-| `/api/routes` | GET | Pan-India route catalog with stop coordinates |
-| `/api/track/:id` | GET | Real-time vehicle telemetry, coordinates, and occupancy |
-| `/api/complaints` | GET / POST / PATCH | Grievance submission and admin resolution workflow |
-| `/api/lost-found` | GET / POST / PATCH | Passenger lost items registry and depot claim tracking |
-| `/api/maintenance` | GET / POST | Fleet vehicle health scores and service alerts |
-| `/api/safety/sos` | POST | Emergency distress beacon dispatch with GPS coordinates |
-| `/api/alerts` | GET / POST | Crowdsourced disruption reports and weather advisories |
+### 1. 🎬 Animated Intro Screen (`TransitIntro`)
+
+When users open the website, they first see an animated introduction.
+
+Features:
+- Dark background with glowing purple and blue effects.
+- Animated transport radar with a bus and location icon.
+- The TRANSIT.IN logo appears with a letter-by-letter animation.
+- Animated tagline: "SMARTER JOURNEYS. CONNECTED CITIES."
+- Skip Intro option.
+- The intro is shown only once per browser session.
+- Supports users who prefer reduced animations.
+
+### 2. 🚏 Main Website (`index.html`)
+
+The main page introduces the platform and its features.
+
+Features:
+
+- **Live Radar:** Shows a radar animation with transport information.
+- **GPS Tracking:** Helps passengers track bus locations.
+- **AI Arrival Prediction:** Shows estimated bus arrival times.
+- **Voice Assistant:** Helps passengers find routes using voice commands.
+- **QR Bus Pass:** Provides digital passes for easy boarding.
+- **Emergency Support:** Gives passengers quick access to safety features.
+- **Fleet Management:** Helps administrators manage buses and drivers.
+- **How It Works:** Explains the system through four simple steps.
+- **Customer Reviews:** Displays passenger feedback.
+- **FAQ Section:** Answers common questions about fares, passes, and other services.
+
+### 3. 👤 Passenger Dashboard (`profile.html`)
+
+The passenger dashboard allows users to manage their accounts and travel information.
+
+**Main sections:**
+
+**A. Dashboard and Trips**
+- View personal travel information.
+- Access digital bus passes.
+- Check previous trips.
+- Use quick passenger support options.
+
+**B. Account Settings**
+- Update personal information.
+- Add or manage payment methods.
+- Add money to the transit wallet (+₹100, +₹250, +₹500).
+- Manage notification settings.
+- Control privacy and two-factor authentication settings.
+
+**C. Help and Support**
+- Read frequently asked questions.
+- Submit complaints and support requests.
+- Give feedback and ratings.
+- Learn about Transit+ membership.
+
+**D. Passenger Safety**
+- Send emergency SOS alerts.
+- Share live trip locations through WhatsApp or SMS.
+- Play an emergency siren.
+- Access emergency contact numbers:
+  - Police: 112
+  - Women Helpline: 1091
+  - Road Accident Emergency: 1512
+  - Ambulance: 108
+
+### 4. 🏢 Admin Dashboard (`admin.html`)
+
+The admin dashboard helps transport administrators manage the complete transport system.
+
+Features:
+
+- **Bus Management:** View and manage buses.
+- **Live Fleet Tracking:** Check bus locations and current status.
+- **Bus Status:** Identify active buses, buses under maintenance, and buses travelling on the wrong route.
+- **Driver Management:** View driver details, working hours, and assigned buses.
+- **Maintenance Management:** Check vehicle health and identify possible maintenance problems.
+- **Complaint Management:** View and respond to passenger complaints.
+- **Lost and Found:** Manage items lost by passengers and help them claim their belongings.
+
+### 5. 🎙️ Multilingual Voice Assistant (`js/voice-assistant.js`)
+
+TRANSIT.IN includes a voice assistant that helps passengers use the website through voice commands.
+
+Features:
+- Floating microphone button.
+- Animated sound waves while listening.
+- Supports English, Hindi, and regional language phrases.
+- Converts voice commands into text.
+- Gives spoken answers and route information.
+- Provides important transport announcements.
+
+**Example voice commands:**
+- "Where is route 500D?"
+- "What is the fare to the airport?"
+- "Show my bus pass."
 
 ---
 
-## ⚡ Quick Start & Installation
+## 📡 REST API and Database
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) v18 or higher.
-- Modern Chromium, Safari, or Firefox browser.
+The backend is managed using `server.js`. It provides APIs to connect the website with the server and database.
 
-### 1. Clone & Setup
+| API Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/health` | GET | Checks whether the server is working. |
+| `/api/profile` | GET / POST | Gets and saves passenger details. |
+| `/api/trips` | GET / POST | Gets and saves trip history. |
+| `/api/wallet` | GET / POST | Manages wallet balance and recharges. |
+| `/api/routes` | GET | Displays available bus routes and stops. |
+| `/api/track/:id` | GET | Gets bus location and passenger information. |
+| `/api/complaints` | GET / POST / PATCH | Manages passenger complaints. |
+| `/api/lost-found` | GET / POST / PATCH | Manages lost and found items. |
+| `/api/maintenance` | GET / POST | Manages bus maintenance information. |
+| `/api/safety/sos` | POST | Sends emergency alerts with GPS location. |
+| `/api/alerts` | GET / POST | Manages traffic, weather, and travel alerts. |
+
+---
+
+## ⚡ Installation and Setup
+
+Follow these steps to run the project on your computer.
+
+### Requirements
+
+- Node.js version 18 or above.
+- A modern web browser such as Chrome, Firefox, or Safari.
+- Internet connection.
+
+### Step 1: Clone the Repository
+
+Open your terminal and run:
+
 ```bash
 git clone https://github.com/shreya-s-f/smart-public-transport-tracker.git
+```
+
+Move into the project folder:
+
+```bash
 cd smart-public-transport-tracker
+```
+
+### Step 2: Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Launch Server
+### Step 3: Start the Server
+
 ```bash
 npm start
-# Server starts on http://localhost:5000
 ```
 
-### 3. Demo Role Accounts
-- **Passenger:** `shreya.f@example.com` / `password123` &rarr; Navigates to Commuter Hub
-- **Fleet Admin:** `admin@transit` / `admin123` &rarr; Navigates to Admin Portal (`admin.html`)
+The server will start at:
 
-### 4. Global Keyboard Shortcuts
-- `Ctrl + K` (or `Cmd + K`): Opens universal spotlight search command palette across all pages.
-- `Alt + S`: Launches 24/7 Safety Shield panic modal.
-- `Alt + V`: Activates Multilingual TransitVoice Assistant.
+`http://localhost:5000`
+
+### Step 4: Demo Login Details
+
+**Passenger Account**
+- Email: `shreya.f@example.com`
+- Password: `password123`
+
+**Admin Account**
+- Email: `admin@transit`
+- Password: `admin123`
+
+These accounts are provided for testing the passenger and admin dashboards.
+
+### Keyboard Shortcuts
+
+| Shortcut | Function |
+|---|---|
+| `Ctrl + K` / `Cmd + K` | Opens the search menu. |
+| `Alt + S` | Opens the emergency SOS section. |
+| `Alt + V` | Activates the voice assistant. |
 
 ---
 
 ## 🌍 Pan-India Transit Coverage
-1. **Delhi (DTC & Airport Express)** &bull; Connaught Place, Okhla, IGI Terminal 3, Anand Vihar.
-2. **Mumbai (BEST & Coastal)** &bull; CSMT, Bandra Kurla Complex (BKC), Nariman Point, Andheri.
-3. **Bangalore (BMTC & Vayu Vajra)** &bull; Hebbal, Manyata, Silk Board, Whitefield ITPL, KIA Airport.
-4. **Bagalkot (NWKRTC & City Hub)** &bull; Navanagar, Old Bus Stand, Vidyagiri, Medical College.
-5. **Hyderabad (TSRTC & Hitec Feeder)** &bull; Secunderabad, Hitec City, Charminar, Gachibowli.
-6. **Chennai (MTC & Coastal Express)** &bull; Central Railway, Marina Beach, OMR IT Corridor, Guindy.
-7. **Pune (PMPML & Rainbow BRTS)** &bull; Swargate, Pune Station, Hinjewadi IT Park, Kothrud.
+
+TRANSIT.IN is designed to support public transport services across seven Indian cities.
+
+### 1. Delhi
+- DTC and Airport Express.
+- Connaught Place, Okhla, IGI Terminal 3, Anand Vihar.
+
+### 2. Mumbai
+- BEST and Coastal services.
+- CSMT, Bandra Kurla Complex, Nariman Point, Andheri.
+
+### 3. Bangalore
+- BMTC and Vayu Vajra.
+- Hebbal, Manyata, Silk Board, Whitefield ITPL, KIA Airport.
+
+### 4. Bagalkot
+- NWKRTC and City Bus Services.
+- Navanagar, Old Bus Stand, Vidyagiri, Medical College.
+
+### 5. Hyderabad
+- TSRTC and Hitec City feeder services.
+- Secunderabad, Hitec City, Charminar, Gachibowli.
+
+### 6. Chennai
+- MTC and Coastal services.
+- Central Railway, Marina Beach, OMR, Guindy.
+
+### 7. Pune
+- PMPML and Rainbow BRTS.
+- Swargate, Pune Station, Hinjewadi IT Park, Kothrud.
 
 ---
 
-## 📄 License & Credits
-Developed with &hearts; by **Shreya Fakirapur** &copy; 2026. Released under the [MIT License](LICENSE).
+## 📄 License and Credits
+
+This project was developed by **Shreya Fakirapur** in 2026.
+
+It is released under the **MIT License**.
+
+---
+
+⭐ If you like this project, consider giving it a star on GitHub!
+
+**GitHub Repository:** https://github.com/shreya-s-f/smart-public-transport-tracker
