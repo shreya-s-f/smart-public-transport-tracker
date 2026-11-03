@@ -899,6 +899,7 @@
             // ── ONBOARDING TOUR: Mark as new user only on fresh signup ──
             if (pendingAuthUser && pendingAuthUser.origin === 'signup') {
                 localStorage.setItem('spt-is-new-user', 'true');
+                localStorage.removeItem('transit-tour-done');
                 sessionStorage.removeItem('transit-tour-active');
                 sessionStorage.removeItem('transit-tour-step');
             }

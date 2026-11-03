@@ -219,5 +219,73 @@
       }
     }
   },
-  "feedback": []
+  "feedback": [],
+  "complaints": [
+    {
+      "id": "CMP-2026-9041",
+      "commuter": "Shreya F",
+      "category": "AC Temperature",
+      "busNumber": "KA-01-FA-4421",
+      "status": "In Review",
+      "priority": "Medium",
+      "timestamp": "2026-11-02 11:20 AM",
+      "notes": "Cabin temperature reported warm on Route 500D."
+    },
+    {
+      "id": "CMP-2026-8812",
+      "commuter": "Aditya V",
+      "category": "Rash Driving",
+      "busNumber": "DL-01-EXP-507",
+      "status": "Under Investigation",
+      "priority": "High",
+      "timestamp": "2026-11-02 09:45 AM",
+      "notes": "Speeding reported on Ring Road curve."
+    }
+  ],
+  "lostFound": [
+    {
+      "id": "LF-2026-114",
+      "item": "Black Dell Laptop Bag",
+      "busNumber": "KA-01-FA-4421",
+      "route": "500D (Hebbal to Silk Board)",
+      "status": "Safeguarded at Depot 4",
+      "claimed": false,
+      "date": "2026-11-02"
+    },
+    {
+      "id": "LF-2026-098",
+      "item": "Titan Automatic Wristwatch",
+      "busNumber": "MH-01-BT-301",
+      "route": "BEST-301 (CSMT to BKC)",
+      "status": "Claimed by Owner",
+      "claimed": true,
+      "date": "2026-11-01"
+    }
+  ],
+  "maintenance": [
+    {
+      "busId": "KA-01-FA-4421",
+      "route": "500D",
+      "healthScore": 92,
+      "batteryBrake": "Brake Pad Wear 22%",
+      "nextService": "In 14 days",
+      "status": "Healthy"
+    },
+    {
+      "busId": "DL-01-EXP-507",
+      "route": "507",
+      "healthScore": 78,
+      "batteryBrake": "Coolant Flow Low",
+      "nextService": "In 3 days",
+      "status": "Attention Needed"
+    },
+    {
+      "busId": "MH-01-BT-301",
+      "route": "BEST-301",
+      "healthScore": 96,
+      "batteryBrake": "Battery Cell 98%",
+      "nextService": "In 28 days",
+      "status": "Optimal"
+    }
+  ]
 }
