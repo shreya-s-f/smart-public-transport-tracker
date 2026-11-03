@@ -457,14 +457,14 @@
     },
     {
       page: 'profile.html',
-      selector: '#retake-tour-card, .retake-tour-box, main',
-      title: 'Interactive Tours Hub',
-      desc: 'You can replay this full <strong>Passenger Tour</strong> or launch the <strong>Fleet Admin Tour</strong> at any time directly from your commuter profile.',
+      selector: '.account-settings, .profile-container, main',
+      title: 'Commuter Preferences & Account Settings',
+      desc: 'Customize your notification alerts, linked emergency contacts, default payment methods, and account security preferences.',
       module: 'Profile',
-      icon: 'fa-circle-play',
+      icon: 'fa-user-shield',
       position: 'center',
-      padding: 18,
-      pills: ['Always Available', 'Role Switcher', 'Shift + ? Shortcut']
+      padding: 16,
+      pills: ['Settings', 'Security', 'Preferences']
     }
   ];
 
@@ -795,75 +795,130 @@
 
     const userRole = localStorage.getItem('spt-user-role') || 'passenger';
     const tourModePref = localStorage.getItem('spt-tour-mode') || userRole;
+    const isAdmin = (tourModePref === 'admin');
 
     const modal = document.createElement('div');
     modal.id = 'tour-welcome-modal';
     modal.className = 'tour-welcome-overlay';
-    modal.innerHTML = `
-      <div class="tour-welcome-card" style="max-width: 680px;">
-        <div class="tour-welcome-icon-glow">
-          <i class="fa-solid fa-bus-simple"></i>
-        </div>
-        <span class="tour-welcome-badge">Welcome to TRANSIT.IN</span>
-        <h2 class="tour-welcome-title">Smarter Journeys. <span>Connected Cities.</span></h2>
-        <p class="tour-welcome-desc">
-          Your account is active! Choose a customized guided tour tailored specifically to how you interact with TRANSIT.IN:
-        </p>
 
-        <!-- Role Choice Grid: Passenger Tour vs Admin Tour -->
-        <div class="tour-role-cards-grid">
-          <!-- Passenger Card -->
-          <div class="tour-role-card" id="choose-tour-passenger" onclick="window.startPassengerTour(); document.getElementById('tour-welcome-modal').remove();">
-            <div>
-              <div class="tour-role-card-header">
-                <div class="tour-role-card-icon">
-                  <i class="fa-solid fa-person-walking-luggage"></i>
-                </div>
-                <div>
-                  <div class="tour-role-card-title">Passenger Tour</div>
-                  <span class="tour-role-card-badge">Commuter Journey</span>
-                </div>
-              </div>
-              <p class="tour-role-card-desc">
-                Explore real-time GPS tracking, journey planning, seat booking, digital QR passes, Safety Shield, and multilingual Voice AI.
-              </p>
-            </div>
-            <button class="tour-role-card-btn" type="button">
-              <i class="fa-solid fa-play"></i> Start Passenger Tour
-            </button>
+    if (isAdmin) {
+      // ── Dedicated Admin Tour Welcome ──
+      modal.innerHTML = `
+        <div class="tour-welcome-card" style="max-width: 600px;">
+          <div class="tour-welcome-icon-glow" style="border-color: rgba(245, 158, 11, 0.6); background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(239, 68, 68, 0.3)); color: #F59E0B; box-shadow: 0 0 40px rgba(245, 158, 11, 0.5);">
+            <i class="fa-solid fa-shield-halved"></i>
           </div>
-
-          <!-- Admin Card -->
-          <div class="tour-role-card admin-card" id="choose-tour-admin" onclick="window.startAdminTour(); document.getElementById('tour-welcome-modal').remove();">
-            <div>
-              <div class="tour-role-card-header">
-                <div class="tour-role-card-icon">
-                  <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div>
-                  <div class="tour-role-card-title">Fleet Admin Tour</div>
-                  <span class="tour-role-card-badge">Transit Authority</span>
-                </div>
+          <span class="tour-welcome-badge" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #FCD34D;">
+            Transit Authority Onboarding
+          </span>
+          <h2 class="tour-welcome-title">Fleet Operations <span>Command</span></h2>
+          <p class="tour-welcome-desc">
+            Your administrator account is verified. Take a 2-minute guided walkthrough of the <strong>centralized dispatch matrix</strong>, live vehicle telemetry, driver rosters, and predictive maintenance diagnostics.
+          </p>
+          <div class="tour-features-preview">
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-tower-broadcast" style="color: #F59E0B;"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Centralized Dispatch</span>
+                <span class="tour-feat-card-sub">6 Core Operations KPIs</span>
               </div>
-              <p class="tour-role-card-desc">
-                Explore central dispatch matrix, live vehicle telemetry, certified driver rosters, predictive maintenance, and incident desk.
-              </p>
             </div>
-            <button class="tour-role-card-btn" type="button">
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-bus-simple" style="color: #F59E0B;"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Live Fleet Matrix</span>
+                <span class="tour-feat-card-sub">Vehicles, occupancy &amp; routes</span>
+              </div>
+            </div>
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-id-badge" style="color: #F59E0B;"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Certified Driver Rosters</span>
+                <span class="tour-feat-card-sub">Shift schedules &amp; safety scores</span>
+              </div>
+            </div>
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-screwdriver-wrench" style="color: #F59E0B;"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Predictive Maintenance</span>
+                <span class="tour-feat-card-sub">Sensor health diagnostics</span>
+              </div>
+            </div>
+          </div>
+          <div class="tour-welcome-actions">
+            <button class="tour-start-btn" id="tour-welcome-start-btn" style="background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); box-shadow: 0 6px 24px rgba(245, 158, 11, 0.5);">
               <i class="fa-solid fa-play"></i> Start Admin Tour
             </button>
+            <button class="tour-skip-all-btn" id="tour-welcome-skip-btn">
+              <i class="fa-solid fa-forward"></i> Skip Tour
+            </button>
           </div>
         </div>
-
-        <div class="tour-welcome-actions">
-          <button class="tour-skip-all-btn" id="tour-welcome-skip-btn">
-            Skip &amp; Explore on My Own
-          </button>
+      `;
+    } else {
+      // ── Dedicated Passenger Tour Welcome ──
+      modal.innerHTML = `
+        <div class="tour-welcome-card" style="max-width: 600px;">
+          <div class="tour-welcome-icon-glow">
+            <i class="fa-solid fa-bus-simple"></i>
+          </div>
+          <span class="tour-welcome-badge">Welcome to TRANSIT.IN</span>
+          <h2 class="tour-welcome-title">Smarter Journeys. <span>Connected Cities.</span></h2>
+          <p class="tour-welcome-desc">
+            Your passenger account is ready! Take a quick 2-minute interactive tour to explore real-time GPS tracking, journey planning, seat booking, digital QR passes, and the Safety Shield.
+          </p>
+          <div class="tour-features-preview">
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-map-location-dot"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Live GPS Radar</span>
+                <span class="tour-feat-card-sub">Sub-second fleet tracking</span>
+              </div>
+            </div>
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-chair"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Interactive Seat Booking</span>
+                <span class="tour-feat-card-sub">Pick your seat in advance</span>
+              </div>
+            </div>
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-qrcode"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Digital QR Passes</span>
+                <span class="tour-feat-card-sub">Zero-contact paperless ticketing</span>
+              </div>
+            </div>
+            <div class="tour-feat-card">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div class="tour-feat-card-text">
+                <span class="tour-feat-card-title">Safety Shield</span>
+                <span class="tour-feat-card-sub">SOS beacon &amp; live trip share</span>
+              </div>
+            </div>
+          </div>
+          <div class="tour-welcome-actions">
+            <button class="tour-start-btn" id="tour-welcome-start-btn">
+              <i class="fa-solid fa-play"></i> Start Passenger Tour
+            </button>
+            <button class="tour-skip-all-btn" id="tour-welcome-skip-btn">
+              <i class="fa-solid fa-forward"></i> Skip Tour
+            </button>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
 
     document.body.appendChild(modal);
+
+    document.getElementById('tour-welcome-start-btn').addEventListener('click', () => {
+      modal.remove();
+      if (isAdmin) {
+        startAdminTour();
+      } else {
+        startPassengerTour();
+      }
+    });
 
     document.getElementById('tour-welcome-skip-btn').addEventListener('click', () => {
       modal.remove();
