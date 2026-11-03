@@ -1,36 +1,36 @@
 /**
- * TRANSIT.IN — Premium First-Time User Onboarding Tour System (v2 Comprehensive)
- * ==============================================================================
- * - Full tour covering ALL 10 modules & 40 distinct features across the platform
- * - Cinematic welcome overlay on first-time signup (spt-is-new-user flag)
- * - Spotlight with animated breathing purple/blue glow
- * - Responsive tooltip on desktop/tablet & native bottom-sheet on mobile (<=520px)
- * - Multi-page navigation persistence via sessionStorage
- * - Keyboard navigation (Left/Right arrows, Escape, Enter)
- * - Celebratory completion modal with confetti cannon
- * - Retake Tour trigger available anytime from Commuter Profile or console
+ * TRANSIT.IN — Role-Based Interactive Onboarding Tour System
+ * ==========================================================
+ * - Two completely separate tours:
+ *   1. PASSENGER TOUR: Commuter experience across 9 passenger modules
+ *      (Dashboard, Routes, Live Tracking, Timetable, Booking, Alerts, Safety, Voice AI, Profile)
+ *   2. ADMIN TOUR: Fleet operations command on Admin Portal
+ *      (Dispatch matrix, 6 core KPIs, active fleet table, driver roster, maintenance diagnostics, complaints, audit export)
+ * - Automatic dynamic tab switching during Admin Tour
+ * - Interactive Role-Picker Welcome Modal on first signup
+ * - Native Mobile Bottom-Sheet (<=520px) & Floating Desktop Tooltip
+ * - Keyboard navigation (Arrows, Enter, Escape, Shift + ?)
+ * - Celebratory completion modals with confetti
  */
 
 (function () {
   'use strict';
 
   // ──────────────────────────────────────────────────────────────────────────
-  // COMPLETE TOUR STEPS — All 10 Modules & 40 Specific Platform Features
+  // 1. PASSENGER TOUR STEPS (9 Modules, Commuter-Centric)
   // ──────────────────────────────────────────────────────────────────────────
-  const TOUR_STEPS = [
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 1: DASHBOARD (index.html)
-    // ══════════════════════════════════════════════════════════════════════════
+  const PASSENGER_STEPS = [
+    // ── DASHBOARD (index.html) ──────────────────────────────────────────────
     {
       page: 'index.html',
       selector: '.navbar',
       title: 'Unified Navigation Command Bar',
-      desc: 'Your <strong>top-middle floating navigation bar</strong> links all 10 transit modules seamlessly. Switch between Dashboard, Routes, Live Tracking, Booking, Safety, and AI Voice with one tap.',
+      desc: 'Your <strong>top-middle floating navigation bar</strong> links all transit modules seamlessly. Switch between Dashboard, Routes, Live Tracking, Booking, Safety, and Voice AI with one tap.',
       module: 'Global Nav',
       icon: 'fa-compass',
       position: 'bottom',
       padding: 10,
-      pills: ['Unified Bar', 'All 10 Modules', 'Zero Clutter']
+      pills: ['Unified Bar', '9 Modules', 'Zero Clutter']
     },
     {
       page: 'index.html',
@@ -165,9 +165,7 @@
       pills: ['4 Simple Steps', 'Instant Commute', 'Zero Paper']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 2: ROUTES DIRECTORY (routes.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── ROUTES (routes.html) ────────────────────────────────────────────────
     {
       page: 'routes.html',
       selector: '.navbar',
@@ -202,9 +200,7 @@
       pills: ['Headway Times', 'Stop Breakdown', 'Track Line']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 3: LIVE TRACKING (tracking.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── LIVE TRACKING (tracking.html) ───────────────────────────────────────
     {
       page: 'tracking.html',
       selector: '.navbar',
@@ -239,9 +235,7 @@
       pills: ['Seat Occupancy', 'Delay Offsets', 'Next 3 Stops']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 4: TIMETABLE & SCHEDULES (timetable.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── TIMETABLE (timetable.html) ──────────────────────────────────────────
     {
       page: 'timetable.html',
       selector: '.navbar',
@@ -265,9 +259,7 @@
       pills: ['Terminal Bays', 'Weekend Service', 'Instant Search']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 5: TICKETING & DIGITAL BUS PASS (booking.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── BOOKING (booking.html) ──────────────────────────────────────────────
     {
       page: 'booking.html',
       selector: '.navbar',
@@ -335,9 +327,7 @@
       pills: ['Encrypted QR', 'Zero-Contact Scan', 'Anti-Counterfeit']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 6: NOTIFICATIONS & ALERTS (notifications.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── ALERTS (notifications.html) ─────────────────────────────────────────
     {
       page: 'notifications.html',
       selector: '.navbar',
@@ -361,9 +351,7 @@
       pills: ['Category Filter', 'SMS & WhatsApp', 'Mark as Read']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 7: SAFETY SHIELD & EMERGENCY SOS (safety.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── SAFETY (safety.html) ────────────────────────────────────────────────
     {
       page: 'safety.html',
       selector: '.navbar',
@@ -409,9 +397,7 @@
       pills: ['112 National SOS', '1091 Women', '1512 Transit Police']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 8: VOICE TRANSIT ASSISTANT (voice.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── VOICE AI (voice.html) ───────────────────────────────────────────────
     {
       page: 'voice.html',
       selector: '.navbar',
@@ -446,35 +432,7 @@
       pills: ['Quick Prompts', 'Instant Answers', 'Natural Dialogue']
     },
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 9: FLEET ADMIN DASHBOARD (admin.html)
-    // ══════════════════════════════════════════════════════════════════════════
-    {
-      page: 'admin.html',
-      selector: '.navbar',
-      title: 'Fleet Authority Command',
-      desc: 'Transit controllers and administrators manage vehicles, drivers, route detours, emergency incidents, and passenger feedback from this secure portal.',
-      module: 'Admin Fleet',
-      icon: 'fa-sliders',
-      position: 'bottom',
-      padding: 10,
-      pills: ['Authority Portal', 'Fleet Control', 'Emergency Desk']
-    },
-    {
-      page: 'admin.html',
-      selector: 'main, .admin-container, .admin-grid',
-      title: 'Fleet Operations & Incident Desk',
-      desc: 'Real-time telemetry tables, driver duty allocations, automated maintenance health alerts, and instant complaint resolution workflows.',
-      module: 'Admin Fleet',
-      icon: 'fa-wrench',
-      position: 'center',
-      padding: 18,
-      pills: ['Duty Allocations', 'Vehicle Health', 'Complaint Desk']
-    },
-
-    // ══════════════════════════════════════════════════════════════════════════
-    // MODULE 10: COMMUTER PROFILE & SETTINGS (profile.html)
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── PROFILE (profile.html) ──────────────────────────────────────────────
     {
       page: 'profile.html',
       selector: '.navbar',
@@ -500,18 +458,232 @@
     {
       page: 'profile.html',
       selector: '#retake-tour-card, .retake-tour-box, main',
-      title: 'Retake Guided Tour Anytime',
-      desc: 'You can replay this full interactive tour at any time by clicking <strong>Take Interactive Tour</strong> on your profile page, or by pressing <strong>Shift + ?</strong>.',
+      title: 'Interactive Tours Hub',
+      desc: 'You can replay this full <strong>Passenger Tour</strong> or launch the <strong>Fleet Admin Tour</strong> at any time directly from your commuter profile.',
       module: 'Profile',
       icon: 'fa-circle-play',
       position: 'center',
       padding: 18,
-      pills: ['Always Available', 'Shift + ? Shortcut', '10 Modules']
+      pills: ['Always Available', 'Role Switcher', 'Shift + ? Shortcut']
+    }
+  ];
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // 2. ADMIN TOUR STEPS (Fleet Authority & Operations Matrix on admin.html)
+  // ──────────────────────────────────────────────────────────────────────────
+  const ADMIN_STEPS = [
+    {
+      page: 'admin.html',
+      selector: '.navbar',
+      title: 'Transit Authority Command Header',
+      desc: 'You are authenticated inside the <strong>Central Transit Authority Portal</strong>. This encrypted command bar secures administrative privileges across all municipal depots.',
+      module: 'Admin Authority',
+      icon: 'fa-shield-halved',
+      position: 'bottom',
+      padding: 10,
+      pills: ['Role: Administrator', 'Encrypted Session', 'Citywide Control']
+    },
+    {
+      page: 'admin.html',
+      selector: '.admin-page-container > div:first-child',
+      title: 'Centralized Dispatch Matrix',
+      desc: 'Real-time telemetry control center monitoring fleet duty rosters, predictive vehicle health diagnostics, and automated incident resolution workflows.',
+      module: 'Dispatch Hub',
+      icon: 'fa-tower-broadcast',
+      position: 'bottom',
+      padding: 14,
+      pills: ['Central Dispatch', 'Live Operations', 'Audit Logs']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-passengers',
+      title: 'Total Passenger Ridership',
+      desc: 'Live commuter count showing <strong>148,230 passengers</strong> served today with an automated <strong>+12% surge prediction</strong> during peak rush hours.',
+      module: 'KPI Analytics',
+      icon: 'fa-users',
+      position: 'bottom',
+      padding: 16,
+      pills: ['148k+ Riders', '+12% Surge Trend', 'Demand Forecasting']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-buses',
+      title: 'Active Fleet Availability Ratio',
+      desc: 'Monitors real-time fleet deployment: <strong>84 out of 90 buses</strong> are actively operating on route lines, reflecting an outstanding <strong>93.3% fleet availability</strong>.',
+      module: 'KPI Analytics',
+      icon: 'fa-bus-simple',
+      position: 'bottom',
+      padding: 16,
+      pills: ['84/90 Active Units', '93.3% Availability', 'Depot Standby']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-drivers',
+      title: 'Certified Driver Roster',
+      desc: 'Real-time driver roster: <strong>92 certified drivers</strong> registered, with <strong>78 on active duty shifts</strong> operating across scheduled metropolitan routes.',
+      module: 'KPI Analytics',
+      icon: 'fa-id-badge',
+      position: 'bottom',
+      padding: 16,
+      pills: ['92 Certified', '78 on Active Shift', 'Zero Truancy']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-routes',
+      title: 'Operational Corridors Matrix',
+      desc: 'Overview of <strong>45 active routes</strong> spanning <strong>7 interconnected metro networks</strong>, complete with automated headway balancing and detour protocols.',
+      module: 'KPI Analytics',
+      icon: 'fa-route',
+      position: 'bottom',
+      padding: 16,
+      pills: ['45 Active Corridors', '7 Metro Networks', 'Dynamic Headways']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-emergencies',
+      title: 'Live SOS & Emergency Safety Grid',
+      desc: 'Integrated panic beacon monitoring. Displays active distress triggers across the fleet. Current status is <strong>0 Active Alerts</strong> (100% Secure Grid).',
+      module: 'Security Grid',
+      icon: 'fa-shield-heart',
+      position: 'bottom',
+      padding: 16,
+      pills: ['Zero Active SOS', '100% Secure Grid', 'Rapid Dispatch']
+    },
+    {
+      page: 'admin.html',
+      selector: '#stat-admin-complaints',
+      title: 'Grievance Resolution Desk',
+      desc: 'Real-time commuter feedback queue. Shows 4 pending grievances with an outstanding <strong>18-minute average resolution SLA</strong> across all lines.',
+      module: 'Service Quality',
+      icon: 'fa-inbox',
+      position: 'bottom',
+      padding: 16,
+      pills: ['4 Pending Tickets', '18-min Avg SLA', 'Automated Routing']
+    },
+    {
+      page: 'admin.html',
+      selector: '#tab-buses',
+      title: 'Fleet & Route Matrix Tab',
+      desc: 'Click or select this tab to inspect the complete operational fleet table: vehicle numbers, OSRM corridor paths, live passenger occupancy, and status.',
+      module: 'Fleet Operations',
+      icon: 'fa-bus-simple',
+      position: 'bottom',
+      padding: 12,
+      tab: 'buses',
+      pills: ['Vehicle Registration', 'Corridor Paths', 'Live Occupancy']
+    },
+    {
+      page: 'admin.html',
+      selector: '#section-buses table, #section-buses',
+      title: 'Live Vehicle Telemetry Table',
+      desc: 'Inspect individual buses in real-time. View registration numbers (KA-01-F-2024), route codes, passenger occupancy percentages, and maintenance status.',
+      module: 'Fleet Operations',
+      icon: 'fa-table',
+      position: 'center',
+      padding: 16,
+      tab: 'buses',
+      pills: ['Telemetry Table', 'Speed & Fuel', 'Real-Time Sync']
+    },
+    {
+      page: 'admin.html',
+      selector: 'button[onclick="openAddRouteModal()"]',
+      title: 'Add & Dispatch New Route',
+      desc: 'Dispatch new bus corridors on-the-fly. Define terminal stops, allocate vehicle units, assign shift drivers, and publish new routes to the commuter app instantly.',
+      module: 'Fleet Operations',
+      icon: 'fa-plus',
+      position: 'left',
+      padding: 12,
+      tab: 'buses',
+      pills: ['Instant Dispatch', 'Stop Waypoints', 'Public Broadcast']
+    },
+    {
+      page: 'admin.html',
+      selector: '#tab-drivers',
+      title: 'Certified Driver Roster Tab',
+      desc: 'Switch to the Driver Roster tab to review verified drivers, shift timetables, assigned bus registrations, and passenger safety ratings.',
+      module: 'Staff Management',
+      icon: 'fa-id-badge',
+      position: 'bottom',
+      padding: 12,
+      tab: 'drivers',
+      pills: ['Driver Rosters', 'Shift Schedules', 'Direct Call']
+    },
+    {
+      page: 'admin.html',
+      selector: '#section-drivers table, #section-drivers',
+      title: 'Driver Duty Assignments & Ratings',
+      desc: 'Detailed driver ledger showing 5-star commuter safety ratings, duty shift hours (06:00 AM – 02:00 PM), and one-click direct phone dispatch buttons.',
+      module: 'Staff Management',
+      icon: 'fa-user-check',
+      position: 'center',
+      padding: 16,
+      tab: 'drivers',
+      pills: ['Safety Ratings', 'Shift Timings', 'Direct Phone Call']
+    },
+    {
+      page: 'admin.html',
+      selector: '#tab-maintenance',
+      title: 'Predictive Vehicle Maintenance Tab',
+      desc: 'Switch to AI-driven predictive maintenance diagnostics. Telemetry sensors detect brake wear, tyre pressure anomalies, and battery health before failures occur.',
+      module: 'Predictive Maintenance',
+      icon: 'fa-wrench',
+      position: 'bottom',
+      padding: 12,
+      tab: 'maintenance',
+      pills: ['Brake Diagnostics', 'Tyre Pressure', 'Battery & Motor']
+    },
+    {
+      page: 'admin.html',
+      selector: '#section-maintenance, #tab-maintenance',
+      title: 'Vehicle Diagnostics & Service Reminders',
+      desc: 'Review automated health scorecards per vehicle. Prevent breakdowns on the road by scheduling proactive depot maintenance based on sensor alerts.',
+      module: 'Predictive Maintenance',
+      icon: 'fa-screwdriver-wrench',
+      position: 'center',
+      padding: 16,
+      tab: 'maintenance',
+      pills: ['Zero Breakdowns', 'Health Scores', 'Depot Reminders']
+    },
+    {
+      page: 'admin.html',
+      selector: '#tab-complaints',
+      title: 'Commuter Grievances & Resolution Tab',
+      desc: 'Direct ticketing workflow to investigate lost items, delayed buses, driver behavior complaints, or fare issues, with automated SMS/email updates to commuters.',
+      module: 'Grievance SLA',
+      icon: 'fa-triangle-exclamation',
+      position: 'bottom',
+      padding: 12,
+      tab: 'complaints',
+      pills: ['Ticket Resolution', 'Automated SMS', 'Audit Trail']
+    },
+    {
+      page: 'admin.html',
+      selector: '#tab-cities',
+      title: 'Operating Cities Network Matrix',
+      desc: 'Multi-city configuration engine. Manage operational corridors across Delhi, Mumbai, Bangalore, Hyderabad, Chennai, and tier-2 expanding networks.',
+      module: 'Multi-City Grid',
+      icon: 'fa-city',
+      position: 'bottom',
+      padding: 12,
+      tab: 'cities',
+      pills: ['7 Metros', 'Tier-2 Corridors', 'Custom Cities']
+    },
+    {
+      page: 'admin.html',
+      selector: 'button[onclick="exportAdminAuditLog()"]',
+      title: 'Fleet Audit Log & Report Export',
+      desc: 'Export end-of-day operational reports, ridership analytics, revenue ledgers, and compliance audit logs into CSV or JSON with one click.',
+      module: 'Audit & Compliance',
+      icon: 'fa-file-arrow-down',
+      position: 'left',
+      padding: 12,
+      pills: ['Audit Logs', 'CSV & JSON Export', 'Compliance Ready']
     }
   ];
 
   // Storage keys
   const STORAGE_KEY_ACTIVE    = 'transit-tour-active';
+  const STORAGE_KEY_MODE      = 'transit-tour-mode'; // 'passenger' | 'admin'
   const STORAGE_KEY_STEP      = 'transit-tour-step';
   const STORAGE_KEY_NEW_USER  = 'spt-is-new-user';
   const STORAGE_KEY_DONE      = 'transit-tour-done';
@@ -521,9 +693,14 @@
   let spotlightEl = null;
   let tooltipEl = null;
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // HELPER FUNCTIONS
-  // ──────────────────────────────────────────────────────────────────────────
+  function getCurrentTourMode() {
+    return sessionStorage.getItem(STORAGE_KEY_MODE) || 'passenger';
+  }
+
+  function getStepsForCurrentTour() {
+    return getCurrentTourMode() === 'admin' ? ADMIN_STEPS : PASSENGER_STEPS;
+  }
+
   function getCurrentPageName() {
     const path = window.location.pathname;
     const segments = path.split('/');
@@ -572,7 +749,7 @@
               <i class="fa-solid fa-compass"></i>
               <span id="tour-badge-text">Dashboard</span>
             </span>
-            <span class="tour-step-counter" id="tour-step-counter">Step 1 of ${TOUR_STEPS.length}</span>
+            <span class="tour-step-counter" id="tour-step-counter">Step 1 of 30</span>
           </div>
           <button class="tour-close-btn" id="tour-close-btn" title="Skip Tour (Esc)">
             <i class="fa-solid fa-xmark"></i>
@@ -611,72 +788,82 @@
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // SHOW WELCOME MODAL (TRIGGERED ON FIRST SIGNUP)
+  // ROLE-AWARE WELCOME MODAL (FIRST SIGNUP)
   // ──────────────────────────────────────────────────────────────────────────
   function showWelcomeModal() {
     if (document.getElementById('tour-welcome-modal')) return;
+
+    const userRole = localStorage.getItem('spt-user-role') || 'passenger';
+    const tourModePref = localStorage.getItem('spt-tour-mode') || userRole;
 
     const modal = document.createElement('div');
     modal.id = 'tour-welcome-modal';
     modal.className = 'tour-welcome-overlay';
     modal.innerHTML = `
-      <div class="tour-welcome-card">
+      <div class="tour-welcome-card" style="max-width: 680px;">
         <div class="tour-welcome-icon-glow">
           <i class="fa-solid fa-bus-simple"></i>
         </div>
         <span class="tour-welcome-badge">Welcome to TRANSIT.IN</span>
         <h2 class="tour-welcome-title">Smarter Journeys. <span>Connected Cities.</span></h2>
         <p class="tour-welcome-desc">
-          Your account is ready! Take a 2-minute interactive tour to explore all <strong>10 modules</strong>, 
-          real-time GPS fleet tracking, AI arrival predictions, digital QR passes, and the Safety Shield.
+          Your account is active! Choose a customized guided tour tailored specifically to how you interact with TRANSIT.IN:
         </p>
-        <div class="tour-features-preview">
-          <div class="tour-feat-card">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <div class="tour-feat-card-text">
-              <span class="tour-feat-card-title">Live GPS Radar</span>
-              <span class="tour-feat-card-sub">Sub-second fleet tracking</span>
+
+        <!-- Role Choice Grid: Passenger Tour vs Admin Tour -->
+        <div class="tour-role-cards-grid">
+          <!-- Passenger Card -->
+          <div class="tour-role-card" id="choose-tour-passenger" onclick="window.startPassengerTour(); document.getElementById('tour-welcome-modal').remove();">
+            <div>
+              <div class="tour-role-card-header">
+                <div class="tour-role-card-icon">
+                  <i class="fa-solid fa-person-walking-luggage"></i>
+                </div>
+                <div>
+                  <div class="tour-role-card-title">Passenger Tour</div>
+                  <span class="tour-role-card-badge">Commuter Journey</span>
+                </div>
+              </div>
+              <p class="tour-role-card-desc">
+                Explore real-time GPS tracking, journey planning, seat booking, digital QR passes, Safety Shield, and multilingual Voice AI.
+              </p>
             </div>
+            <button class="tour-role-card-btn" type="button">
+              <i class="fa-solid fa-play"></i> Start Passenger Tour
+            </button>
           </div>
-          <div class="tour-feat-card">
-            <i class="fa-solid fa-qrcode"></i>
-            <div class="tour-feat-card-text">
-              <span class="tour-feat-card-title">Digital QR Passes</span>
-              <span class="tour-feat-card-sub">Zero-contact paperless ticketing</span>
+
+          <!-- Admin Card -->
+          <div class="tour-role-card admin-card" id="choose-tour-admin" onclick="window.startAdminTour(); document.getElementById('tour-welcome-modal').remove();">
+            <div>
+              <div class="tour-role-card-header">
+                <div class="tour-role-card-icon">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                  <div class="tour-role-card-title">Fleet Admin Tour</div>
+                  <span class="tour-role-card-badge">Transit Authority</span>
+                </div>
+              </div>
+              <p class="tour-role-card-desc">
+                Explore central dispatch matrix, live vehicle telemetry, certified driver rosters, predictive maintenance, and incident desk.
+              </p>
             </div>
-          </div>
-          <div class="tour-feat-card">
-            <i class="fa-solid fa-shield-halved"></i>
-            <div class="tour-feat-card-text">
-              <span class="tour-feat-card-title">Safety Shield</span>
-              <span class="tour-feat-card-sub">SOS beacon & live trip share</span>
-            </div>
-          </div>
-          <div class="tour-feat-card">
-            <i class="fa-solid fa-microphone"></i>
-            <div class="tour-feat-card-text">
-              <span class="tour-feat-card-title">Voice Transit AI</span>
-              <span class="tour-feat-card-sub">Natural multilingual assistance</span>
-            </div>
+            <button class="tour-role-card-btn" type="button">
+              <i class="fa-solid fa-play"></i> Start Admin Tour
+            </button>
           </div>
         </div>
+
         <div class="tour-welcome-actions">
-          <button class="tour-start-btn" id="tour-welcome-start-btn">
-            <i class="fa-solid fa-play"></i> Start Interactive Tour
-          </button>
           <button class="tour-skip-all-btn" id="tour-welcome-skip-btn">
-            Skip & Explore on My Own
+            Skip &amp; Explore on My Own
           </button>
         </div>
       </div>
     `;
 
     document.body.appendChild(modal);
-
-    document.getElementById('tour-welcome-start-btn').addEventListener('click', () => {
-      modal.remove();
-      startTourFromBeginning();
-    });
 
     document.getElementById('tour-welcome-skip-btn').addEventListener('click', () => {
       modal.remove();
@@ -689,43 +876,53 @@
   // SHOW COMPLETION MODAL (WITH CONFETTI)
   // ──────────────────────────────────────────────────────────────────────────
   function showCompletionModal() {
+    const mode = getCurrentTourMode();
+    const steps = getStepsForCurrentTour();
     stopTourCleanly();
     localStorage.removeItem(STORAGE_KEY_NEW_USER);
     localStorage.setItem(STORAGE_KEY_DONE, 'true');
 
-    // Launch confetti shower
     launchConfetti();
 
+    const isAdmin = (mode === 'admin');
     const modal = document.createElement('div');
     modal.id = 'tour-completion-modal';
     modal.className = 'tour-complete-overlay';
     modal.innerHTML = `
       <div class="tour-complete-card">
-        <div class="tour-complete-badge">
+        <div class="tour-complete-badge" style="${isAdmin ? 'border-color: #F59E0B; color: #F59E0B; background: rgba(245,158,11,0.2);' : ''}">
           <i class="fa-solid fa-check"></i>
         </div>
-        <h2 class="tour-complete-title">You're All Set to Travel Smarter!</h2>
+        <h2 class="tour-complete-title">
+          ${isAdmin ? 'Fleet Operations Mastered!' : 'You\'re All Set to Travel Smarter!'}
+        </h2>
         <p class="tour-complete-desc">
-          You've explored all <strong>10 modules</strong> and core features of TRANSIT.IN.
-          You're ready to track buses in real-time, purchase digital QR passes, and travel with peace of mind.
+          ${isAdmin 
+            ? 'You\'ve explored the central dispatch matrix, fleet telemetry, driver rosters, and predictive maintenance.'
+            : 'You\'ve explored all core commuter modules of TRANSIT.IN and are ready to ride with peace of mind.'}
         </p>
         <div class="tour-complete-stats">
           <div class="tour-stat-item">
-            <span class="tour-stat-number">10</span>
-            <span class="tour-stat-label">Modules</span>
+            <span class="tour-stat-number" style="${isAdmin ? 'color: #F59E0B;' : ''}">${isAdmin ? 'Admin' : '9'}</span>
+            <span class="tour-stat-label">${isAdmin ? 'Portal' : 'Modules'}</span>
           </div>
           <div class="tour-stat-item">
-            <span class="tour-stat-number">40</span>
+            <span class="tour-stat-number" style="${isAdmin ? 'color: #F59E0B;' : ''}">${steps.length}</span>
             <span class="tour-stat-label">Features</span>
           </div>
           <div class="tour-stat-item">
-            <span class="tour-stat-number">100%</span>
-            <span class="tour-stat-label">Toured</span>
+            <span class="tour-stat-number" style="${isAdmin ? 'color: #F59E0B;' : ''}">100%</span>
+            <span class="tour-stat-label">Complete</span>
           </div>
         </div>
-        <button class="tour-go-btn" id="tour-complete-go-btn">
-          <i class="fa-solid fa-house"></i> Go to Dashboard
-        </button>
+        <div style="display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap;">
+          <button class="tour-go-btn" id="tour-complete-go-btn" style="${isAdmin ? 'background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);' : ''}">
+            <i class="fa-solid fa-house"></i> ${isAdmin ? 'Go to Admin Command' : 'Go to Dashboard'}
+          </button>
+          <button class="tour-skip-all-btn" id="tour-switch-other-btn">
+            ${isAdmin ? 'Take Passenger Tour' : 'Take Admin Tour'}
+          </button>
+        </div>
       </div>
     `;
 
@@ -733,7 +930,16 @@
 
     document.getElementById('tour-complete-go-btn').addEventListener('click', () => {
       modal.remove();
-      window.location.href = 'index.html';
+      window.location.href = isAdmin ? 'admin.html' : 'index.html';
+    });
+
+    document.getElementById('tour-switch-other-btn').addEventListener('click', () => {
+      modal.remove();
+      if (isAdmin) {
+        startPassengerTour();
+      } else {
+        startAdminTour();
+      }
     });
   }
 
@@ -751,9 +957,6 @@
     }
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // SHOW TRANSITION TOAST WHEN SWITCHING PAGES
-  // ──────────────────────────────────────────────────────────────────────────
   function showTransitionToast(nextModuleName) {
     const toast = document.createElement('div');
     toast.className = 'tour-transition-toast';
@@ -767,13 +970,14 @@
   // ──────────────────────────────────────────────────────────────────────────
   // TOUR CORE ENGINE
   // ──────────────────────────────────────────────────────────────────────────
-  function startTourFromBeginning() {
+  function startPassengerTour() {
+    sessionStorage.setItem(STORAGE_KEY_MODE, 'passenger');
     sessionStorage.setItem(STORAGE_KEY_ACTIVE, 'true');
     sessionStorage.setItem(STORAGE_KEY_STEP, '0');
     currentStepIndex = 0;
 
     const currentPage = getCurrentPageName();
-    const firstStep = TOUR_STEPS[0];
+    const firstStep = PASSENGER_STEPS[0];
 
     if (currentPage !== firstStep.page) {
       showTransitionToast(firstStep.module);
@@ -783,8 +987,36 @@
     }
   }
 
+  function startAdminTour() {
+    // Check admin authentication
+    const userRole = localStorage.getItem('spt-user-role') || 'passenger';
+    if (userRole !== 'admin') {
+      // Temporarily set role for inspection or elevate to allow seamless tour
+      localStorage.setItem('spt-user-role', 'admin');
+    }
+
+    sessionStorage.setItem(STORAGE_KEY_MODE, 'admin');
+    sessionStorage.setItem(STORAGE_KEY_ACTIVE, 'true');
+    sessionStorage.setItem(STORAGE_KEY_STEP, '0');
+    currentStepIndex = 0;
+
+    const currentPage = getCurrentPageName();
+    const firstStep = ADMIN_STEPS[0];
+
+    if (currentPage !== firstStep.page) {
+      showTransitionToast('Admin Operations');
+      window.location.href = firstStep.page;
+    } else {
+      renderStep(0);
+    }
+  }
+
   function renderStep(index) {
-    if (index >= TOUR_STEPS.length) {
+    const steps = getStepsForCurrentTour();
+    const mode = getCurrentTourMode();
+    const isAdmin = (mode === 'admin');
+
+    if (index >= steps.length) {
       showCompletionModal();
       return;
     }
@@ -793,7 +1025,7 @@
     currentStepIndex = index;
     sessionStorage.setItem(STORAGE_KEY_STEP, index.toString());
 
-    const step = TOUR_STEPS[index];
+    const step = steps[index];
     const currentPage = getCurrentPageName();
 
     // If step belongs to another page, navigate there smoothly
@@ -805,10 +1037,25 @@
       return;
     }
 
+    // Auto-switch Admin Tab if step specifies one
+    if (isAdmin && step.tab) {
+      if (typeof window.switchAdminTab === 'function') {
+        window.switchAdminTab(step.tab);
+      } else {
+        const tabBtn = document.getElementById(`tab-${step.tab}`);
+        if (tabBtn) tabBtn.click();
+      }
+    }
+
     ensureTourDOMElements();
 
-    // Activate overlay
+    // Activate overlay & update role styling
     overlayEl.className = 'tour-overlay active';
+    if (isAdmin) {
+      spotlightEl.classList.add('admin');
+    } else {
+      spotlightEl.classList.remove('admin');
+    }
 
     // Find target element with fallback selectors
     let targetEl = null;
@@ -835,10 +1082,9 @@
       });
     }
 
-    // Small delay to allow smooth scrolling to settle
     setTimeout(() => {
       updateSpotlight(targetEl, step.padding || 12);
-      updateTooltip(step, targetEl, index);
+      updateTooltip(step, targetEl, index, steps.length, isAdmin);
     }, 280);
   }
 
@@ -846,7 +1092,6 @@
     if (!spotlightEl) return;
 
     if (el === document.body) {
-      // Center spotlight
       spotlightEl.style.display = 'none';
       return;
     }
@@ -861,14 +1106,22 @@
     spotlightEl.style.height = Math.min(window.innerHeight, rect.height + pad * 2) + 'px';
   }
 
-  function updateTooltip(step, targetEl, index) {
+  function updateTooltip(step, targetEl, index, totalSteps, isAdmin) {
     if (!tooltipEl) return;
 
-    // Update text and counters
-    document.getElementById('tour-badge-text').textContent = step.module;
-    document.getElementById('tour-step-counter').textContent = `Step ${index + 1} of ${TOUR_STEPS.length}`;
+    // Badge styling & text
+    const badgeEl = document.getElementById('tour-page-badge');
+    const badgeText = document.getElementById('tour-badge-text');
+    badgeText.textContent = step.module;
+    if (isAdmin) {
+      badgeEl.className = 'tour-page-badge admin';
+    } else {
+      badgeEl.className = 'tour-page-badge';
+    }
+
+    document.getElementById('tour-step-counter').textContent = `Step ${index + 1} of ${totalSteps}`;
     document.getElementById('tour-title').innerHTML = `
-      <i class="fa-solid ${step.icon || 'fa-compass'}"></i> ${step.title}
+      <i class="fa-solid ${step.icon || 'fa-compass'}" style="${isAdmin ? 'color: #F59E0B;' : ''}"></i> ${step.title}
     `;
     document.getElementById('tour-desc').innerHTML = step.desc;
 
@@ -885,29 +1138,39 @@
     }
 
     // Progress bar fill percentage
-    const fillPercent = Math.round(((index + 1) / TOUR_STEPS.length) * 100);
-    document.getElementById('tour-progress-fill').style.width = `${fillPercent}%`;
+    const fillPercent = Math.round(((index + 1) / totalSteps) * 100);
+    const fillEl = document.getElementById('tour-progress-fill');
+    fillEl.style.width = `${fillPercent}%`;
+    if (isAdmin) {
+      fillEl.style.background = 'linear-gradient(90deg, #F59E0B 0%, #EF4444 100%)';
+    } else {
+      fillEl.style.background = 'linear-gradient(90deg, #8B5CF6 0%, #38BDF8 100%)';
+    }
 
     // Button states
     const prevBtn = document.getElementById('tour-btn-prev');
     const nextBtn = document.getElementById('tour-btn-next');
     prevBtn.disabled = (index === 0);
 
-    const isLastStep = (index === TOUR_STEPS.length - 1);
+    const isLastStep = (index === totalSteps - 1);
     nextBtn.innerHTML = isLastStep
       ? `Finish <i class="fa-solid fa-flag-checkered"></i>`
       : `Next <i class="fa-solid fa-arrow-right"></i>`;
+
+    if (isAdmin) {
+      nextBtn.style.background = 'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)';
+    } else {
+      nextBtn.style.background = 'linear-gradient(135deg, #8B5CF6 0%, #38BDF8 100%)';
+    }
 
     // Positioning
     tooltipEl.style.display = 'block';
 
     if (isMobile()) {
-      // Mobile bottom-sheet layout handled via CSS
       tooltipEl.setAttribute('data-position', 'mobile-bottom');
       return;
     }
 
-    // Desktop/Tablet Positioning
     positionTooltip(targetEl, step.position || 'bottom');
   }
 
@@ -934,7 +1197,6 @@
     if (preferredPos === 'bottom') {
       top = targetRect.bottom + margin;
       left = targetRect.left + (targetRect.width / 2) - 40;
-      // If overflows bottom of viewport, flip to top
       if (top + tooltipRect.height > window.innerHeight - 20) {
         actualPos = 'top';
         top = targetRect.top - tooltipRect.height - margin;
@@ -942,10 +1204,17 @@
     } else if (preferredPos === 'top') {
       top = targetRect.top - tooltipRect.height - margin;
       left = targetRect.left + (targetRect.width / 2) - 40;
-      // If overflows top of viewport, flip to bottom
       if (top < 20) {
         actualPos = 'bottom';
         top = targetRect.bottom + margin;
+      }
+    } else if (preferredPos === 'left') {
+      top = targetRect.top;
+      left = targetRect.left - tooltipRect.width - margin;
+      if (left < 20) {
+        actualPos = 'bottom';
+        top = targetRect.bottom + margin;
+        left = targetRect.left;
       }
     } else {
       top = targetRect.bottom + margin;
@@ -996,9 +1265,13 @@
   document.addEventListener('keydown', (e) => {
     const isTourActive = sessionStorage.getItem(STORAGE_KEY_ACTIVE) === 'true';
     if (!isTourActive) {
-      // Shift + ? shortcut to launch tour from any page
       if (e.shiftKey && (e.key === '?' || e.key === '/')) {
-        startTourFromBeginning();
+        const page = getCurrentPageName();
+        if (page === 'admin.html') {
+          startAdminTour();
+        } else {
+          startPassengerTour();
+        }
       }
       return;
     }
@@ -1012,7 +1285,6 @@
     }
   });
 
-  // Handle window resize dynamically
   window.addEventListener('resize', () => {
     if (sessionStorage.getItem(STORAGE_KEY_ACTIVE) === 'true') {
       renderStep(currentStepIndex);
@@ -1022,14 +1294,16 @@
   // ──────────────────────────────────────────────────────────────────────────
   // GLOBAL API EXPOSURE
   // ──────────────────────────────────────────────────────────────────────────
-  window.startTransitTour = function () {
-    startTourFromBeginning();
-  };
+  window.startPassengerTour = startPassengerTour;
+  window.startAdminTour     = startAdminTour;
+  window.startTransitTour   = startPassengerTour; // default alias
 
   window.TransitTour = {
-    start: startTourFromBeginning,
-    retake: startTourFromBeginning,
-    stop: stopTour
+    startPassenger: startPassengerTour,
+    startAdmin:     startAdminTour,
+    start:          startPassengerTour,
+    retake:         startPassengerTour,
+    stop:           stopTour
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -1040,7 +1314,7 @@
     const isNewUser = localStorage.getItem(STORAGE_KEY_NEW_USER) === 'true';
     const tourDone = localStorage.getItem(STORAGE_KEY_DONE) === 'true';
 
-    // 1. If tour is already in progress across pages
+    // 1. If tour is currently in progress across page transitions
     if (isTourActive) {
       const savedStep = parseInt(sessionStorage.getItem(STORAGE_KEY_STEP) || '0', 10);
       setTimeout(() => renderStep(savedStep), 350);
@@ -1051,16 +1325,6 @@
     if (isNewUser && !tourDone) {
       setTimeout(() => showWelcomeModal(), 700);
       return;
-    }
-
-    // 3. Connect Retake Tour button on profile.html if present
-    const retakeBtn = document.getElementById('retake-tour-btn') ||
-                      document.querySelector('[data-action="retake-tour"]');
-    if (retakeBtn) {
-      retakeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        startTourFromBeginning();
-      });
     }
   }
 

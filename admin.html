@@ -169,7 +169,10 @@
                     Real-time telemetry control, driver rosters, predictive vehicle health, and automated incident resolution.
                 </p>
             </div>
-            <div style="display: flex; gap: 0.8rem;">
+            <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-primary-gradient" id="admin-start-tour-btn" onclick="window.TransitTour ? window.TransitTour.startAdmin() : window.startAdminTour()" style="background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4); padding: 0.55rem 1.1rem; font-size: 0.85rem; border-radius: 10px;">
+                    <i class="fa-solid fa-circle-play"></i> Start Admin Fleet Tour
+                </button>
                 <button type="button" class="btn-secondary-glass" onclick="exportAdminAuditLog()">
                     <i class="fa-solid fa-file-arrow-down"></i> Export Report
                 </button>
