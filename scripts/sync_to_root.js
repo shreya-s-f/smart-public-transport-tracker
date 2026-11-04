@@ -8,6 +8,8 @@ const src = '.';
 const newFiles = [
   ['css/onboarding-tour.css', path.join(root, 'css/onboarding-tour.css')],
   ['js/onboarding-tour.js',  path.join(root, 'js/onboarding-tour.js')],
+  ['css/ai-assistant.css',   path.join(root, 'css/ai-assistant.css')],
+  ['js/ai-assistant.js',     path.join(root, 'js/ai-assistant.js')],
 ];
 
 newFiles.forEach(([from, to]) => {
