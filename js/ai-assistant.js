@@ -183,6 +183,55 @@
       }
     });
 
+    // Delegate message action buttons click & deep linking
+    messagesContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('.transit-ai-action-btn');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      const targetVal = btn.dataset.val;
+
+      if (action === 'track-bus') {
+        sessionStorage.setItem('spt-selected-bus', targetVal || '500D');
+        if (window.location.pathname.includes('tracking.html')) {
+          if (typeof window.selectBusForTracking === 'function') {
+            window.selectBusForTracking(targetVal);
+          }
+          closeAssistant();
+        } else {
+          window.location.href = 'tracking.html';
+        }
+      } else if (action === 'book-route') {
+        sessionStorage.setItem('spt-booking-route', targetVal || '500D');
+        if (window.location.pathname.includes('booking.html')) {
+          const routeSelect = document.getElementById('route-select');
+          if (routeSelect && targetVal) {
+            routeSelect.value = targetVal;
+            routeSelect.dispatchEvent(new Event('change'));
+          }
+          closeAssistant();
+        } else {
+          window.location.href = 'booking.html';
+        }
+      } else if (action === 'trigger-sos') {
+        if (window.location.pathname.includes('safety.html')) {
+          const beacon = document.querySelector('.beacon-box, #panic-btn');
+          if (beacon) beacon.scrollIntoView({ behavior: 'smooth' });
+          closeAssistant();
+        } else {
+          window.location.href = 'safety.html';
+        }
+      } else if (action === 'open-tour') {
+        closeAssistant();
+        if (window.TransitTour && typeof window.TransitTour.startPassenger === 'function') {
+          window.TransitTour.startPassenger();
+        }
+      } else if (action === 'fill-query') {
+        inputEl.value = targetVal || '';
+        handleUserSend();
+      }
+    });
+
     // Render Welcome Message on First Load
     sendWelcomeMessage();
   }
@@ -301,9 +350,10 @@
     `;
 
     const actions = `
-      <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-map-location-dot"></i> Live Map</a>
+      <button class="transit-ai-action-btn" data-action="track-bus" data-val="500D"><i class="fa-solid fa-map-location-dot"></i> Live Map</button>
       <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
-      <a href="safety.html" class="transit-ai-action-btn" style="color: #F87171; border-color: rgba(239,68,68,0.4);"><i class="fa-solid fa-shield-heart"></i> Safety SOS</a>
+      <button class="transit-ai-action-btn" data-action="trigger-sos" style="color: #F87171; border-color: rgba(239,68,68,0.4);"><i class="fa-solid fa-shield-heart"></i> Safety SOS</button>
+      <button class="transit-ai-action-btn" data-action="open-tour" style="color: #C4B5FD;"><i class="fa-solid fa-play"></i> Guided Tour</button>
     `;
 
     appendMessage('assistant', welcomeHtml, actions);
@@ -366,8 +416,8 @@
           </div>
         `;
         const actions = `
-          <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-crosshairs"></i> Track on Live Map</a>
-          <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-chair"></i> Book Seat on ${bus.id}</a>
+          <button class="transit-ai-action-btn" data-action="track-bus" data-val="${bus.id}"><i class="fa-solid fa-crosshairs"></i> Track on Live Map</button>
+          <button class="transit-ai-action-btn" data-action="book-route" data-val="${bus.id}"><i class="fa-solid fa-chair"></i> Book Seat on ${bus.id}</button>
         `;
         const speechText = `Bus ${bus.id} is currently at ${bus.loc}, arriving at ${bus.nextStop} in approximately ${bus.eta}. Occupancy is ${bus.occupancy}.`;
         return { html, actions, speechText };
