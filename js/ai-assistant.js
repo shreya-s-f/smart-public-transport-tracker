@@ -318,6 +318,7 @@
 
     inputEl.value = '';
     appendMessage('user', `<p>${escapeHTML(query)}</p>`);
+    playUiChime('send');
 
     showTypingIndicator();
 
@@ -325,6 +326,7 @@
       hideTypingIndicator();
       const response = processNLPQuery(query);
       appendMessage('assistant', response.html, response.actions);
+      playUiChime('receive');
 
       // Voice synthesis read-aloud
       if (isSpeechEnabled && response.speechText) {
@@ -525,20 +527,87 @@
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // 7. SPEECH SYNTHESIS & SPEECH-TO-TEXT (STT/TTS)
+  // 7. SPEECH SYNTHESIS, WEB AUDIO & SPEECH-TO-TEXT (STT/TTS)
   // ──────────────────────────────────────────────────────────────────────────
+  let audioCtx = null;
+
+  function playUiChime(type) {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+      if (type === 'send') {
+        // High soft beep
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'receive') {
+        // Futuristic two-tone chime
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.setValueAtTime(880, now + 0.08); // A5
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+    } catch (e) {
+      // AudioContext unavailable or blocked
+    }
+  }
+
   function speakResponse(text) {
-    if (!('speechSynthesis' in window)) return;
+    if (!isSpeechEnabled || !('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
+      utterance.rate = 1.02;
       utterance.pitch = 1.0;
       utterance.lang = 'en-IN';
+
+      // Pick best English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const indianVoice = voices.find(v => v.lang.includes('en-IN') || v.name.includes('India'));
+      if (indianVoice) utterance.voice = indianVoice;
+
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       console.warn('Speech synthesis error:', e);
     }
+  }
+
+  function showWaveform() {
+    const inputWrap = document.querySelector('.transit-ai-input-wrap');
+    if (!inputWrap || document.getElementById('transit-ai-waveform')) return;
+
+    const wave = document.createElement('div');
+    wave.id = 'transit-ai-waveform';
+    wave.className = 'transit-ai-waveform-overlay';
+    wave.innerHTML = `
+      <div class="transit-ai-wave-bar"></div>
+      <div class="transit-ai-wave-bar"></div>
+      <div class="transit-ai-wave-bar"></div>
+      <div class="transit-ai-wave-bar"></div>
+      <div class="transit-ai-wave-bar"></div>
+      <span style="font-size: 0.76rem; color: #38BDF8; font-weight: 600; margin-left: 6px;">Listening...</span>
+    `;
+    inputWrap.appendChild(wave);
+  }
+
+  function hideWaveform() {
+    const wave = document.getElementById('transit-ai-waveform');
+    if (wave) wave.remove();
   }
 
   function initSpeechRecognition() {
@@ -557,12 +626,14 @@
       isListening = true;
       micBtn.classList.add('listening');
       micBtn.title = 'Listening... Speak your destination or bus number';
+      showWaveform();
     };
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       if (transcript) {
         inputEl.value = transcript;
+        hideWaveform();
         handleUserSend();
       }
     };
@@ -570,12 +641,14 @@
     recognition.onerror = () => {
       isListening = false;
       micBtn.classList.remove('listening');
+      hideWaveform();
     };
 
     recognition.onend = () => {
       isListening = false;
       micBtn.classList.remove('listening');
       micBtn.title = 'Speak your query';
+      hideWaveform();
     };
 
     micBtn.addEventListener('click', () => {
