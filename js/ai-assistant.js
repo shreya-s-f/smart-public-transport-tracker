@@ -116,17 +116,20 @@
         <button class="transit-ai-chip" data-query="Where is Bus 500D?">
           <i class="fa-solid fa-location-crosshairs"></i> Where is Bus 500D?
         </button>
-        <button class="transit-ai-chip" data-query="How to reach Airport?">
-          <i class="fa-solid fa-plane-departure"></i> Airport Routes
+        <button class="transit-ai-chip" data-query="How much is a bus pass?">
+          <i class="fa-solid fa-ticket"></i> Ticket &amp; Pass Prices
         </button>
-        <button class="transit-ai-chip" data-query="What is Daily Pass price?">
-          <i class="fa-solid fa-ticket"></i> Daily Pass Fare
+        <button class="transit-ai-chip" data-query="How to reach the Airport?">
+          <i class="fa-solid fa-plane-departure"></i> Airport Express Buses
         </button>
-        <button class="transit-ai-chip" data-query="Emergency Helplines">
-          <i class="fa-solid fa-shield-heart"></i> Safety SOS
+        <button class="transit-ai-chip" data-query="Emergency helpline numbers">
+          <i class="fa-solid fa-shield-heart"></i> Emergency Helplines
         </button>
-        <button class="transit-ai-chip" data-query="How to book digital pass?">
-          <i class="fa-solid fa-qrcode"></i> Digital QR Pass
+        <button class="transit-ai-chip" data-query="How to use digital QR pass?">
+          <i class="fa-solid fa-qrcode"></i> How QR Pass Works
+        </button>
+        <button class="transit-ai-chip" data-query="Bus timings &amp; schedule">
+          <i class="fa-solid fa-clock"></i> Bus Operating Hours
         </button>
       </div>
 
@@ -137,10 +140,10 @@
             type="text" 
             class="transit-ai-input" 
             id="transit-ai-input" 
-            placeholder="Ask about live buses, routes, fares, passes..." 
+            placeholder="Ask in simple words (e.g. Bus 500D, pass price, airport)..." 
             autocomplete="off"
           />
-          <button class="transit-ai-mic-btn" id="transit-ai-mic-btn" title="Speak your query">
+          <button class="transit-ai-mic-btn" id="transit-ai-mic-btn" title="Speak your query in simple English">
             <i class="fa-solid fa-microphone"></i>
           </button>
         </div>
@@ -332,26 +335,27 @@
 
   function sendWelcomeMessage() {
     const welcomeHtml = `
-      <p>👋 Hello! I am your <strong>Transit.IN AI Assistant</strong>.</p>
-      <p>I can help you track active buses in real-time, compute ticket fares, find nearby routes, book digital passes, and activate emergency helplines.</p>
+      <p>Hello! Welcome to <strong>Transit.IN</strong>. I am your smart travel assistant.</p>
+      <p>I am here to help you travel easily across the city. You can ask me anything about live bus locations, ticket fares, passes, or emergency help.</p>
       <div class="transit-ai-card-attachment">
         <div class="transit-ai-card-title">
-          <i class="fa-solid fa-satellite-dish" style="color: #38BDF8;"></i> Live Transit Matrix Active
+          <i class="fa-solid fa-circle-check" style="color: #10B981;"></i> City Transit Status
         </div>
         <div class="transit-ai-card-row">
-          <span>Active Fleet Buses:</span>
-          <strong style="color: #34D399;">1,840+ Units</strong>
+          <span>Active Buses on Road:</span>
+          <strong style="color: #10B981;">1,840+ Buses Running</strong>
         </div>
         <div class="transit-ai-card-row">
-          <span>Network Reliability:</span>
-          <strong style="color: #38BDF8;">99.4% On-Time</strong>
+          <span>On-Time Arrival:</span>
+          <strong style="color: #38BDF8;">99.4% On Schedule</strong>
         </div>
       </div>
+      <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 0.4rem;">Tap any quick option below or type your question in simple words.</p>
     `;
 
     const actions = `
       <button class="transit-ai-action-btn" data-action="track-bus" data-val="500D"><i class="fa-solid fa-map-location-dot"></i> Live Map</button>
-      <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
+      <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Buy Bus Pass</a>
       <button class="transit-ai-action-btn" data-action="trigger-sos" style="color: #F87171; border-color: rgba(239,68,68,0.4);"><i class="fa-solid fa-shield-heart"></i> Safety SOS</button>
       <button class="transit-ai-action-btn" data-action="open-tour" style="color: #C4B5FD;"><i class="fa-solid fa-play"></i> Guided Tour</button>
     `;
@@ -360,7 +364,7 @@
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // 6. INTELLIGENT TRANSIT NLP ENGINE
+  // 6. INTELLIGENT TRANSIT NLP ENGINE (PROFESSIONAL & SIMPLE ENGLISH)
   // ──────────────────────────────────────────────────────────────────────────
   function handleUserSend() {
     const query = inputEl.value.trim();
@@ -382,35 +386,35 @@
       if (isSpeechEnabled && response.speechText) {
         speakResponse(response.speechText);
       }
-    }, 450);
+    }, 400);
   }
 
   function processNLPQuery(rawQuery) {
     const q = rawQuery.toLowerCase().trim();
 
-    // 1. Live Bus Location / Specific Bus Query (e.g., 500D, 335E, KIAS-9, 500A, 201R)
+    // 1. Live Bus Location / Specific Bus Tracking (e.g. 500D, 335E, KIAS-9, 500A, 201R, BGK-01)
     for (const bus of TRANSIT_KB.buses) {
       if (q.includes(bus.id.toLowerCase())) {
         const html = `
-          <p>📍 <strong>${bus.name}</strong> is currently active!</p>
+          <p>Here is the live status for <strong>${bus.name}</strong>:</p>
           <div class="transit-ai-card-attachment">
             <div class="transit-ai-card-title">
-              <i class="fa-solid fa-bus-simple" style="color: #38BDF8;"></i> Live Vehicle Telemetry
+              <i class="fa-solid fa-bus-simple" style="color: #38BDF8;"></i> Live Bus Location
             </div>
             <div class="transit-ai-card-row">
-              <span>Current Location:</span>
+              <span>Current location:</span>
               <strong style="color: #FFFFFF;">${bus.loc}</strong>
             </div>
             <div class="transit-ai-card-row">
-              <span>Next Approaching Stop:</span>
-              <strong style="color: #C4B5FD;">${bus.nextStop} (in ${bus.eta})</strong>
+              <span>Next approaching stop:</span>
+              <strong style="color: #C4B5FD;">${bus.nextStop} (Arrives in ${bus.eta})</strong>
             </div>
             <div class="transit-ai-card-row">
-              <span>Live Speed:</span>
+              <span>Current speed:</span>
               <span class="transit-ai-badge-pill">${bus.speed}</span>
             </div>
             <div class="transit-ai-card-row">
-              <span>Passenger Occupancy:</span>
+              <span>Seat availability:</span>
               <span style="color: #34D399; font-weight: 600;">${bus.occupancy}</span>
             </div>
           </div>
@@ -419,150 +423,212 @@
           <button class="transit-ai-action-btn" data-action="track-bus" data-val="${bus.id}"><i class="fa-solid fa-crosshairs"></i> Track on Live Map</button>
           <button class="transit-ai-action-btn" data-action="book-route" data-val="${bus.id}"><i class="fa-solid fa-chair"></i> Book Seat on ${bus.id}</button>
         `;
-        const speechText = `Bus ${bus.id} is currently at ${bus.loc}, arriving at ${bus.nextStop} in approximately ${bus.eta}. Occupancy is ${bus.occupancy}.`;
+        const speechText = `Bus ${bus.id} is currently at ${bus.loc}. It will reach ${bus.nextStop} in ${bus.eta}. Seats are available.`;
         return { html, actions, speechText };
       }
     }
 
-    // 2. Airport Transit Routes
-    if (q.includes('airport') || q.includes('kias') || q.includes('vayu vajra')) {
+    // 2. Airport Transit Routes (KIAS-9 Vayu Vajra)
+    if (q.includes('airport') || q.includes('kias') || q.includes('flight') || q.includes('vayu vajra')) {
       const html = `
-        <p>✈️ <strong>Airport Transit Services (Vayu Vajra)</strong>:</p>
-        <p>Airport buses operate 24/7 on dedicated express corridors with luggage racks and free high-speed onboard Wi-Fi.</p>
+        <p>Here is the easiest way to reach the <strong>Airport</strong>:</p>
         <div class="transit-ai-card-attachment">
           <div class="transit-ai-card-title">
-            <i class="fa-solid fa-plane" style="color: #38BDF8;"></i> Route KIAS-9 (Kempegowda BS ↔ Airport)
+            <i class="fa-solid fa-plane" style="color: #38BDF8;"></i> Airport Express Bus (KIAS-9)
           </div>
-          <div class="transit-ai-card-row"><span>Headway:</span><strong>Every 15 mins</strong></div>
-          <div class="transit-ai-card-row"><span>Fare:</span><strong>₹240 (All inclusive)</strong></div>
-          <div class="transit-ai-card-row"><span>Travel Time:</span><strong>~60 mins via Hebbal Expressway</strong></div>
+          <div class="transit-ai-card-row"><span>Starting point:</span><strong>Kempegowda Bus Station (Majestic)</strong></div>
+          <div class="transit-ai-card-row"><span>Destination:</span><strong>Airport Terminal 1 &amp; 2</strong></div>
+          <div class="transit-ai-card-row"><span>Bus frequency:</span><strong>Leaves every 15 minutes</strong></div>
+          <div class="transit-ai-card-row"><span>Ticket price:</span><strong>₹240 per person</strong></div>
+          <div class="transit-ai-card-row"><span>Travel time:</span><strong>Around 60 minutes</strong></div>
         </div>
+        <p style="font-size: 0.82rem; color: #94A3B8; margin-top: 0.4rem;">
+          These are air-conditioned Volvo buses with luggage space and free Wi-Fi, running 24 hours every day.
+        </p>
       `;
       const actions = `
-        <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-location-dot"></i> Track Airport Buses</a>
+        <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-location-dot"></i> View Airport Buses</a>
         <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Book Airport Pass</a>
       `;
-      const speechText = `Airport buses run 24/7 every 15 minutes. Route KIAS-9 from Kempegowda Bus Station takes approximately 60 minutes with a fare of 240 rupees.`;
+      const speechText = `Airport express buses run 24 hours a day. Route KIAS-9 leaves every 15 minutes from Majestic, costs 240 rupees, and takes around 60 minutes.`;
       return { html, actions, speechText };
     }
 
     // 3. Fares, Passes & Ticket Pricing
-    if (q.includes('fare') || q.includes('price') || q.includes('pass') || q.includes('ticket') || q.includes('cost')) {
+    if (q.includes('fare') || q.includes('price') || q.includes('pass') || q.includes('ticket') || q.includes('cost') || q.includes('rate') || q.includes('how much')) {
       const html = `
-        <p>🎫 <strong>Transit.IN Fare & Pass Structure</strong>:</p>
+        <p>Here is the simple price guide for bus tickets and passes:</p>
         <div class="transit-ai-card-attachment">
           <div class="transit-ai-card-row">
-            <span>Single Journey:</span>
-            <strong>${TRANSIT_KB.fares.single}</strong>
+            <span>Single Ride:</span>
+            <strong>₹15 to ₹45 (depends on distance)</strong>
           </div>
           <div class="transit-ai-card-row">
             <span>Daily All-City Pass:</span>
-            <strong style="color: #34D399;">${TRANSIT_KB.fares.dailyPass}</strong>
+            <strong style="color: #34D399;">₹70 (Unlimited rides all day)</strong>
           </div>
           <div class="transit-ai-card-row">
-            <span>Monthly Pass:</span>
-            <strong style="color: #38BDF8;">${TRANSIT_KB.fares.monthlyPass}</strong>
+            <span>Monthly Student Pass:</span>
+            <strong style="color: #38BDF8;">₹350 per month</strong>
+          </div>
+          <div class="transit-ai-card-row">
+            <span>Monthly Regular Pass:</span>
+            <strong style="color: #C4B5FD;">₹1,050 per month</strong>
           </div>
         </div>
-        <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 0.4rem;">All tickets generate an encrypted <strong>Holographic QR Pass</strong> on your phone with instant onboard tap-and-go validation.</p>
+        <p style="font-size: 0.82rem; color: #94A3B8; margin-top: 0.4rem;">
+          All passes are digital. You can buy them online and show the QR code on your phone to board.
+        </p>
       `;
       const actions = `
         <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-credit-card"></i> Buy Pass Online</a>
-        <a href="profile.html" class="transit-ai-action-btn"><i class="fa-solid fa-wallet"></i> My Wallet</a>
+        <a href="profile.html" class="transit-ai-action-btn"><i class="fa-solid fa-wallet"></i> Check My Wallet</a>
       `;
-      const speechText = `Single bus fares range from 15 to 45 rupees. A Daily Unlimited Transit Pass costs 70 rupees, and monthly passes start at 350 rupees for students.`;
+      const speechText = `Single bus tickets start at 15 rupees. An all-day pass costs 70 rupees for unlimited rides, and a student monthly pass is 350 rupees.`;
       return { html, actions, speechText };
     }
 
-    // 4. Safety, Emergency SOS, Police, Helplines
-    if (q.includes('safety') || q.includes('sos') || q.includes('emergency') || q.includes('police') || q.includes('help') || q.includes('danger') || q.includes('women')) {
+    // 4. How to Use Digital QR Bus Pass
+    if (q.includes('qr') || q.includes('digital pass') || q.includes('how to use') || q.includes('scan') || q.includes('board')) {
       const html = `
-        <p>🛡️ <strong>Safety Shield & Emergency SOS Command</strong>:</p>
-        <p>If you feel unsafe or observe an incident, trigger our instant distress siren or call toll-free responder lines:</p>
-        <div class="transit-ai-card-attachment" style="border-color: rgba(239, 68, 68, 0.4);">
-          ${TRANSIT_KB.helplines.map(h => `
-            <div class="transit-ai-card-row" style="margin-bottom: 0.25rem;">
-              <span>${h.name}:</span>
-              <a href="tel:${h.num}" style="color: #F87171; font-weight: 700; text-decoration: none;"><i class="fa-solid fa-phone"></i> ${h.num}</a>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      const actions = `
-        <a href="safety.html" class="transit-ai-action-btn" style="color: #EF4444; border-color: rgba(239,68,68,0.5);"><i class="fa-solid fa-triangle-exclamation"></i> Open Safety Shield</a>
-        <a href="safety.html" class="transit-ai-action-btn"><i class="fa-solid fa-share-nodes"></i> Share Live Journey</a>
-      `;
-      const speechText = `Emergency responders are available 24/7. Call 112 for national emergency, 1091 for women helpline, or 1512 for transit police. You can also press the emergency SOS alarm on the Safety page.`;
-      return { html, actions, speechText };
-    }
-
-    // 5. Timetable & Schedule Timings
-    if (q.includes('timetable') || q.includes('time') || q.includes('schedule') || q.includes('morning') || q.includes('night') || q.includes('first bus') || q.includes('last bus')) {
-      const html = `
-        <p>⏰ <strong>Official Service Timetables</strong>:</p>
-        <p>• <strong>Morning Early Runs:</strong> First bus starts at <strong>05:00 AM</strong> from all major depots.</p>
-        <p>• <strong>Peak Headway:</strong> Every <strong>4–8 minutes</strong> during rush hours (08:00–11:00 AM, 05:00–09:00 PM).</p>
-        <p>• <strong>Night Corridors:</strong> Night Owl lines operate until <strong>01:30 AM</strong> connecting railway terminals, hospitals, and airport routes.</p>
-      `;
-      const actions = `
-        <a href="timetable.html" class="transit-ai-action-btn"><i class="fa-solid fa-calendar-days"></i> Browse Full Timetable</a>
-        <a href="routes.html" class="transit-ai-action-btn"><i class="fa-solid fa-route"></i> Route Directory</a>
-      `;
-      const speechText = `Early morning bus service begins at 5 AM. During peak hours, buses arrive every 4 to 8 minutes, with night services operating until 1:30 AM.`;
-      return { html, actions, speechText };
-    }
-
-    // 6. Routes & Navigation
-    if (q.includes('route') || q.includes('reach') || q.includes('how to go') || q.includes('from') || q.includes('majestic') || q.includes('whitefield') || q.includes('silk board')) {
-      const html = `
-        <p>🗺️ <strong>Intermodal Route Recommendations</strong>:</p>
-        <p>Use our smart journey planner to find optimal direct corridors with lowest travel time and live vehicle tracking:</p>
+        <p>Using your <strong>Digital Bus Pass</strong> is quick and easy in 3 steps:</p>
         <div class="transit-ai-card-attachment">
-          <div class="transit-ai-card-row"><span>Majestic ↔ Whitefield:</span><strong>Route 335E (Every 8m)</strong></div>
-          <div class="transit-ai-card-row"><span>Hebbal ↔ Silk Board:</span><strong>Route 500D (Every 5m)</strong></div>
-          <div class="transit-ai-card-row"><span>City Station ↔ Airport:</span><strong>Route KIAS-9 (Every 15m)</strong></div>
+          <div class="transit-ai-card-row"><span>Step 1:</span><strong>Select your route or pass type online</strong></div>
+          <div class="transit-ai-card-row"><span>Step 2:</span><strong>Pay securely using UPI, Card, or Wallet</strong></div>
+          <div class="transit-ai-card-row"><span>Step 3:</span><strong>Show your QR pass on your phone screen to board</strong></div>
+        </div>
+        <p style="font-size: 0.82rem; color: #94A3B8; margin-top: 0.4rem;">
+          Your digital pass is stored in your Profile so you can open it at any time, even without an active internet connection.
+        </p>
+      `;
+      const actions = `
+        <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-qrcode"></i> Buy Digital QR Pass</a>
+        <a href="profile.html" class="transit-ai-action-btn"><i class="fa-solid fa-id-card"></i> View My Saved Pass</a>
+      `;
+      const speechText = `To use a digital pass, buy it online, open the QR code on your phone, and show it to the bus conductor to board. It works even offline.`;
+      return { html, actions, speechText };
+    }
+
+    // 5. Safety, Emergency SOS, Police, Helplines
+    if (q.includes('safety') || q.includes('sos') || q.includes('emergency') || q.includes('police') || q.includes('help') || q.includes('danger') || q.includes('women') || q.includes('ambulance')) {
+      const html = `
+        <p>Your safety is our top priority. For immediate help, call any of these toll-free numbers 24/7:</p>
+        <div class="transit-ai-card-attachment" style="border-color: rgba(239, 68, 68, 0.4);">
+          <div class="transit-ai-card-row" style="margin-bottom: 0.35rem;">
+            <span>National Police &amp; Emergency:</span>
+            <a href="tel:112" style="color: #F87171; font-weight: 700; text-decoration: none;"><i class="fa-solid fa-phone"></i> 112</a>
+          </div>
+          <div class="transit-ai-card-row" style="margin-bottom: 0.35rem;">
+            <span>Women Safety Helpline:</span>
+            <a href="tel:1091" style="color: #F87171; font-weight: 700; text-decoration: none;"><i class="fa-solid fa-phone"></i> 1091</a>
+          </div>
+          <div class="transit-ai-card-row" style="margin-bottom: 0.35rem;">
+            <span>Transit &amp; Railway Police:</span>
+            <a href="tel:1512" style="color: #F87171; font-weight: 700; text-decoration: none;"><i class="fa-solid fa-phone"></i> 1512</a>
+          </div>
+          <div class="transit-ai-card-row">
+            <span>Medical Ambulance:</span>
+            <a href="tel:108" style="color: #F87171; font-weight: 700; text-decoration: none;"><i class="fa-solid fa-phone"></i> 108</a>
+          </div>
+        </div>
+        <p style="font-size: 0.82rem; color: #94A3B8; margin-top: 0.4rem;">
+          You can also tap below to share your live location with family via WhatsApp or sound the emergency alarm.
+        </p>
+      `;
+      const actions = `
+        <button class="transit-ai-action-btn" data-action="trigger-sos" style="color: #EF4444; border-color: rgba(239,68,68,0.5);"><i class="fa-solid fa-triangle-exclamation"></i> Open Safety Shield</button>
+        <a href="safety.html" class="transit-ai-action-btn"><i class="fa-solid fa-share-nodes"></i> Share Live Location</a>
+      `;
+      const speechText = `Emergency helplines are free and available 24 hours. Call 112 for national emergency, 1091 for women helpline, or 1512 for transit police. You can also trigger the emergency SOS alarm on the Safety page.`;
+      return { html, actions, speechText };
+    }
+
+    // 6. Timetable & Schedule Timings
+    if (q.includes('timetable') || q.includes('time') || q.includes('schedule') || q.includes('morning') || q.includes('night') || q.includes('first bus') || q.includes('last bus') || q.includes('hours')) {
+      const html = `
+        <p>Here are the standard bus service hours:</p>
+        <div class="transit-ai-card-attachment">
+          <div class="transit-ai-card-row"><span>First bus in the morning:</span><strong>05:00 AM</strong></div>
+          <div class="transit-ai-card-row"><span>Morning rush (8 AM – 11 AM):</span><strong>Every 4 to 8 minutes</strong></div>
+          <div class="transit-ai-card-row"><span>Evening rush (5 PM – 9 PM):</span><strong>Every 4 to 8 minutes</strong></div>
+          <div class="transit-ai-card-row"><span>Regular afternoon hours:</span><strong>Every 10 to 15 minutes</strong></div>
+          <div class="transit-ai-card-row"><span>Night bus service:</span><strong>Runs until 01:30 AM on major routes</strong></div>
         </div>
       `;
       const actions = `
-        <a href="routes.html" class="transit-ai-action-btn"><i class="fa-solid fa-magnifying-glass"></i> Route Directory</a>
-        <a href="index.html#journey-planner-container" class="transit-ai-action-btn"><i class="fa-solid fa-compass"></i> Open Journey Planner</a>
+        <a href="timetable.html" class="transit-ai-action-btn"><i class="fa-solid fa-calendar-days"></i> Open Bus Timetable</a>
+        <a href="routes.html" class="transit-ai-action-btn"><i class="fa-solid fa-route"></i> Browse All Routes</a>
       `;
-      const speechText = `You can search and plan optimal routes in our Route Directory. Popular routes include 335E to Whitefield, 500D along the Outer Ring Road, and KIAS-9 to the Airport.`;
+      const speechText = `The first bus leaves at 5 AM. During rush hours, buses arrive every 4 to 8 minutes, and night services run until 1:30 AM.`;
       return { html, actions, speechText };
     }
 
-    // 7. General Greetings & Help
-    if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('who are you') || q.includes('namaste')) {
+    // 7. Routes & Recommendations
+    if (q.includes('route') || q.includes('reach') || q.includes('how to go') || q.includes('from') || q.includes('to') || q.includes('majestic') || q.includes('whitefield') || q.includes('silk board') || q.includes('bagalkot') || q.includes('delhi')) {
       const html = `
-        <p>👋 Hello! I am <strong>Transit.IN AI Assistant</strong>, your real-time companion for city mobility.</p>
-        <p>You can ask me:</p>
-        <p>• <em>"Where is Bus 500D right now?"</em><br>• <em>"How much is a daily bus pass?"</em><br>• <em>"Fastest route to Airport"</em><br>• <em>"Emergency helpline numbers"</em></p>
+        <p>Here are the recommended direct routes across the city:</p>
+        <div class="transit-ai-card-attachment">
+          <div class="transit-ai-card-row"><span>Majestic ↔ Whitefield:</span><strong>Route 335E (Every 8 mins)</strong></div>
+          <div class="transit-ai-card-row"><span>Hebbal ↔ Central Silk Board:</span><strong>Route 500D (Every 5 mins)</strong></div>
+          <div class="transit-ai-card-row"><span>City Station ↔ Airport:</span><strong>Route KIAS-9 (Every 15 mins)</strong></div>
+          <div class="transit-ai-card-row"><span>Navanagar ↔ Old Bus Stand:</span><strong>Route BGK-01 (Every 10 mins)</strong></div>
+        </div>
       `;
       const actions = `
-        <button class="transit-ai-action-btn" onclick="document.getElementById('transit-ai-input').value='Where is Bus 500D?'; document.getElementById('transit-ai-send-btn').click();">Track Bus 500D</button>
-        <button class="transit-ai-action-btn" onclick="document.getElementById('transit-ai-input').value='What is Daily Pass price?'; document.getElementById('transit-ai-send-btn').click();">Pass Prices</button>
+        <a href="routes.html" class="transit-ai-action-btn"><i class="fa-solid fa-magnifying-glass"></i> Search All Routes</a>
+        <a href="index.html#journey-planner-container" class="transit-ai-action-btn"><i class="fa-solid fa-compass"></i> Plan My Journey</a>
       `;
-      const speechText = `Hello! I am your Transit.IN AI Assistant. How can I help you travel smarter today?`;
+      const speechText = `You can search and plan any route in our Route Directory. Popular direct routes include 335E to Whitefield, 500D across the Outer Ring Road, and KIAS-9 to the airport.`;
       return { html, actions, speechText };
     }
 
-    // 8. Default Intelligent Fallback
+    // 8. General Greetings
+    if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('who are you') || q.includes('good morning') || q.includes('good evening') || q.includes('namaste')) {
+      const html = `
+        <p>Hello! Welcome to <strong>Transit.IN</strong>. How may I help you with your journey today?</p>
+        <p>You can ask me simple questions like:</p>
+        <p>• <em>"Where is Bus 500D right now?"</em><br>• <em>"How much is an all-day bus pass?"</em><br>• <em>"How do I reach the airport?"</em><br>• <em>"Show emergency helpline numbers"</em></p>
+      `;
+      const actions = `
+        <button class="transit-ai-action-btn" data-action="track-bus" data-val="500D"><i class="fa-solid fa-location-crosshairs"></i> Where is Bus 500D?</button>
+        <button class="transit-ai-action-btn" data-action="fill-query" data-val="How much is a bus pass?"><i class="fa-solid fa-ticket"></i> Pass Prices</button>
+        <button class="transit-ai-action-btn" data-action="fill-query" data-val="How to reach the Airport?"><i class="fa-solid fa-plane"></i> Airport Route</button>
+      `;
+      const speechText = `Hello! Welcome to Transit.IN. How can I help you travel today?`;
+      return { html, actions, speechText };
+    }
+
+    // 9. Polite Thank You
+    if (q.includes('thank') || q.includes('thanks') || q.includes('great') || q.includes('good') || q.includes('awesome')) {
+      const html = `
+        <p>You are very welcome! 😊</p>
+        <p>I am always here to assist you. Have a safe, comfortable, and pleasant journey with <strong>Transit.IN</strong>!</p>
+      `;
+      const actions = `
+        <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-map-location-dot"></i> View Live Map</a>
+        <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Book a Ticket</a>
+      `;
+      const speechText = `You are very welcome! Have a safe and pleasant journey.`;
+      return { html, actions, speechText };
+    }
+
+    // 10. Default Helpful Fallback
     const html = `
-      <p>I understand you're asking about <strong>"${escapeHTML(rawQuery)}"</strong>.</p>
-      <p>Here are quick actions you can take across the platform right now:</p>
+      <p>Thank you for asking. I am here to help you travel smoothly across the city.</p>
+      <p>Here are the quickest ways to find what you need:</p>
       <div class="transit-ai-card-attachment">
-        <div class="transit-ai-card-title"><i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i> Suggested Actions</div>
-        <div class="transit-ai-card-row"><span>Live GPS Radar:</span><strong>tracking.html</strong></div>
-        <div class="transit-ai-card-row"><span>Paperless Pass Booking:</span><strong>booking.html</strong></div>
-        <div class="transit-ai-card-row"><span>Emergency SOS:</span><strong>safety.html</strong></div>
+        <div class="transit-ai-card-title"><i class="fa-solid fa-circle-question" style="color: #38BDF8;"></i> Quick Assistance</div>
+        <div class="transit-ai-card-row"><span>Want to see where buses are?</span><strong style="color: #38BDF8;">Check Live Map</strong></div>
+        <div class="transit-ai-card-row"><span>Need to buy a ticket or pass?</span><strong style="color: #34D399;">Buy Bus Pass</strong></div>
+        <div class="transit-ai-card-row"><span>Need emergency or safety help?</span><strong style="color: #F87171;">Safety Shield</strong></div>
       </div>
     `;
     const actions = `
-      <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-map-location-dot"></i> Live Tracking</a>
+      <a href="tracking.html" class="transit-ai-action-btn"><i class="fa-solid fa-map-location-dot"></i> Live Map</a>
       <a href="routes.html" class="transit-ai-action-btn"><i class="fa-solid fa-route"></i> All Routes</a>
-      <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Book Ticket</a>
+      <a href="booking.html" class="transit-ai-action-btn"><i class="fa-solid fa-ticket"></i> Buy Pass</a>
     `;
-    const speechText = `I have provided helpful links for your query. You can inspect live tracking, search bus routes, or book tickets online.`;
+    const speechText = `I am here to help you. You can inspect live buses on the map, look up routes, or buy tickets online.`;
     return { html, actions, speechText };
   }
 
