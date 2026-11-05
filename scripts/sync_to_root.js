@@ -13,6 +13,8 @@ const newFiles = [
   ['css/style.css',          path.join(root, 'css/style.css')],
   ['css/landing-page.css',    path.join(root, 'css/landing-page.css')],
   ['css/design-system.css',  path.join(root, 'css/design-system.css')],
+  ['css/transit-3d-bg.css',  path.join(root, 'css/transit-3d-bg.css')],
+  ['js/transit-3d-bg.js',    path.join(root, 'js/transit-3d-bg.js')],
 ];
 
 newFiles.forEach(([from, to]) => {
