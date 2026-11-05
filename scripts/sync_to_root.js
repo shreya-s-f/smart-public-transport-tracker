@@ -10,6 +10,9 @@ const newFiles = [
   ['js/onboarding-tour.js',  path.join(root, 'js/onboarding-tour.js')],
   ['css/ai-assistant.css',   path.join(root, 'css/ai-assistant.css')],
   ['js/ai-assistant.js',     path.join(root, 'js/ai-assistant.js')],
+  ['css/style.css',          path.join(root, 'css/style.css')],
+  ['css/landing-page.css',    path.join(root, 'css/landing-page.css')],
+  ['css/design-system.css',  path.join(root, 'css/design-system.css')],
 ];
 
 newFiles.forEach(([from, to]) => {

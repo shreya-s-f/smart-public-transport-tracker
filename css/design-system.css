@@ -178,7 +178,8 @@ h1, h2, h3, h4, .brand-heading {
   position: sticky;
   top: 1rem;
   z-index: 1000;
-  max-width: 1380px;
+  max-width: 1680px;
+  width: 97%;
   margin: 0.75rem auto 1.5rem auto;
   padding: 0.75rem 1.75rem;
   background: var(--navbar-glass-bg);
