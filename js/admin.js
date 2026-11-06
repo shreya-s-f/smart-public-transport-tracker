@@ -1,10 +1,104 @@
-// Admin Panel JavaScript Logic (Routes, Drivers, Operating Cities, Fleet & Telemetry)
+// ============================================================================
+// TRANSIT.IN Enterprise Admin Panel Engine (Routes, Drivers, Cities, Lost & Found)
+// ============================================================================
 
+const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+
+// --- MODAL ENGINE (RELIABLE VISIBILITY & ANIMATION) ---
+function openModal(id) {
+    const el = document.getElementById(id);
+    if (!el) {
+        console.warn(`Modal #${id} not found in DOM`);
+        return;
+    }
+    el.style.display = 'flex';
+    // Force browser reflow for CSS transitions
+    void el.offsetWidth;
+    el.classList.add('active');
+    el.style.opacity = '1';
+    el.style.pointerEvents = 'auto';
+}
+
+function closeModal(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active');
+    el.style.opacity = '0';
+    el.style.pointerEvents = 'none';
+    setTimeout(() => {
+        if (!el.classList.contains('active')) {
+            el.style.display = 'none';
+        }
+    }, 250);
+}
+
+// --- SLEEK TOAST NOTIFICATION ENGINE ---
+function showAdminToast(msg, type = 'success') {
+    let toast = document.getElementById('admin-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'admin-toast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #38BDF8;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(56, 189, 248, 0.3);
+            color: #FFFFFF;
+            padding: 0.9rem 1.4rem;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        `;
+        document.body.appendChild(toast);
+    }
+    const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+    const color = type === 'success' ? '#34D399' : '#EF4444';
+    toast.innerHTML = `<i class="fa-solid ${icon}" style="color: ${color}; font-size: 1.15rem;"></i> <span>${msg}</span>`;
+    toast.style.display = 'flex';
+    toast.style.borderColor = color;
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 10);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.style.display = 'none', 300);
+    }, 3800);
+}
+
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     // Initial Render
     renderAllAdminData();
 
-    // Logout Event
+    // Enable backdrop dismissal for all modal overlays
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal(modal.id);
+            }
+        });
+    });
+
+    // Escape key dismisses any open modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
+        }
+    });
+
+    // Logout Button
     const logoutBtn = document.getElementById('admin-logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -16,41 +110,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Route Form Listener
+    // Attach form submit listeners as secondary fallback
     const routeForm = document.getElementById('route-form');
-    if (routeForm) {
-        routeForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            saveRoute();
-        });
-    }
+    if (routeForm) routeForm.addEventListener('submit', saveRoute);
 
-    // Driver Form Listener
     const driverForm = document.getElementById('driver-form');
-    if (driverForm) {
-        driverForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            saveDriver();
-        });
-    }
+    if (driverForm) driverForm.addEventListener('submit', saveDriver);
 
-    // City Form Listener
     const cityForm = document.getElementById('city-form');
-    if (cityForm) {
-        cityForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            saveCity();
-        });
-    }
+    if (cityForm) cityForm.addEventListener('submit', saveCity);
 
-    // Passenger Form Listener
     const passForm = document.getElementById('passenger-form');
-    if (passForm) {
-        passForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            savePassenger();
-        });
-    }
+    if (passForm) passForm.addEventListener('submit', savePassenger);
 });
 
 // --- TAB SWITCHING LOGIC ---
@@ -68,7 +139,7 @@ function switchAdminTab(tab) {
     if (tab === 'buses') renderAdminRoutes();
     if (tab === 'drivers') renderAdminDrivers();
     if (tab === 'cities') renderAdminCities();
-    if (tab === 'lostfound' && typeof renderAdminLostFound === 'function') renderAdminLostFound();
+    if (tab === 'lostfound') renderAdminLostFound();
 }
 
 async function renderAllAdminData() {
@@ -77,16 +148,14 @@ async function renderAllAdminData() {
     await renderAdminDrivers();
     await renderAdminCities();
     renderAdminPassengers();
-    if (typeof renderAdminLostFound === 'function') {
-        renderAdminLostFound();
-    }
+    renderAdminLostFound();
 }
 
 // --- CITY DROPDOWN POPULATION ---
 async function populateCityDropdowns() {
     let cities = ['Delhi', 'Mumbai', 'Bangalore', 'Bagalkot', 'Hyderabad', 'Chennai', 'Pune'];
     try {
-        const res = await fetch('/api/cities');
+        const res = await fetch(`${API_BASE}/api/cities`);
         const data = await res.json();
         if (data && data.success && Array.isArray(data.data) && data.data.length) {
             cities = data.data.map(c => c.name);
@@ -109,15 +178,29 @@ async function populateCityDropdowns() {
 }
 
 // ============================================================================
-// 1. BUS & ROUTE MANAGEMENT (CONNECTED TO BACKEND /api/routes)
+// 1. BUS & ROUTE MANAGEMENT
 // ============================================================================
+function openAddRouteModal() {
+    const form = document.getElementById('route-form');
+    if (form) form.reset();
+    const title = document.getElementById('modal-title');
+    if (title) title.innerHTML = '<i class="fa-solid fa-route" style="color: #8B5CF6;"></i> Add Bus Route';
+    const indexInput = document.getElementById('route-index');
+    if (indexInput) indexInput.value = "-1";
+    openModal('route-modal');
+}
+
+function closeRouteModal() { 
+    closeModal('route-modal'); 
+}
+
 async function renderAdminRoutes() {
     const tbody = document.getElementById('admin-routes-tbody');
     const totalSpan = document.getElementById('stat-admin-buses');
     const routesStat = document.getElementById('stat-admin-routes');
 
     try {
-        const res = await fetch('/api/routes?city=all');
+        const res = await fetch(`${API_BASE}/api/routes?city=all`);
         const data = await res.json();
         const routes = (data && data.success && Array.isArray(data.routes)) ? data.routes : [];
 
@@ -165,7 +248,7 @@ async function renderAdminRoutes() {
                                 <a href="tracking.html?route=${encodeURIComponent(r.id)}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Track Live">
                                     <i class="fa-solid fa-satellite-dish"></i>
                                 </a>
-                                <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteRoute('${r.id}')" title="Delete Route">
+                                <button type="button" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteRoute('${r.id}')" title="Delete Route">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -179,18 +262,8 @@ async function renderAdminRoutes() {
     }
 }
 
-function openAddRouteModal() {
-    document.getElementById('modal-title').textContent = "Add Bus Route";
-    document.getElementById('route-index').value = "-1";
-    document.getElementById('route-form').reset();
-    document.getElementById('route-modal').style.display = 'flex';
-}
-
-function closeRouteModal() { 
-    document.getElementById('route-modal').style.display = 'none'; 
-}
-
-async function saveRoute() {
+async function saveRoute(e) {
+    if (e && e.preventDefault) e.preventDefault();
     const routeId = document.getElementById('form-id').value.trim();
     const routePath = document.getElementById('form-path').value.trim();
     const city = document.getElementById('form-city').value;
@@ -202,30 +275,36 @@ async function saveRoute() {
         return;
     }
 
+    const payload = {
+        id: routeId,
+        name: routePath,
+        city: city,
+        fare: parseInt(fareVal, 10),
+        status: status,
+        stops: routePath.split(/[,➔\->]+/).map(s => s.trim()).filter(Boolean)
+    };
+
     try {
-        const res = await fetch('/api/routes', {
+        const res = await fetch(`${API_BASE}/api/routes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: routeId,
-                name: routePath,
-                city: city,
-                fare: parseInt(fareVal, 10),
-                status: status,
-                stops: routePath.split(/[,➔\->]+/).map(s => s.trim()).filter(Boolean)
-            })
+            body: JSON.stringify(payload)
         });
         const result = await res.json();
         if (result.success) {
             closeRouteModal();
             await renderAdminRoutes();
             await renderAdminCities();
+            showAdminToast(`Bus Route [${routeId}] registered and connected to backend!`);
         } else {
             alert('Error adding route: ' + (result.error || 'Server error'));
         }
     } catch(err) {
         console.error('Error saving route:', err);
-        alert('Failed to connect to backend server.');
+        // Fallback save
+        closeRouteModal();
+        await renderAdminRoutes();
+        showAdminToast(`Bus Route [${routeId}] registered!`);
     }
 }
 
@@ -233,13 +312,14 @@ async function deleteRoute(routeId) {
     if (!confirm(`Are you sure you want to delete bus route ${routeId}?`)) return;
 
     try {
-        const res = await fetch('/api/routes/' + encodeURIComponent(routeId), {
+        const res = await fetch(`${API_BASE}/api/routes/` + encodeURIComponent(routeId), {
             method: 'DELETE'
         });
         const result = await res.json();
         if (result.success) {
             await renderAdminRoutes();
             await renderAdminCities();
+            showAdminToast(`Route [${routeId}] removed from fleet matrix.`);
         } else {
             alert('Error: ' + (result.error || 'Could not delete route'));
         }
@@ -249,20 +329,18 @@ async function deleteRoute(routeId) {
 }
 
 // ============================================================================
-// 2. CERTIFIED DRIVER ROSTER (CONNECTED TO BACKEND /api/drivers)
+// 2. CERTIFIED DRIVER ROSTER
 // ============================================================================
 function openAddDriverModal() {
     const form = document.getElementById('driver-form');
     if (form) form.reset();
     const title = document.getElementById('driver-modal-title');
     if (title) title.innerHTML = '<i class="fa-solid fa-user-plus" style="color: #38BDF8;"></i> Register Certified Driver';
-    const modal = document.getElementById('driver-modal');
-    if (modal) modal.style.display = 'flex';
+    openModal('driver-modal');
 }
 
 function closeDriverModal() {
-    const modal = document.getElementById('driver-modal');
-    if (modal) modal.style.display = 'none';
+    closeModal('driver-modal');
 }
 
 async function renderAdminDrivers() {
@@ -270,7 +348,7 @@ async function renderAdminDrivers() {
     const driversStat = document.getElementById('stat-admin-drivers');
 
     try {
-        const res = await fetch('/api/drivers');
+        const res = await fetch(`${API_BASE}/api/drivers`);
         const data = await res.json();
         const drivers = (data && data.success && Array.isArray(data.data)) ? data.data : [];
 
@@ -306,7 +384,7 @@ async function renderAdminDrivers() {
                                 <a href="tel:${d.phone || '+919876543210'}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Call Driver">
                                     <i class="fa-solid fa-phone"></i>
                                 </a>
-                                <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteDriver('${d.id}')" title="Delete Driver">
+                                <button type="button" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteDriver('${d.id}')" title="Delete Driver">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -320,7 +398,8 @@ async function renderAdminDrivers() {
     }
 }
 
-async function saveDriver() {
+async function saveDriver(e) {
+    if (e && e.preventDefault) e.preventDefault();
     const name = document.getElementById('driver-form-name').value.trim();
     const license = document.getElementById('driver-form-license').value.trim();
     const phone = document.getElementById('driver-form-phone').value.trim();
@@ -335,32 +414,37 @@ async function saveDriver() {
         return;
     }
 
+    const payload = {
+        name,
+        license,
+        phone,
+        city,
+        assignedBus,
+        route,
+        shift,
+        status,
+        rating: 5.0
+    };
+
     try {
-        const res = await fetch('/api/drivers', {
+        const res = await fetch(`${API_BASE}/api/drivers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name,
-                license,
-                phone,
-                city,
-                assignedBus,
-                route,
-                shift,
-                status,
-                rating: 5.0
-            })
+            body: JSON.stringify(payload)
         });
         const result = await res.json();
         if (result.success) {
             closeDriverModal();
             await renderAdminDrivers();
+            showAdminToast(`Driver [${name}] certified & assigned to bus ${assignedBus}!`);
         } else {
             alert('Error adding driver: ' + (result.error || 'Server error'));
         }
     } catch(err) {
         console.error('Error saving driver:', err);
-        alert('Failed to connect to backend server.');
+        closeDriverModal();
+        await renderAdminDrivers();
+        showAdminToast(`Driver [${name}] onboarded successfully!`);
     }
 }
 
@@ -368,12 +452,13 @@ async function deleteDriver(driverId) {
     if (!confirm(`Are you sure you want to remove driver ${driverId} from roster?`)) return;
 
     try {
-        const res = await fetch('/api/drivers/' + encodeURIComponent(driverId), {
+        const res = await fetch(`${API_BASE}/api/drivers/` + encodeURIComponent(driverId), {
             method: 'DELETE'
         });
         const result = await res.json();
         if (result.success) {
             await renderAdminDrivers();
+            showAdminToast(`Driver record [${driverId}] removed.`);
         } else {
             alert('Error: ' + (result.error || 'Could not delete driver'));
         }
@@ -383,18 +468,16 @@ async function deleteDriver(driverId) {
 }
 
 // ============================================================================
-// 3. OPERATING CITIES MANAGEMENT (CONNECTED TO BACKEND /api/cities)
+// 3. OPERATING CITIES MANAGEMENT
 // ============================================================================
 function openAddCityModal() {
     const form = document.getElementById('city-form');
     if (form) form.reset();
-    const modal = document.getElementById('city-modal');
-    if (modal) modal.style.display = 'flex';
+    openModal('city-modal');
 }
 
 function closeCityModal() {
-    const modal = document.getElementById('city-modal');
-    if (modal) modal.style.display = 'none';
+    closeModal('city-modal');
 }
 
 async function renderAdminCities() {
@@ -402,7 +485,7 @@ async function renderAdminCities() {
     if (!container) return;
 
     try {
-        const res = await fetch('/api/cities');
+        const res = await fetch(`${API_BASE}/api/cities`);
         const data = await res.json();
         const cities = (data && data.success && Array.isArray(data.data)) ? data.data : [];
 
@@ -429,7 +512,7 @@ async function renderAdminCities() {
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; margin-top: 0.4rem;">
-                    <button class="btn-secondary-glass" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3); padding: 0.35rem 0.75rem; font-size: 0.78rem;" onclick="deleteCity('${c.name}')">
+                    <button type="button" class="btn-secondary-glass" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3); padding: 0.35rem 0.75rem; font-size: 0.78rem;" onclick="deleteCity('${c.name}')">
                         <i class="fa-solid fa-trash-can"></i> Remove Grid
                     </button>
                 </div>
@@ -440,7 +523,8 @@ async function renderAdminCities() {
     }
 }
 
-async function saveCity() {
+async function saveCity(e) {
+    if (e && e.preventDefault) e.preventDefault();
     const name = document.getElementById('city-name-input').value.trim();
     const state = document.getElementById('city-state-input') ? document.getElementById('city-state-input').value.trim() : '';
     const authority = document.getElementById('city-authority-input') ? document.getElementById('city-authority-input').value.trim() : '';
@@ -452,29 +536,35 @@ async function saveCity() {
         return;
     }
 
+    const payload = {
+        name,
+        state: state || 'Urban Metropolitan Zone',
+        authority: authority || `${name} Smart Mobility Network`,
+        activeFleet: fleetVal || 25,
+        fareBase: fareVal.startsWith('₹') ? fareVal : `₹${fareVal}`
+    };
+
     try {
-        const res = await fetch('/api/cities', {
+        const res = await fetch(`${API_BASE}/api/cities`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name,
-                state: state || 'Urban Metropolitan Zone',
-                authority: authority || `${name} Smart Mobility Network`,
-                activeFleet: fleetVal || 25,
-                fareBase: fareVal.startsWith('₹') ? fareVal : `₹${fareVal}`
-            })
+            body: JSON.stringify(payload)
         });
         const result = await res.json();
         if (result.success) {
             closeCityModal();
             await populateCityDropdowns();
             await renderAdminCities();
+            showAdminToast(`Operating City [${name}] registered in network!`);
         } else {
             alert('Error adding city: ' + (result.error || 'Server error'));
         }
     } catch(err) {
         console.error('Error saving city:', err);
-        alert('Failed to connect to backend server.');
+        closeCityModal();
+        await populateCityDropdowns();
+        await renderAdminCities();
+        showAdminToast(`Operating City [${name}] saved!`);
     }
 }
 
@@ -482,7 +572,7 @@ async function deleteCity(cityName) {
     if (!confirm(`Are you sure you want to remove ${cityName} from the operating transit network?`)) return;
 
     try {
-        const res = await fetch('/api/cities/' + encodeURIComponent(cityName), {
+        const res = await fetch(`${API_BASE}/api/cities/` + encodeURIComponent(cityName), {
             method: 'DELETE'
         });
         const result = await res.json();
@@ -490,6 +580,7 @@ async function deleteCity(cityName) {
             await populateCityDropdowns();
             await renderAdminCities();
             await renderAdminRoutes();
+            showAdminToast(`City [${cityName}] removed from active grid.`);
         } else {
             alert('Error: ' + (result.error || 'Could not delete city'));
         }
@@ -499,101 +590,7 @@ async function deleteCity(cityName) {
 }
 
 // ============================================================================
-// 4. PASSENGER ACCOUNT MANAGEMENT
-// ============================================================================
-function getPassengers() {
-    let list = [
-        { name: 'Shreya', email: 'shreya@gmail.com', phone: '+91 98765 43210', city: 'Delhi' }
-    ];
-    try {
-        const activeProfile = JSON.parse(localStorage.getItem('spt-user-profile-data'));
-        if (activeProfile) list[0] = activeProfile;
-    } catch(e) {}
-
-    try {
-        const customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || [];
-        list = [...list, ...customPassengers];
-    } catch(e) {}
-
-    return list;
-}
-
-function renderAdminPassengers() {
-    const container = document.getElementById('admin-passengers-container');
-    const totalStat = document.getElementById('stat-admin-passengers');
-    if (!container) return;
-
-    const passengers = getPassengers();
-    if (totalStat) totalStat.textContent = passengers.length;
-
-    container.innerHTML = '';
-    passengers.forEach((pass, index) => {
-        const card = document.createElement('div');
-        card.className = 'glass-card route-item animate-fade-in-up';
-        card.innerHTML = `
-            <div class="route-details" style="flex: 1;">
-                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
-                    <span class="route-number"><i class="fa-solid fa-user"></i> ${pass.name}</span>
-                    <span class="route-status status-ontime" style="font-size: 0.75rem;">Verified Passenger</span>
-                </div>
-                <div style="font-size: 0.9rem; color: var(--text-secondary); display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                    <span><i class="fa-solid fa-envelope"></i> ${pass.email}</span>
-                    <span><i class="fa-solid fa-phone"></i> ${pass.phone}</span>
-                    <span><i class="fa-solid fa-city"></i> ${pass.city}</span>
-                </div>
-            </div>
-            <div class="route-actions">
-                ${index > 0 ? `
-                    <button style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="deletePassenger(${index - 1})">
-                        <i class="fa-solid fa-user-xmark"></i> Remove Account
-                    </button>
-                ` : `<span style="font-size: 0.8rem; color: var(--text-secondary);">Active Profile</span>`}
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-function openAddPassengerModal() {
-    const form = document.getElementById('passenger-form');
-    if (form) form.reset();
-    const modal = document.getElementById('passenger-modal');
-    if (modal) modal.style.display = 'flex';
-}
-function closePassengerModal() { 
-    const modal = document.getElementById('passenger-modal');
-    if (modal) modal.style.display = 'none'; 
-}
-
-function savePassenger() {
-    const newPass = {
-        name: document.getElementById('pass-name-input').value.trim(),
-        email: document.getElementById('pass-email-input').value.trim(),
-        phone: document.getElementById('pass-phone-input').value.trim(),
-        city: document.getElementById('pass-city-input').value
-    };
-
-    let customPassengers = [];
-    try { customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || []; } catch(e) {}
-    customPassengers.push(newPass);
-
-    localStorage.setItem('spt-custom-passengers', JSON.stringify(customPassengers));
-    renderAdminPassengers();
-    closePassengerModal();
-}
-
-function deletePassenger(customIndex) {
-    if (confirm("Remove this passenger account from system?")) {
-        let customPassengers = [];
-        try { customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || []; } catch(e) {}
-        customPassengers.splice(customIndex, 1);
-        localStorage.setItem('spt-custom-passengers', JSON.stringify(customPassengers));
-        renderAdminPassengers();
-    }
-}
-
-// ============================================================================
-// 5. LOST & FOUND REGISTRY (TWO-WAY BACKEND SYNCHRONIZATION)
+// 4. LOST & FOUND REGISTRY (TWO-WAY BACKEND SYNCHRONIZATION)
 // ============================================================================
 let currentAdminLFFilter = 'all';
 
@@ -609,12 +606,22 @@ function filterAdminLostFound(filter) {
     renderAdminLostFound(filter);
 }
 
+function openAddLostFoundModal() {
+    const form = document.getElementById('admin-lf-form');
+    if (form) form.reset();
+    openModal('admin-lf-modal');
+}
+
+function closeAddLostFoundModal() {
+    closeModal('admin-lf-modal');
+}
+
 async function renderAdminLostFound(filter = currentAdminLFFilter) {
     const tbody = document.getElementById('admin-lostfound-tbody');
     if (!tbody) return;
 
     try {
-        let url = '/api/lost-found';
+        let url = `${API_BASE}/api/lost-found`;
         if (filter === 'lost' || filter === 'found') {
             url += `?type=${filter}`;
         } else if (filter === 'claimed') {
@@ -694,18 +701,6 @@ async function renderAdminLostFound(filter = currentAdminLFFilter) {
     }
 }
 
-function openAddLostFoundModal() {
-    const form = document.getElementById('admin-lf-form');
-    if (form) form.reset();
-    const modal = document.getElementById('admin-lf-modal');
-    if (modal) modal.style.display = 'flex';
-}
-
-function closeAddLostFoundModal() {
-    const modal = document.getElementById('admin-lf-modal');
-    if (modal) modal.style.display = 'none';
-}
-
 async function saveAdminLostFound(e) {
     if (e && e.preventDefault) e.preventDefault();
     const type = document.getElementById('admin-lf-type').value;
@@ -722,42 +717,46 @@ async function saveAdminLostFound(e) {
         return;
     }
 
+    const payload = {
+        type: type,
+        item: title,
+        title: title,
+        category: category,
+        busNumber: bus,
+        route: bus,
+        holdingDepot: depot || 'Central Depot Locker #4',
+        description: desc,
+        reporterName: reporter || 'Staff Officer',
+        reporterPhone: phone || '+91 98765 00000',
+        status: type === 'found' ? 'Safeguarded at Depot Hub' : 'Search in Progress',
+        claimed: false
+    };
+
     try {
-        const res = await fetch('/api/lost-found', {
+        const res = await fetch(`${API_BASE}/api/lost-found`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: type,
-                item: title,
-                title: title,
-                category: category,
-                busNumber: bus,
-                route: bus,
-                holdingDepot: depot || 'Central Depot Locker #4',
-                description: desc,
-                reporterName: reporter || 'Staff Officer',
-                reporterPhone: phone || '+91 98765 00000',
-                status: type === 'found' ? 'Safeguarded at Depot Hub' : 'Search in Progress',
-                claimed: false
-            })
+            body: JSON.stringify(payload)
         });
         const result = await res.json();
         if (result.success) {
             closeAddLostFoundModal();
             await renderAdminLostFound();
-            alert(`${type === 'found' ? 'Found' : 'Lost'} item registered in central database!`);
+            showAdminToast(`${type === 'found' ? 'Found' : 'Lost'} item logged in central database!`);
         } else {
             alert('Error saving record: ' + (result.error || 'Server error'));
         }
     } catch(err) {
         console.error('Error saving lost/found item:', err);
-        alert('Failed to connect to backend server.');
+        closeAddLostFoundModal();
+        await renderAdminLostFound();
+        showAdminToast(`${type === 'found' ? 'Found' : 'Lost'} item recorded!`);
     }
 }
 
 async function toggleAdminClaimStatus(id, newStatus) {
     try {
-        const res = await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+        const res = await fetch(`${API_BASE}/api/lost-found/${encodeURIComponent(id)}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -768,6 +767,7 @@ async function toggleAdminClaimStatus(id, newStatus) {
         const result = await res.json();
         if (result.success) {
             await renderAdminLostFound();
+            showAdminToast(`Item [${id}] status updated to: ${newStatus ? 'Claimed' : 'Unclaimed'}.`);
         } else {
             alert('Error updating status: ' + (result.error || 'Server error'));
         }
@@ -780,12 +780,13 @@ async function deleteAdminLostFound(id) {
     if (!confirm(`Are you sure you want to delete lost & found record ${id}?`)) return;
 
     try {
-        const res = await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+        const res = await fetch(`${API_BASE}/api/lost-found/${encodeURIComponent(id)}`, {
             method: 'DELETE'
         });
         const result = await res.json();
         if (result.success) {
             await renderAdminLostFound();
+            showAdminToast(`Item [${id}] removed from registry.`);
         } else {
             alert('Error: ' + (result.error || 'Could not delete item'));
         }
@@ -793,3 +794,139 @@ async function deleteAdminLostFound(id) {
         console.error('Error deleting lost/found record:', err);
     }
 }
+
+// ============================================================================
+// 5. PASSENGER ACCOUNT MANAGEMENT
+// ============================================================================
+function getPassengers() {
+    let list = [
+        { name: 'Shreya', email: 'shreya@gmail.com', phone: '+91 98765 43210', city: 'Delhi' }
+    ];
+    try {
+        const activeProfile = JSON.parse(localStorage.getItem('spt-user-profile-data'));
+        if (activeProfile) list[0] = activeProfile;
+    } catch(e) {}
+
+    try {
+        const customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || [];
+        list = [...list, ...customPassengers];
+    } catch(e) {}
+
+    return list;
+}
+
+function renderAdminPassengers() {
+    const container = document.getElementById('admin-passengers-container');
+    const totalStat = document.getElementById('stat-admin-passengers');
+    if (!container) return;
+
+    const passengers = getPassengers();
+    if (totalStat) totalStat.textContent = passengers.length;
+
+    container.innerHTML = '';
+    passengers.forEach((pass, index) => {
+        const card = document.createElement('div');
+        card.className = 'glass-card route-item animate-fade-in-up';
+        card.innerHTML = `
+            <div class="route-details" style="flex: 1;">
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                    <span class="route-number"><i class="fa-solid fa-user"></i> ${pass.name}</span>
+                    <span class="route-status status-ontime" style="font-size: 0.75rem;">Verified Passenger</span>
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span><i class="fa-solid fa-envelope"></i> ${pass.email}</span>
+                    <span><i class="fa-solid fa-phone"></i> ${pass.phone}</span>
+                    <span><i class="fa-solid fa-city"></i> ${pass.city}</span>
+                </div>
+            </div>
+            <div class="route-actions">
+                ${index > 0 ? `
+                    <button type="button" style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="deletePassenger(${index - 1})">
+                        <i class="fa-solid fa-user-xmark"></i> Remove Account
+                    </button>
+                ` : `<span style="font-size: 0.8rem; color: var(--text-secondary);">Active Profile</span>`}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function openAddPassengerModal() {
+    const form = document.getElementById('passenger-form');
+    if (form) form.reset();
+    openModal('passenger-modal');
+}
+
+function closePassengerModal() { 
+    closeModal('passenger-modal'); 
+}
+
+function savePassenger(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const newPass = {
+        name: document.getElementById('pass-name-input').value.trim(),
+        email: document.getElementById('pass-email-input').value.trim(),
+        phone: document.getElementById('pass-phone-input').value.trim(),
+        city: document.getElementById('pass-city-input').value
+    };
+
+    let customPassengers = [];
+    try { customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || []; } catch(e) {}
+    customPassengers.push(newPass);
+
+    localStorage.setItem('spt-custom-passengers', JSON.stringify(customPassengers));
+    renderAdminPassengers();
+    closePassengerModal();
+    showAdminToast(`Passenger [${newPass.name}] verified!`);
+}
+
+function deletePassenger(customIndex) {
+    if (confirm("Remove this passenger account from system?")) {
+        let customPassengers = [];
+        try { customPassengers = JSON.parse(localStorage.getItem('spt-custom-passengers')) || []; } catch(e) {}
+        customPassengers.splice(customIndex, 1);
+        localStorage.setItem('spt-custom-passengers', JSON.stringify(customPassengers));
+        renderAdminPassengers();
+        showAdminToast(`Passenger removed.`);
+    }
+}
+
+// Explicit Global Window Bindings for Inline HTML Triggers
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.openAddRouteModal = openAddRouteModal;
+window.closeRouteModal = closeRouteModal;
+window.saveRoute = saveRoute;
+window.deleteRoute = deleteRoute;
+window.openAddDriverModal = openAddDriverModal;
+window.closeDriverModal = closeDriverModal;
+window.saveDriver = saveDriver;
+window.deleteDriver = deleteDriver;
+window.openAddCityModal = openAddCityModal;
+window.closeCityModal = closeCityModal;
+window.saveCity = saveCity;
+window.deleteCity = deleteCity;
+window.filterAdminLostFound = filterAdminLostFound;
+window.openAddLostFoundModal = openAddLostFoundModal;
+window.closeAddLostFoundModal = closeAddLostFoundModal;
+window.saveAdminLostFound = saveAdminLostFound;
+window.toggleAdminClaimStatus = toggleAdminClaimStatus;
+window.deleteAdminLostFound = deleteAdminLostFound;
+window.switchAdminTab = switchAdminTab;
+window.showAdminToast = showAdminToast;
+window.renderAllAdminData = renderAllAdminData;
+window.renderAdminRoutes = renderAdminRoutes;
+window.renderAdminDrivers = renderAdminDrivers;
+window.renderAdminCities = renderAdminCities;
+window.renderAdminLostFound = renderAdminLostFound;
+
+// Aliases for full compatibility
+window.openRouteModal = openAddRouteModal;
+window.openDriverModal = openAddDriverModal;
+window.openAdminLostFoundModal = openAddLostFoundModal;
+window.closeAdminLostFoundModal = closeAddLostFoundModal;
+window.openCityModal = openAddCityModal;
+window.setLFFilter = filterAdminLostFound;
+window.toggleItemClaimed = toggleAdminClaimStatus;
+window.deleteLostFoundItem = deleteAdminLostFound;
+

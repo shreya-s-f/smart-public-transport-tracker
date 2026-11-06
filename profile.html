@@ -3174,6 +3174,8 @@
             window.hideModal('complaint-modal');
         }
 
+        const PASSENGER_API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+
         async function handleComplaintSubmit(e) {
             e.preventDefault();
             const category = document.getElementById('complaint-category')?.value;
@@ -3185,7 +3187,7 @@
             const payload = { id: ticketId, category, route, datetime, details, status: 'Under Review', timestamp: new Date().toISOString() };
 
             try {
-                await fetch('/api/complaints', {
+                await fetch(`${PASSENGER_API_BASE}/api/complaints`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -3238,7 +3240,7 @@
             if (!listContainer) return;
 
             try {
-                const res = await fetch('/api/lost-found');
+                const res = await fetch(`${PASSENGER_API_BASE}/api/lost-found`);
                 const result = await res.json();
                 const items = (result && result.success && Array.isArray(result.data)) ? result.data : [];
 
@@ -3316,7 +3318,7 @@
             };
 
             try {
-                const res = await fetch('/api/lost-found', {
+                const res = await fetch(`${PASSENGER_API_BASE}/api/lost-found`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -3340,7 +3342,7 @@
 
         async function claimLostItem(id, itemTitle) {
             try {
-                await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+                await fetch(`${PASSENGER_API_BASE}/api/lost-found/${encodeURIComponent(id)}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ claimed: true, status: 'Claim Verified by Commuter' })
