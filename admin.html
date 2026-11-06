@@ -323,42 +323,20 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Driver Name</th>
+                            <th>Driver &amp; Badge</th>
                             <th>Assigned Bus</th>
-                            <th>Route</th>
-                            <th>Shift Time</th>
+                            <th>Route &amp; Metro</th>
+                            <th>Shift Schedule</th>
                             <th>Safety Rating</th>
                             <th>Duty Status</th>
-                            <th>Contact</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-drivers-tbody">
                         <tr>
-                            <td><strong>Ramesh Kumar</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">ID: DRV-441</span></td>
-                            <td><span style="font-family: monospace; color: #38BDF8;">KA-01-F-2024</span></td>
-                            <td>Route 500A (Electric)</td>
-                            <td>06:00 AM – 02:00 PM</td>
-                            <td><span style="color: #F59E0B;"><i class="fa-solid fa-star"></i> 4.9 / 5</span></td>
-                            <td><span class="pill-badge pill-badge-green">On Route</span></td>
-                            <td><a href="tel:+919876543210" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;"><i class="fa-solid fa-phone"></i> Call</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Suresh Patil</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">ID: DRV-108</span></td>
-                            <td><span style="font-family: monospace; color: #38BDF8;">KA-29-B-5510</span></td>
-                            <td>Route BGK-01 (Bagalkot)</td>
-                            <td>08:00 AM – 04:00 PM</td>
-                            <td><span style="color: #F59E0B;"><i class="fa-solid fa-star"></i> 5.0 / 5</span></td>
-                            <td><span class="pill-badge pill-badge-green">On Route</span></td>
-                            <td><a href="tel:+919876543211" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;"><i class="fa-solid fa-phone"></i> Call</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Devendra Singh</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">ID: DRV-309</span></td>
-                            <td><span style="font-family: monospace; color: #38BDF8;">DL-01-A-4412</span></td>
-                            <td>Route 507 (Delhi)</td>
-                            <td>02:00 PM – 10:00 PM</td>
-                            <td><span style="color: #F59E0B;"><i class="fa-solid fa-star"></i> 4.8 / 5</span></td>
-                            <td><span class="pill-badge pill-badge-blue">Scheduled</span></td>
-                            <td><a href="tel:+919876543212" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;"><i class="fa-solid fa-phone"></i> Call</a></td>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading driver roster from backend...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -580,18 +558,107 @@
 
     <!-- Modal 2: Add City Modal -->
     <div id="city-modal" class="modal-overlay">
-        <div class="modal-box animate-fade-in-up" style="max-width: 420px;">
+        <div class="modal-box animate-fade-in-up" style="max-width: 480px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
-                <h3 style="margin: 0; color: #FFFFFF;"><i class="fa-solid fa-city" style="color: #10B981;"></i> Add Operating City</h3>
+                <h3 style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-city" style="color: #10B981;"></i> Register Operating City</h3>
                 <button onclick="closeCityModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <form id="city-form">
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">City Name</label>
-                    <input type="text" id="city-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Ahmedabad or Kolkata" required>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Metro City Name</label>
+                    <input type="text" id="city-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Ahmedabad, Kolkata, Kochi" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">State / Federal Province</label>
+                    <input type="text" id="city-state-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Gujarat, West Bengal, Kerala" required>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Transport Authority Name</label>
+                    <input type="text" id="city-authority-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. AMTS Smart Urban Bus Service">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Fleet Size (Buses)</label>
+                        <input type="number" id="city-fleet-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" value="30" min="1" max="500">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Base Fare</label>
+                        <input type="text" id="city-fare-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" value="₹15">
+                    </div>
                 </div>
                 <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-check"></i> Register City Grid</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Add/Register Driver Modal -->
+    <div id="driver-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 id="driver-modal-title" style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-user-plus" style="color: #38BDF8;"></i> Register Certified Driver</h3>
+                <button onclick="closeDriverModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="driver-form">
+                <input type="hidden" id="driver-edit-id" value="">
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Full Name</label>
+                        <input type="text" id="driver-form-name" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Ramesh Kumar" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">License / Badge ID</label>
+                        <input type="text" id="driver-form-license" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. DL-KA-2022-7711" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Phone Number</label>
+                        <input type="text" id="driver-form-phone" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Operating Metro</label>
+                        <select id="driver-form-city" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Assigned Bus Plate</label>
+                        <input type="text" id="driver-form-bus" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. KA-01-F-2024" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Assigned Route</label>
+                        <input type="text" id="driver-form-route" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Route 500A (Electric)" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Duty Shift</label>
+                        <select id="driver-form-shift" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                            <option value="06:00 AM – 02:00 PM">Morning Shift (06:00 AM – 02:00 PM)</option>
+                            <option value="08:00 AM – 04:00 PM">Day Shift (08:00 AM – 04:00 PM)</option>
+                            <option value="02:00 PM – 10:00 PM">Evening Shift (02:00 PM – 10:00 PM)</option>
+                            <option value="10:00 PM – 06:00 AM">Night Express (10:00 PM – 06:00 AM)</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Duty Status</label>
+                        <select id="driver-form-status" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                            <option value="On Route">On Route (Active Duty)</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Off Duty">Off Duty</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-id-card"></i> Save &amp; Assign Driver</button>
             </form>
         </div>
     </div>
@@ -635,13 +702,6 @@
 
         function exportAdminAuditLog() {
             alert('Generating encrypted fleet audit report (CSV / PDF)... Download starting.');
-        }
-
-        function openAddDriverModal() {
-            const name = prompt("Enter Driver Full Name:");
-            if (name) {
-                alert(`Driver ${name} registered and safety induction packet queued.`);
-            }
         }
     </script>
 <script src="js/onboarding-tour.js" defer></script>

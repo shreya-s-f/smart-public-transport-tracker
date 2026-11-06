@@ -1,4 +1,4 @@
-// Admin Panel JavaScript Logic (Buses, Cities, Passengers)
+// Admin Panel JavaScript Logic (Routes, Drivers, Operating Cities, Fleet & Telemetry)
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initial Render
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Form Event Listeners
+    // Route Form Listener
     const routeForm = document.getElementById('route-form');
     if (routeForm) {
         routeForm.addEventListener('submit', (e) => {
@@ -25,6 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Driver Form Listener
+    const driverForm = document.getElementById('driver-form');
+    if (driverForm) {
+        driverForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveDriver();
+        });
+    }
+
+    // City Form Listener
     const cityForm = document.getElementById('city-form');
     if (cityForm) {
         cityForm.addEventListener('submit', (e) => {
@@ -33,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Passenger Form Listener
     const passForm = document.getElementById('passenger-form');
     if (passForm) {
         passForm.addEventListener('submit', (e) => {
@@ -53,113 +64,118 @@ function switchAdminTab(tab) {
         const el = document.getElementById(`section-${s}`);
         if (el) el.style.display = s === tab ? 'block' : 'none';
     });
+
+    if (tab === 'buses') renderAdminRoutes();
+    if (tab === 'drivers') renderAdminDrivers();
+    if (tab === 'cities') renderAdminCities();
+    if (tab === 'lostfound' && typeof renderAdminLostFound === 'function') renderAdminLostFound();
 }
 
-function renderAllAdminData() {
-    populateCityDropdowns();
-    renderAdminRoutes();
-    renderAdminCities();
+async function renderAllAdminData() {
+    await populateCityDropdowns();
+    await renderAdminRoutes();
+    await renderAdminDrivers();
+    await renderAdminCities();
     renderAdminPassengers();
+    if (typeof renderAdminLostFound === 'function') {
+        renderAdminLostFound();
+    }
 }
 
-// --- CITY HELPERS ---
-function getCities() {
-    const defaultCities = ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune'];
-    let customCities = [];
-    try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
-    return [...new Set([...defaultCities, ...customCities])];
-}
+// --- CITY DROPDOWN POPULATION ---
+async function populateCityDropdowns() {
+    let cities = ['Delhi', 'Mumbai', 'Bangalore', 'Bagalkot', 'Hyderabad', 'Chennai', 'Pune'];
+    try {
+        const res = await fetch('/api/cities');
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.data) && data.data.length) {
+            cities = data.data.map(c => c.name);
+        }
+    } catch(err) {
+        console.warn('Fallback to local cities catalog:', err);
+    }
 
-function populateCityDropdowns() {
-    const cities = getCities();
     const routeSelect = document.getElementById('form-city');
+    const driverSelect = document.getElementById('driver-form-city');
     const passSelect = document.getElementById('pass-city-input');
 
-    if (routeSelect) {
-        routeSelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-    if (passSelect) {
-        passSelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
+    const options = cities.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (routeSelect) routeSelect.innerHTML = options;
+    if (driverSelect) driverSelect.innerHTML = options;
+    if (passSelect) passSelect.innerHTML = options;
 
     const cityStat = document.getElementById('stat-admin-cities');
     if (cityStat) cityStat.textContent = cities.length;
 }
 
-// --- 1. BUS & ROUTE MANAGEMENT ---
-function getCustomRoutes() {
-    try { return JSON.parse(localStorage.getItem('spt-custom-routes')) || []; } catch(e) { return []; }
-}
-
-function renderAdminRoutes() {
+// ============================================================================
+// 1. BUS & ROUTE MANAGEMENT (CONNECTED TO BACKEND /api/routes)
+// ============================================================================
+async function renderAdminRoutes() {
     const tbody = document.getElementById('admin-routes-tbody');
-    const container = document.getElementById('admin-routes-container');
     const totalSpan = document.getElementById('stat-admin-buses');
+    const routesStat = document.getElementById('stat-admin-routes');
 
-    const defaultFleet = [
-        { id: '500A', veh: 'KA-01-F-2024', path: 'Silk Board ➔ Hebbal Flyover', city: 'Bangalore', occ: '64%', occLabel: 'Moderate', status: 'Active' },
-        { id: '507', veh: 'DL-01-A-4412', path: 'Okhla Phase 1 ➔ Connaught Place', city: 'Delhi', occ: '82%', occLabel: 'Crowded', status: 'Active' },
-        { id: 'BEST-301', veh: 'MH-02-B-9910', path: 'CSMT ➔ Bandra Kurla Complex (BKC)', city: 'Mumbai', occ: '40%', occLabel: 'Available', status: 'Active' },
-        { id: 'BGK-01', veh: 'KA-29-B-5510', path: 'Navanagar ➔ College Cross (Bagalkot)', city: 'Bagalkot', occ: '30%', occLabel: 'Available', status: 'Active' },
-        { id: '100M', veh: 'TS-09-E-1200', path: 'Secunderabad ➔ Hitec City', city: 'Hyderabad', occ: '75%', occLabel: 'Moderate', status: 'Active' },
-        { id: 'MTC-21G', veh: 'TN-01-G-3390', path: 'Broadway ➔ Tambaram', city: 'Chennai', occ: '55%', occLabel: 'Moderate', status: 'Active' },
-        { id: 'Rainbow-102', veh: 'MH-12-Q-7788', path: 'Swargate ➔ Hinjawadi Phase 3', city: 'Pune', occ: '90%', occLabel: 'Crowded', status: 'Delayed' }
-    ];
+    try {
+        const res = await fetch('/api/routes?city=all');
+        const data = await res.json();
+        const routes = (data && data.success && Array.isArray(data.routes)) ? data.routes : [];
 
-    const customRoutes = getCustomRoutes();
-    const allRoutes = [...defaultFleet, ...customRoutes.map(r => ({
-        id: r.id,
-        veh: 'SYS-' + (Math.floor(1000 + Math.random() * 9000)),
-        path: r.path,
-        city: r.city,
-        occ: '45%',
-        occLabel: 'Available',
-        status: r.status,
-        isCustom: true
-    }))];
+        if (totalSpan) totalSpan.textContent = `${routes.length} / 90`;
+        if (routesStat) routesStat.textContent = routes.length;
 
-    if (totalSpan) totalSpan.textContent = `${allRoutes.length} / 90`;
+        if (tbody) {
+            if (!routes.length) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">No routes configured in network. Click "Add New Bus Route" to create one.</td></tr>`;
+                return;
+            }
 
-    if (tbody) {
-        tbody.innerHTML = allRoutes.map((r, idx) => `
-            <tr>
-                <td><strong style="color: #8B5CF6; font-size: 1rem;">${r.id}</strong></td>
-                <td><span style="font-family: monospace; color: #38BDF8;">${r.veh}</span></td>
-                <td><strong>${r.path}</strong></td>
-                <td><span class="pill-badge pill-badge-purple" style="font-size: 0.72rem;">${r.city}</span></td>
-                <td>
-                    <span style="font-size: 0.85rem; color: #FFFFFF;">${r.occ}</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">(${r.occLabel})</span>
-                </td>
-                <td>
-                    <span class="pill-badge ${r.status === 'Active' ? 'pill-badge-green' : 'pill-badge-purple'}">
-                        ${r.status}
-                    </span>
-                </td>
-                <td>
-                    <div style="display: flex; gap: 0.4rem;">
-                        <a href="tracking.html?route=${encodeURIComponent(r.id)}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Track Live">
-                            <i class="fa-solid fa-satellite-dish"></i>
-                        </a>
-                        <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="alert('Telemetry sync initiated for route ${r.id}')" title="Sync">
-                            <i class="fa-solid fa-rotate"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
+            tbody.innerHTML = routes.map((r) => {
+                const stopsDisplay = Array.isArray(r.stops) && r.stops.length > 1 
+                    ? `${r.stops[0]} ➔ ${r.stops[r.stops.length - 1]}`
+                    : (r.name || r.path || 'Corridor');
+                const hashVal = Math.abs(String(r.id).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
+                const vehPlate = r.veh || `IN-${(r.city || 'DL').slice(0, 2).toUpperCase()}-EB-${1000 + (hashVal % 8999)}`;
+                const occ = 35 + (hashVal % 50);
+                const occLabel = occ > 75 ? 'Crowded' : occ > 45 ? 'Moderate' : 'Seats Available';
 
-    if (container) {
-        container.innerHTML = allRoutes.map(r => `
-            <div class="glass-panel" style="padding: 1rem; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <strong style="color: #8B5CF6;">${r.id}</strong> &bull; <span>${r.path}</span>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">${r.city} &bull; Veh: ${r.veh}</div>
-                </div>
-                <span class="pill-badge ${r.status === 'Active' ? 'pill-badge-green' : 'pill-badge-purple'}">${r.status}</span>
-            </div>
-        `).join('');
+                return `
+                    <tr>
+                        <td>
+                            <strong style="color: #8B5CF6; font-size: 1rem;">${r.id}</strong>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">${r.type || 'Electric'} &bull; ${r.frequency || '15m'}</div>
+                        </td>
+                        <td><span style="font-family: monospace; color: #38BDF8;">${vehPlate}</span></td>
+                        <td>
+                            <strong>${r.name || r.path}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${stopsDisplay}</div>
+                        </td>
+                        <td><span class="pill-badge pill-badge-purple" style="font-size: 0.72rem;">${r.city || 'Transit Grid'}</span></td>
+                        <td>
+                            <span style="font-size: 0.85rem; color: #FFFFFF;">${occ}%</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">(${occLabel})</span>
+                        </td>
+                        <td>
+                            <span class="pill-badge ${r.status === 'Delayed' ? 'pill-badge-purple' : 'pill-badge-green'}">
+                                ${r.status || 'Active'}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                <a href="tracking.html?route=${encodeURIComponent(r.id)}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Track Live">
+                                    <i class="fa-solid fa-satellite-dish"></i>
+                                </a>
+                                <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteRoute('${r.id}')" title="Delete Route">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    } catch (err) {
+        console.error('Error fetching routes:', err);
     }
 }
 
@@ -170,130 +186,321 @@ function openAddRouteModal() {
     document.getElementById('route-modal').style.display = 'flex';
 }
 
-function closeRouteModal() { document.getElementById('route-modal').style.display = 'none'; }
-
-function editRoute(index) {
-    const customRoutes = getCustomRoutes();
-    const route = customRoutes[index];
-    if (!route) return;
-
-    document.getElementById('modal-title').textContent = "Edit Bus Route";
-    document.getElementById('route-index').value = index;
-    document.getElementById('form-city').value = route.city || 'Delhi';
-    document.getElementById('form-id').value = route.id;
-    document.getElementById('form-path').value = route.path;
-    document.getElementById('form-fare').value = route.fare || '₹30';
-    document.getElementById('form-status').value = route.status || 'Active';
-    const firstInput = document.getElementById('form-first');
-    const lastInput = document.getElementById('form-last');
-    if (firstInput) firstInput.value = route.first || '06:00 AM';
-    if (lastInput) lastInput.value = route.last || '10:00 PM';
-
-    document.getElementById('route-modal').style.display = 'flex';
+function closeRouteModal() { 
+    document.getElementById('route-modal').style.display = 'none'; 
 }
 
-function saveRoute() {
-    const index = parseInt(document.getElementById('route-index').value);
-    const firstVal = document.getElementById('form-first') ? document.getElementById('form-first').value.trim() : '06:00 AM';
-    const lastVal = document.getElementById('form-last') ? document.getElementById('form-last').value.trim() : '10:00 PM';
-    const fareVal = document.getElementById('form-fare').value.trim();
+async function saveRoute() {
+    const routeId = document.getElementById('form-id').value.trim();
+    const routePath = document.getElementById('form-path').value.trim();
+    const city = document.getElementById('form-city').value;
+    const fareVal = document.getElementById('form-fare').value.replace(/\D/g, '') || '25';
+    const status = document.getElementById('form-status').value;
 
-    const newRoute = {
-        city: document.getElementById('form-city').value,
-        id: document.getElementById('form-id').value.trim(),
-        path: document.getElementById('form-path').value.trim(),
-        fare: fareVal.startsWith('₹') ? fareVal : `₹${fareVal.replace(/\D/g, '') || '30'}`,
-        status: document.getElementById('form-status').value,
-        first: firstVal || '06:00 AM',
-        last: lastVal || '10:00 PM'
-    };
-
-    let customRoutes = getCustomRoutes();
-    if (index >= 0 && index < customRoutes.length) {
-        customRoutes[index] = newRoute;
-    } else {
-        customRoutes.push(newRoute);
+    if (!routeId || !routePath) {
+        alert("Please provide Route ID and Route Path.");
+        return;
     }
 
-    localStorage.setItem('spt-custom-routes', JSON.stringify(customRoutes));
-    renderAdminRoutes();
-    closeRouteModal();
-}
-
-function deleteRoute(index) {
-    if (confirm("Delete this bus route?")) {
-        let customRoutes = getCustomRoutes();
-        customRoutes.splice(index, 1);
-        localStorage.setItem('spt-custom-routes', JSON.stringify(customRoutes));
-        renderAdminRoutes();
+    try {
+        const res = await fetch('/api/routes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: routeId,
+                name: routePath,
+                city: city,
+                fare: parseInt(fareVal, 10),
+                status: status,
+                stops: routePath.split(/[,➔\->]+/).map(s => s.trim()).filter(Boolean)
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            closeRouteModal();
+            await renderAdminRoutes();
+            await renderAdminCities();
+        } else {
+            alert('Error adding route: ' + (result.error || 'Server error'));
+        }
+    } catch(err) {
+        console.error('Error saving route:', err);
+        alert('Failed to connect to backend server.');
     }
 }
 
-// --- 2. CITY MANAGEMENT ---
-function renderAdminCities() {
+async function deleteRoute(routeId) {
+    if (!confirm(`Are you sure you want to delete bus route ${routeId}?`)) return;
+
+    try {
+        const res = await fetch('/api/routes/' + encodeURIComponent(routeId), {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+        if (result.success) {
+            await renderAdminRoutes();
+            await renderAdminCities();
+        } else {
+            alert('Error: ' + (result.error || 'Could not delete route'));
+        }
+    } catch(err) {
+        console.error('Error deleting route:', err);
+    }
+}
+
+// ============================================================================
+// 2. CERTIFIED DRIVER ROSTER (CONNECTED TO BACKEND /api/drivers)
+// ============================================================================
+function openAddDriverModal() {
+    const form = document.getElementById('driver-form');
+    if (form) form.reset();
+    const title = document.getElementById('driver-modal-title');
+    if (title) title.innerHTML = '<i class="fa-solid fa-user-plus" style="color: #38BDF8;"></i> Register Certified Driver';
+    const modal = document.getElementById('driver-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeDriverModal() {
+    const modal = document.getElementById('driver-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function renderAdminDrivers() {
+    const tbody = document.getElementById('admin-drivers-tbody');
+    const driversStat = document.getElementById('stat-admin-drivers');
+
+    try {
+        const res = await fetch('/api/drivers');
+        const data = await res.json();
+        const drivers = (data && data.success && Array.isArray(data.data)) ? data.data : [];
+
+        if (driversStat) driversStat.textContent = drivers.length;
+
+        if (tbody) {
+            if (!drivers.length) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">No drivers registered. Click "Register Driver" to onboard one.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = drivers.map(d => {
+                const statusBadge = d.status === 'On Route' 
+                    ? 'pill-badge-green' 
+                    : (d.status === 'Scheduled' ? 'pill-badge-blue' : 'pill-badge-purple');
+
+                return `
+                    <tr>
+                        <td>
+                            <strong>${d.name}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">Badge: ${d.id || d.license}</div>
+                        </td>
+                        <td><span style="font-family: monospace; color: #38BDF8; font-weight: 600;">${d.assignedBus || 'Unassigned'}</span></td>
+                        <td>
+                            <strong>${d.route || 'General Route'}</strong>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">${d.city || 'Metro Grid'}</div>
+                        </td>
+                        <td><span style="font-size: 0.85rem; color: #FFFFFF;">${d.shift || '08:00 AM – 04:00 PM'}</span></td>
+                        <td><span style="color: #F59E0B;"><i class="fa-solid fa-star"></i> ${d.rating || 5.0} / 5</span></td>
+                        <td><span class="pill-badge ${statusBadge}">${d.status || 'Active'}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                <a href="tel:${d.phone || '+919876543210'}" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; text-decoration: none;" title="Call Driver">
+                                    <i class="fa-solid fa-phone"></i>
+                                </a>
+                                <button class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteDriver('${d.id}')" title="Delete Driver">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    } catch(err) {
+        console.error('Error fetching drivers:', err);
+    }
+}
+
+async function saveDriver() {
+    const name = document.getElementById('driver-form-name').value.trim();
+    const license = document.getElementById('driver-form-license').value.trim();
+    const phone = document.getElementById('driver-form-phone').value.trim();
+    const city = document.getElementById('driver-form-city').value;
+    const assignedBus = document.getElementById('driver-form-bus').value.trim();
+    const route = document.getElementById('driver-form-route').value.trim();
+    const shift = document.getElementById('driver-form-shift').value;
+    const status = document.getElementById('driver-form-status').value;
+
+    if (!name) {
+        alert("Driver name is required.");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/drivers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name,
+                license,
+                phone,
+                city,
+                assignedBus,
+                route,
+                shift,
+                status,
+                rating: 5.0
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            closeDriverModal();
+            await renderAdminDrivers();
+        } else {
+            alert('Error adding driver: ' + (result.error || 'Server error'));
+        }
+    } catch(err) {
+        console.error('Error saving driver:', err);
+        alert('Failed to connect to backend server.');
+    }
+}
+
+async function deleteDriver(driverId) {
+    if (!confirm(`Are you sure you want to remove driver ${driverId} from roster?`)) return;
+
+    try {
+        const res = await fetch('/api/drivers/' + encodeURIComponent(driverId), {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+        if (result.success) {
+            await renderAdminDrivers();
+        } else {
+            alert('Error: ' + (result.error || 'Could not delete driver'));
+        }
+    } catch(err) {
+        console.error('Error deleting driver:', err);
+    }
+}
+
+// ============================================================================
+// 3. OPERATING CITIES MANAGEMENT (CONNECTED TO BACKEND /api/cities)
+// ============================================================================
+function openAddCityModal() {
+    const form = document.getElementById('city-form');
+    if (form) form.reset();
+    const modal = document.getElementById('city-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeCityModal() {
+    const modal = document.getElementById('city-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function renderAdminCities() {
     const container = document.getElementById('admin-cities-container');
     if (!container) return;
 
-    let customCities = [];
-    try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
+    try {
+        const res = await fetch('/api/cities');
+        const data = await res.json();
+        const cities = (data && data.success && Array.isArray(data.data)) ? data.data : [];
 
-    const allCities = getCities();
+        container.innerHTML = cities.map(c => `
+            <div class="glass-card route-item animate-fade-in-up" style="display: flex; flex-direction: column; gap: 0.8rem; padding: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #FFFFFF; font-family: var(--font-heading);">
+                            <i class="fa-solid fa-city" style="color: #10B981; margin-right: 0.4rem;"></i> ${c.name}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">${c.state || 'Urban Metropolitan Zone'}</div>
+                    </div>
+                    <span class="pill-badge pill-badge-green" style="font-size: 0.72rem;">${c.status || 'Active'}</span>
+                </div>
+                
+                <div style="font-size: 0.78rem; color: #C4B5FD; background: rgba(139, 92, 246, 0.1); padding: 0.4rem 0.6rem; border-radius: 6px;">
+                    <i class="fa-solid fa-building-columns"></i> ${c.authority || `${c.name} Smart Transit Authority`}
+                </div>
 
-    container.innerHTML = '';
-    allCities.forEach(city => {
-        const isCustom = customCities.includes(city);
-        const card = document.createElement('div');
-        card.className = 'glass-card route-item animate-fade-in-up';
-        card.innerHTML = `
-            <div class="route-details" style="flex: 1;">
-                <span class="route-number"><i class="fa-solid fa-city"></i> ${city}</span>
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">${isCustom ? 'Custom Added City' : 'Default Primary Operating Hub'}</span>
-            </div>
-            <div class="route-actions">
-                ${isCustom ? `
-                    <button style="background: rgba(239, 68, 68, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="deleteCity('${city}')">
-                        <i class="fa-solid fa-trash-can"></i> Remove City
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-secondary); border-top: 1px solid var(--card-border); padding-top: 0.6rem;">
+                    <span><i class="fa-solid fa-bus-simple" style="color: #38BDF8;"></i> Fleet: <strong>${c.activeFleet || 20}</strong></span>
+                    <span><i class="fa-solid fa-route" style="color: #F59E0B;"></i> Routes: <strong>${c.routesCount || 1}</strong></span>
+                    <span><i class="fa-solid fa-ticket" style="color: #34D399;"></i> Fare: <strong>${c.fareBase || '₹15'}</strong></span>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 0.4rem;">
+                    <button class="btn-secondary-glass" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3); padding: 0.35rem 0.75rem; font-size: 0.78rem;" onclick="deleteCity('${c.name}')">
+                        <i class="fa-solid fa-trash-can"></i> Remove Grid
                     </button>
-                ` : `<span class="route-status status-ontime">Default City</span>`}
+                </div>
             </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-function openAddCityModal() {
-    document.getElementById('city-form').reset();
-    document.getElementById('city-modal').style.display = 'flex';
-}
-function closeCityModal() { document.getElementById('city-modal').style.display = 'none'; }
-
-function saveCity() {
-    const cityName = document.getElementById('city-name-input').value.trim();
-    if (!cityName) return;
-
-    let customCities = [];
-    try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
-
-    if (!customCities.includes(cityName) && !['Delhi', 'Mumbai', 'Bangalore'].includes(cityName)) {
-        customCities.push(cityName);
-        localStorage.setItem('spt-custom-cities', JSON.stringify(customCities));
-    }
-
-    renderAllAdminData();
-    closeCityModal();
-}
-
-function deleteCity(city) {
-    if (confirm(`Remove city ${city} from system?`)) {
-        let customCities = [];
-        try { customCities = JSON.parse(localStorage.getItem('spt-custom-cities')) || []; } catch(e) {}
-        customCities = customCities.filter(c => c !== city);
-        localStorage.setItem('spt-custom-cities', JSON.stringify(customCities));
-        renderAllAdminData();
+        `).join('');
+    } catch(err) {
+        console.error('Error fetching cities:', err);
     }
 }
 
-// --- 3. PASSENGER ACCOUNT MANAGEMENT ---
+async function saveCity() {
+    const name = document.getElementById('city-name-input').value.trim();
+    const state = document.getElementById('city-state-input') ? document.getElementById('city-state-input').value.trim() : '';
+    const authority = document.getElementById('city-authority-input') ? document.getElementById('city-authority-input').value.trim() : '';
+    const fleetVal = document.getElementById('city-fleet-input') ? parseInt(document.getElementById('city-fleet-input').value, 10) : 30;
+    const fareVal = document.getElementById('city-fare-input') ? document.getElementById('city-fare-input').value.trim() : '₹15';
+
+    if (!name) {
+        alert("Please enter a city name.");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/cities', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name,
+                state: state || 'Urban Metropolitan Zone',
+                authority: authority || `${name} Smart Mobility Network`,
+                activeFleet: fleetVal || 25,
+                fareBase: fareVal.startsWith('₹') ? fareVal : `₹${fareVal}`
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            closeCityModal();
+            await populateCityDropdowns();
+            await renderAdminCities();
+        } else {
+            alert('Error adding city: ' + (result.error || 'Server error'));
+        }
+    } catch(err) {
+        console.error('Error saving city:', err);
+        alert('Failed to connect to backend server.');
+    }
+}
+
+async function deleteCity(cityName) {
+    if (!confirm(`Are you sure you want to remove ${cityName} from the operating transit network?`)) return;
+
+    try {
+        const res = await fetch('/api/cities/' + encodeURIComponent(cityName), {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+        if (result.success) {
+            await populateCityDropdowns();
+            await renderAdminCities();
+            await renderAdminRoutes();
+        } else {
+            alert('Error: ' + (result.error || 'Could not delete city'));
+        }
+    } catch(err) {
+        console.error('Error deleting city:', err);
+    }
+}
+
+// ============================================================================
+// 4. PASSENGER ACCOUNT MANAGEMENT
+// ============================================================================
 function getPassengers() {
     let list = [
         { name: 'Shreya', email: 'shreya@gmail.com', phone: '+91 98765 43210', city: 'Delhi' }
@@ -348,10 +555,15 @@ function renderAdminPassengers() {
 }
 
 function openAddPassengerModal() {
-    document.getElementById('passenger-form').reset();
-    document.getElementById('passenger-modal').style.display = 'flex';
+    const form = document.getElementById('passenger-form');
+    if (form) form.reset();
+    const modal = document.getElementById('passenger-modal');
+    if (modal) modal.style.display = 'flex';
 }
-function closePassengerModal() { document.getElementById('passenger-modal').style.display = 'none'; }
+function closePassengerModal() { 
+    const modal = document.getElementById('passenger-modal');
+    if (modal) modal.style.display = 'none'; 
+}
 
 function savePassenger() {
     const newPass = {
