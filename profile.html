@@ -3205,6 +3205,7 @@
         function openLostFoundModal() {
             const dateInput = document.getElementById('lf-date');
             if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            loadLostFoundCatalog();
             window.showModal('lost-found-modal');
         }
 
@@ -3228,12 +3229,64 @@
                 catalogBtn?.classList.add('active');
                 if (reportContent) reportContent.style.display = 'none';
                 if (catalogContent) catalogContent.style.display = 'block';
+                loadLostFoundCatalog();
+            }
+        }
+
+        async function loadLostFoundCatalog() {
+            const listContainer = document.getElementById('lf-catalog-list');
+            if (!listContainer) return;
+
+            try {
+                const res = await fetch('/api/lost-found');
+                const result = await res.json();
+                const items = (result && result.success && Array.isArray(result.data)) ? result.data : [];
+
+                if (!items.length) {
+                    listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No items currently logged in the registry.</div>';
+                    return;
+                }
+
+                listContainer.innerHTML = items.map(item => {
+                    const isFound = (item.type || 'lost').toLowerCase() === 'found';
+                    const badgeColor = isFound ? '#10B981' : '#F59E0B';
+                    const typeLabel = isFound ? 'Recovered / Found' : 'Reported Lost';
+                    
+                    return `
+                        <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.8rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                                    <span style="font-size: 0.72rem; font-weight: 700; color: ${badgeColor}; border: 1px solid ${badgeColor}; padding: 0.1rem 0.45rem; border-radius: 6px;">${typeLabel}</span>
+                                    <strong style="color: #FFFFFF; font-size: 0.92rem;">${item.item || item.title}</strong>
+                                    <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">(${item.id})</span>
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted);">
+                                    <i class="fa-solid fa-bus" style="color: #38BDF8;"></i> ${item.busNumber || item.bus || item.route || 'Transit Fleet'} &bull;
+                                    <i class="fa-solid fa-location-dot" style="color: #A78BFA;"></i> ${item.holdingDepot || item.location || 'Depot Hub'}
+                                </div>
+                                ${item.description ? `<div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${item.description}</div>` : ''}
+                            </div>
+                            <div>
+                                ${item.claimed ? `
+                                    <span style="font-size: 0.75rem; color: #34D399; font-weight: 600;"><i class="fa-solid fa-check"></i> Claimed</span>
+                                ` : `
+                                    <button type="button" class="btn-secondary-glass" onclick="claimLostItem('${item.id}', '${(item.item || item.title || '').replace(/'/g, "\\'")}')" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; color: #38BDF8;">
+                                        Claim Item
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.warn('Error loading lost & found catalog:', err);
             }
         }
 
         async function handleLostFoundSubmit(e) {
             e.preventDefault();
-            const type = document.getElementById('lf-type')?.value;
+            const rawType = document.getElementById('lf-type')?.value || 'Lost';
+            const type = rawType.toLowerCase();
             const category = document.getElementById('lf-category')?.value;
             const title = document.getElementById('lf-item-title')?.value;
             const bus = document.getElementById('lf-bus-number')?.value;
@@ -3242,28 +3295,61 @@
             const date = document.getElementById('lf-date')?.value;
             const refId = 'LF-' + Math.floor(1000 + Math.random() * 9000);
 
-            const payload = { id: refId, type, category, title, bus, desc, phone, date, status: 'Active In Registry' };
+            const payload = {
+                id: refId,
+                type: type,
+                item: title,
+                title: title,
+                category: category,
+                busNumber: bus,
+                bus: bus,
+                route: bus,
+                location: `Bus ${bus}`,
+                description: desc,
+                desc: desc,
+                reporterPhone: phone,
+                phone: phone,
+                date: date,
+                status: type === 'found' ? 'Safeguarded at Depot Hub' : 'Search in Progress',
+                holdingDepot: type === 'found' ? 'Central Depot Locker #4' : 'Awaiting Custody',
+                claimed: false
+            };
 
             try {
-                await fetch('/api/lost-found', {
+                const res = await fetch('/api/lost-found', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                const resData = await res.json();
+                if (resData && resData.success) {
+                    console.log('Saved to backend /api/lost-found:', resData.data);
+                }
             } catch (err) {
-                console.log('Local offline lost-found fallback mode');
+                console.log('Local offline lost-found fallback mode', err);
             }
 
             const stored = JSON.parse(localStorage.getItem('transit_lost_found') || '[]');
             stored.unshift(payload);
             localStorage.setItem('transit_lost_found', JSON.stringify(stored));
 
+            loadLostFoundCatalog();
             closeLostFoundModal();
-            alert(`Lost & Found Report [${refId}] registered with Central Transit Lockers!`);
+            alert(`${type === 'found' ? 'Found' : 'Lost'} item report [${refId}] registered successfully! Central Transit Lockers synchronized.`);
         }
 
-        function claimLostItem(itemTitle) {
-            alert(`Claim request initiated for "${itemTitle}". Transit depot verification code sent to your registered mobile.`);
+        async function claimLostItem(id, itemTitle) {
+            try {
+                await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ claimed: true, status: 'Claim Verified by Commuter' })
+                });
+            } catch(e) {
+                console.warn('Error claiming item:', e);
+            }
+            alert(`Claim request initiated for "${itemTitle || id}". Transit depot verification code sent to your registered mobile.`);
+            loadLostFoundCatalog();
         }
     </script>
     <script src="js/profile-backend.js"></script>

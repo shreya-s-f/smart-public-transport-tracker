@@ -591,3 +591,205 @@ function deletePassenger(customIndex) {
         renderAdminPassengers();
     }
 }
+
+// ============================================================================
+// 5. LOST & FOUND REGISTRY (TWO-WAY BACKEND SYNCHRONIZATION)
+// ============================================================================
+let currentAdminLFFilter = 'all';
+
+function filterAdminLostFound(filter) {
+    currentAdminLFFilter = filter;
+    ['all', 'lost', 'found', 'claimed'].forEach(f => {
+        const btn = document.getElementById(`lf-filter-${f}`);
+        if (btn) {
+            if (f === filter) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+    renderAdminLostFound(filter);
+}
+
+async function renderAdminLostFound(filter = currentAdminLFFilter) {
+    const tbody = document.getElementById('admin-lostfound-tbody');
+    if (!tbody) return;
+
+    try {
+        let url = '/api/lost-found';
+        if (filter === 'lost' || filter === 'found') {
+            url += `?type=${filter}`;
+        } else if (filter === 'claimed') {
+            url += `?claimed=true`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+        let items = (data && data.success && Array.isArray(data.data)) ? data.data : [];
+
+        if (!items.length) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);"><i class="fa-solid fa-box-open" style="margin-right: 0.5rem;"></i> No items matching filter "${filter}" found in registry.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = items.map(item => {
+            const isFound = (item.type || 'lost').toLowerCase() === 'found';
+            const badgeClass = isFound ? 'pill-badge-green' : 'pill-badge-purple';
+            const typeText = isFound ? 'Found / Recovered' : 'Reported Lost';
+            const statusClass = item.claimed 
+                ? 'pill-badge-green' 
+                : (isFound ? 'pill-badge-blue' : 'pill-badge');
+            const statusBg = item.claimed 
+                ? '' 
+                : (isFound ? '' : 'style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;"');
+
+            return `
+                <tr>
+                    <td>
+                        <strong style="color: #38BDF8; font-family: monospace;">${item.id}</strong><br>
+                        <span class="pill-badge ${badgeClass}" style="font-size: 0.7rem; margin-top: 0.2rem;">${typeText}</span>
+                    </td>
+                    <td>
+                        <strong style="color: #FFFFFF;">${item.item || item.title}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${item.category || 'General'}</div>
+                        ${item.description ? `<div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.2rem;">${item.description}</div>` : ''}
+                    </td>
+                    <td>
+                        <span style="font-family: monospace; color: #38BDF8;">${item.busNumber || item.bus || 'Transit Fleet'}</span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${item.route || 'Network'}</div>
+                    </td>
+                    <td>
+                        <div>${item.reporterName || 'Commuter'}</div>
+                        <a href="tel:${item.reporterPhone || ''}" style="font-size: 0.75rem; color: #38BDF8; text-decoration: none;">
+                            <i class="fa-solid fa-phone"></i> ${item.reporterPhone || 'N/A'}
+                        </a>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.85rem; color: #C4B5FD;"><i class="fa-solid fa-warehouse"></i> ${item.holdingDepot || 'Central Hub'}</span>
+                    </td>
+                    <td>
+                        <span class="pill-badge ${statusClass}" ${statusBg}>
+                            ${item.claimed ? 'Claimed by Owner' : (item.status || 'Safeguarded')}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                            ${item.claimed ? `
+                                <button type="button" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="toggleAdminClaimStatus('${item.id}', false)">
+                                    Unclaim
+                                </button>
+                            ` : `
+                                <button type="button" class="btn-primary-gradient" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="toggleAdminClaimStatus('${item.id}', true)">
+                                    Mark Claimed
+                                </button>
+                            `}
+                            <button type="button" class="btn-secondary-glass" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #F87171;" onclick="deleteAdminLostFound('${item.id}')" title="Delete record">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch(err) {
+        console.error('Error fetching admin lost & found:', err);
+    }
+}
+
+function openAddLostFoundModal() {
+    const form = document.getElementById('admin-lf-form');
+    if (form) form.reset();
+    const modal = document.getElementById('admin-lf-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeAddLostFoundModal() {
+    const modal = document.getElementById('admin-lf-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function saveAdminLostFound(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const type = document.getElementById('admin-lf-type').value;
+    const category = document.getElementById('admin-lf-category').value;
+    const title = document.getElementById('admin-lf-title').value.trim();
+    const bus = document.getElementById('admin-lf-bus').value.trim();
+    const depot = document.getElementById('admin-lf-depot').value.trim();
+    const desc = document.getElementById('admin-lf-desc').value.trim();
+    const reporter = document.getElementById('admin-lf-reporter').value.trim();
+    const phone = document.getElementById('admin-lf-phone').value.trim();
+
+    if (!title) {
+        alert("Item title is required.");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/lost-found', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: type,
+                item: title,
+                title: title,
+                category: category,
+                busNumber: bus,
+                route: bus,
+                holdingDepot: depot || 'Central Depot Locker #4',
+                description: desc,
+                reporterName: reporter || 'Staff Officer',
+                reporterPhone: phone || '+91 98765 00000',
+                status: type === 'found' ? 'Safeguarded at Depot Hub' : 'Search in Progress',
+                claimed: false
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            closeAddLostFoundModal();
+            await renderAdminLostFound();
+            alert(`${type === 'found' ? 'Found' : 'Lost'} item registered in central database!`);
+        } else {
+            alert('Error saving record: ' + (result.error || 'Server error'));
+        }
+    } catch(err) {
+        console.error('Error saving lost/found item:', err);
+        alert('Failed to connect to backend server.');
+    }
+}
+
+async function toggleAdminClaimStatus(id, newStatus) {
+    try {
+        const res = await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                claimed: newStatus,
+                status: newStatus ? 'Claimed by Owner' : 'Safeguarded at Depot Hub'
+            })
+        });
+        const result = await res.json();
+        if (result.success) {
+            await renderAdminLostFound();
+        } else {
+            alert('Error updating status: ' + (result.error || 'Server error'));
+        }
+    } catch(err) {
+        console.error('Error updating claim status:', err);
+    }
+}
+
+async function deleteAdminLostFound(id) {
+    if (!confirm(`Are you sure you want to delete lost & found record ${id}?`)) return;
+
+    try {
+        const res = await fetch(`/api/lost-found/${encodeURIComponent(id)}`, {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+        if (result.success) {
+            await renderAdminLostFound();
+        } else {
+            alert('Error: ' + (result.error || 'Could not delete item'));
+        }
+    } catch(err) {
+        console.error('Error deleting lost/found record:', err);
+    }
+}

@@ -105,6 +105,23 @@
             height: 100%;
             border-radius: 999px;
         }
+
+        .lf-filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lf-filter-btn.active, .lf-filter-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38BDF8;
+        }
     </style>
 <link rel="stylesheet" href="css/onboarding-tour.css">
     <link rel="stylesheet" href="css/ai-assistant.css">
@@ -454,40 +471,36 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-box-archive" style="color: #38BDF8;"></i> Central Depot Lost &amp; Found Registry</h2>
-                    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Items recovered from transit units cataloged for commuter verification and custody return.</p>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Two-way synchronization with passenger portal: commuter lost items &amp; staff recovered goods.</p>
+                </div>
+                <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.25rem; background: rgba(15, 23, 42, 0.6); padding: 0.25rem; border-radius: 10px; border: 1px solid var(--card-border);">
+                        <button type="button" class="lf-filter-btn active" id="lf-filter-all" onclick="filterAdminLostFound('all')">All Items</button>
+                        <button type="button" class="lf-filter-btn" id="lf-filter-lost" onclick="filterAdminLostFound('lost')">Reported Lost</button>
+                        <button type="button" class="lf-filter-btn" id="lf-filter-found" onclick="filterAdminLostFound('found')">Found / Recovered</button>
+                        <button type="button" class="lf-filter-btn" id="lf-filter-claimed" onclick="filterAdminLostFound('claimed')">Claimed</button>
+                    </div>
+                    <button class="btn-primary-gradient" onclick="openAddLostFoundModal()"><i class="fa-solid fa-plus"></i> Log Custody Item</button>
                 </div>
             </div>
             <div style="overflow-x: auto;">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Ref ID</th>
-                            <th>Item Title</th>
-                            <th>Category</th>
-                            <th>Found On Vehicle</th>
+                            <th>Ref ID &amp; Type</th>
+                            <th>Item Title &amp; Category</th>
+                            <th>Transit Vehicle / Corridor</th>
+                            <th>Reporter Contact</th>
                             <th>Holding Depot</th>
                             <th>Custody Status</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-lostfound-tbody">
                         <tr>
-                            <td><strong style="color: #38BDF8;">LF-3312</strong></td>
-                            <td>Brown Leather Wallet (Aadhaar &amp; Metro Card inside)</td>
-                            <td>Wallets &amp; ID</td>
-                            <td>Route 500A (KA-01-F-2024)</td>
-                            <td>Majestic Depot Locker #12</td>
-                            <td><span class="pill-badge pill-badge-green">Secured in Locker</span></td>
-                            <td><button type="button" class="btn-secondary-glass" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="alert('Dispatched verification OTP to claimant.')">Verify Claimant</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong style="color: #38BDF8;">LF-8820</strong></td>
-                            <td>Dell 65W USB-C Laptop Charger</td>
-                            <td>Electronics</td>
-                            <td>Delhi Route 507 (DL-01-A-4412)</td>
-                            <td>Okhla Depot Office</td>
-                            <td><span class="pill-badge pill-badge-blue">Unclaimed</span></td>
-                            <td><button type="button" class="btn-secondary-glass" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="alert('Item custody record updated.')">Archive</button></td>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading items registry from central database...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -659,6 +672,73 @@
                 </div>
 
                 <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-id-card"></i> Save &amp; Assign Driver</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Admin Log Custody Item Modal -->
+    <div id="admin-lf-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-box-archive" style="color: #38BDF8;"></i> Log Custody Item (Lost &amp; Found)</h3>
+                <button onclick="closeAddLostFoundModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="admin-lf-form" onsubmit="saveAdminLostFound(event)">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Report Type</label>
+                        <select id="admin-lf-type" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="found">Found / Recovered by Staff</option>
+                            <option value="lost">Reported Lost by Passenger</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Category</label>
+                        <select id="admin-lf-category" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="Electronics & Phones">Electronics &amp; Phones</option>
+                            <option value="Wallets & Identity Cards">Wallets &amp; Identity Cards</option>
+                            <option value="Bags & Backpacks">Bags &amp; Backpacks</option>
+                            <option value="Keys & Watches">Keys &amp; Watches</option>
+                            <option value="Apparel & Umbrella">Apparel &amp; Umbrella</option>
+                            <option value="Other Belongings">Other Belongings</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Item Title / Name</label>
+                    <input type="text" id="admin-lf-title" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Blue Dell Backpack, Apple Watch Series 8" required>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Bus Plate / Route</label>
+                        <input type="text" id="admin-lf-bus" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. KA-01-FA-4421 (Route 500D)" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Holding Depot / Office</label>
+                        <input type="text" id="admin-lf-depot" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Majestic Depot Locker #14" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Detailed Description</label>
+                    <textarea id="admin-lf-desc" class="search-input" style="width: 100%; height: 70px; margin-top: 0.3rem; resize: none;" placeholder="Color, serial, contents, condition..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Reporter Name</label>
+                        <input type="text" id="admin-lf-reporter" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="Staff Officer or Commuter">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Contact Phone</label>
+                        <input type="text" id="admin-lf-phone" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="+91 98765 43210">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-floppy-disk"></i> Save Custody Record</button>
             </form>
         </div>
     </div>
