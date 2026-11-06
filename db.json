@@ -859,7 +859,7 @@
       "name": "Bangalore",
       "state": "Karnataka",
       "activeFleet": 90,
-      "routesCount": 14,
+      "routesCount": 4,
       "status": "Active",
       "authority": "BMTC Volvo & EV",
       "fareBase": "₹25"

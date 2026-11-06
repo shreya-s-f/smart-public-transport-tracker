@@ -956,13 +956,17 @@ app.use((req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-    console.log(`=======================================================`);
-    console.log(`🚆 Transit.IN Enterprise Mobility Server is RUNNING!`);
-    console.log(`🔗 Local Web App:     http://localhost:${PORT}/index.html`);
-    console.log(`🔗 Profile Dashboard: http://localhost:${PORT}/profile.html`);
-    console.log(`🔗 Backend Health:    http://localhost:${PORT}/api/health`);
-    console.log(`🔗 Profile REST API:  http://localhost:${PORT}/api/profile`);
-    console.log(`📡 Backend Status:    CONNECTED & PERSISTING TO db.json`);
-    console.log(`=======================================================`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`=======================================================`);
+        console.log(`🚆 Transit.IN Enterprise Mobility Server is RUNNING!`);
+        console.log(`🔗 Local Web App:     http://localhost:${PORT}/index.html`);
+        console.log(`🔗 Profile Dashboard: http://localhost:${PORT}/profile.html`);
+        console.log(`🔗 Backend Health:    http://localhost:${PORT}/api/health`);
+        console.log(`🔗 Profile REST API:  http://localhost:${PORT}/api/profile`);
+        console.log(`📡 Backend Status:    CONNECTED & PERSISTING TO db.json`);
+        console.log(`=======================================================`);
+    });
+}
+
+module.exports = { app, db };

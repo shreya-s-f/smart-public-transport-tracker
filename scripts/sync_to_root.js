@@ -16,6 +16,9 @@ const newFiles = [
   ['css/transit-3d-bg.css',  path.join(root, 'css/transit-3d-bg.css')],
   ['js/transit-3d-bg.js',    path.join(root, 'js/transit-3d-bg.js')],
   ['js/three.min.js',        path.join(root, 'js/three.min.js')],
+  ['js/admin.js',            path.join(root, 'js/admin.js')],
+  ['server.js',              path.join(root, 'server.js')],
+  ['db.json',                path.join(root, 'db.json')],
 ];
 
 newFiles.forEach(([from, to]) => {
