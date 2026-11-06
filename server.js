@@ -73,23 +73,7 @@ db.complaints = db.complaints || [
     { id: 'CMP-2026-8812', commuter: 'Aditya V', category: 'Rash Driving', busNumber: 'DL-01-EXP-507', status: 'Under Investigation', priority: 'High', timestamp: '2026-11-02 09:45 AM', notes: 'Speeding reported on Ring Road curve.' }
 ];
 
-db.lostFound = db.lostFound || [
-    { id: 'LF-2026-114', item: 'Black Dell Laptop Bag', busNumber: 'KA-01-FA-4421', route: '500D (Hebbal to Silk Board)', status: 'Safeguarded at Depot 4', claimed: false, date: '2026-11-02' },
-    { id: 'LF-2026-098', item: 'Titan Automatic Wristwatch', busNumber: 'MH-01-BT-301', route: 'BEST-301 (CSMT to BKC)', status: 'Claimed by Owner', claimed: true, date: '2026-11-01' }
-];
-
-db.maintenance = db.maintenance || [
-    { busId: 'KA-01-FA-4421', route: '500D', healthScore: 92, batteryBrake: 'Brake Pad Wear 22%', nextService: 'In 14 days', status: 'Healthy' },
-    { busId: 'DL-01-EXP-507', route: '507', healthScore: 78, batteryBrake: 'Coolant Flow Low', nextService: 'In 3 days', status: 'Attention Needed' },
-    { busId: 'MH-01-BT-301', route: 'BEST-301', healthScore: 96, batteryBrake: 'Battery Cell 98%', nextService: 'In 28 days', status: 'Optimal' }
-];
-
-// In-Memory Seed Data for Global Platform
-const globalTickets = [];
-const incidentReports = [];
-const sosDistressLogs = [];
-
-// Supported Cities Route Catalog
+// Supported Cities Route Catalog Seed
 const cityRoutesCatalog = {
     'Delhi': [
         { id: '507', name: 'Okhla Phase 1 ➔ Connaught Place', type: 'Electric', category: 'Express', stops: ['Okhla Phase 1', 'Nehru Place', 'Moolchand', 'Lajpat Nagar', 'India Gate', 'Connaught Place'], fare: 40, frequency: 'Every 10 min', status: 'On Time', firstBus: '05:30 AM', lastBus: '11:15 PM' },
@@ -129,6 +113,99 @@ const cityRoutesCatalog = {
         { id: 'Hinjawadi-348', name: 'Pune Railway Station ➔ Hinjawadi Phase 3', type: 'AC', category: 'IT Express', stops: ['Pune Station', 'Shivajinagar', 'Aundh', 'Wakad Bridge', 'Hinjawadi Phase 1', 'Phase 3 Circle'], fare: 50, frequency: 'Every 10 min', status: 'On Time', firstBus: '06:00 AM', lastBus: '11:00 PM' }
     ]
 };
+
+// Persistent Database Collections
+db.routes = db.routes || cityRoutesCatalog;
+
+db.drivers = db.drivers || [
+    { id: 'DRV-441', name: 'Ramesh Kumar', license: 'DL-KA-2018-9941', phone: '+91 98765 43210', assignedBus: 'KA-01-F-2024', route: '500A (Electric)', city: 'Bangalore', shift: '06:00 AM – 02:00 PM', rating: 4.9, status: 'On Route' },
+    { id: 'DRV-108', name: 'Suresh Patil', license: 'DL-KA-2016-1108', phone: '+91 98765 43211', assignedBus: 'KA-29-B-5510', route: 'BGK-01 (City Shuttle)', city: 'Bagalkot', shift: '08:00 AM – 04:00 PM', rating: 5.0, status: 'On Route' },
+    { id: 'DRV-309', name: 'Devendra Singh', license: 'DL-DL-2019-3309', phone: '+91 98765 43212', assignedBus: 'DL-01-A-4412', route: '507 (Express)', city: 'Delhi', shift: '02:00 PM – 10:00 PM', rating: 4.8, status: 'Scheduled' },
+    { id: 'DRV-512', name: 'Anand Shinde', license: 'DL-MH-2020-5512', phone: '+91 98765 43213', assignedBus: 'MH-02-B-9910', route: 'BEST-301 (Coastal)', city: 'Mumbai', shift: '06:00 AM – 02:00 PM', rating: 4.9, status: 'On Route' },
+    { id: 'DRV-220', name: 'Karthik Rao', license: 'DL-TN-2017-8820', phone: '+91 98765 43214', assignedBus: 'TN-01-G-3390', route: 'MTC-23C (Metro)', city: 'Chennai', shift: '10:00 AM – 06:00 PM', rating: 4.7, status: 'Scheduled' }
+];
+
+db.cities = db.cities || [
+    { name: 'Delhi', state: 'National Capital Territory', activeFleet: 84, routesCount: 12, status: 'Active', authority: 'DTC / DIMTS', fareBase: '₹15' },
+    { name: 'Mumbai', state: 'Maharashtra', activeFleet: 72, routesCount: 10, status: 'Active', authority: 'BEST Undertaking', fareBase: '₹20' },
+    { name: 'Bangalore', state: 'Karnataka', activeFleet: 90, routesCount: 14, status: 'Active', authority: 'BMTC Volvo & EV', fareBase: '₹25' },
+    { name: 'Bagalkot', state: 'Karnataka', activeFleet: 28, routesCount: 6, status: 'Active', authority: 'NWKRTC Smart City', fareBase: '₹10' },
+    { name: 'Hyderabad', state: 'Telangana', activeFleet: 65, routesCount: 9, status: 'Active', authority: 'TSRTC Pushpak', fareBase: '₹20' },
+    { name: 'Chennai', state: 'Tamil Nadu', activeFleet: 58, routesCount: 8, status: 'Active', authority: 'MTC Express & EV', fareBase: '₹15' },
+    { name: 'Pune', state: 'Maharashtra', activeFleet: 48, routesCount: 7, status: 'Active', authority: 'PMPML Rainbow BRTS', fareBase: '₹15' }
+];
+
+const defaultLostFoundSeed = [
+    {
+        id: 'LF-2026-114',
+        type: 'lost',
+        item: 'Black Dell ThinkPad Laptop Bag',
+        category: 'Bags & Backpacks',
+        busNumber: 'KA-01-FA-4421',
+        route: '500D (Hebbal to Silk Board)',
+        location: 'Rear Row Seat 28',
+        description: 'Contains charger, notebook and company ID badge.',
+        reporterName: 'Aditya Verma',
+        reporterPhone: '+91 98451 22334',
+        holdingDepot: 'Majestic Depot Locker #12',
+        status: 'Safeguarded at Depot Hub',
+        claimed: false,
+        date: '2026-11-02'
+    },
+    {
+        id: 'LF-2026-115',
+        type: 'found',
+        item: 'Titan Automatic Men Watch (Silver)',
+        category: 'Keys & Watches',
+        busNumber: 'DL-01-EXP-507',
+        route: 'Route 507 (Delhi Okhla to CP)',
+        location: 'Found on window sill seat 12',
+        description: 'Silver steel strap Titan watch found during evening sweep.',
+        reporterName: 'Driver Devendra Singh (Staff)',
+        reporterPhone: '+91 91234 56789',
+        holdingDepot: 'Okhla Depot Security Desk',
+        status: 'Safeguarded at Depot Hub',
+        claimed: false,
+        date: '2026-11-03'
+    },
+    {
+        id: 'LF-2026-098',
+        type: 'lost',
+        item: 'Brown Leather Fossil Wallet',
+        category: 'Wallets & Identity Cards',
+        busNumber: 'MH-01-BT-301',
+        route: 'BEST-301 (CSMT to BKC)',
+        location: 'Near middle exit door',
+        description: 'Brown Fossil wallet with driving license and SBI metro debit card.',
+        reporterName: 'Rohit Kulkarni',
+        reporterPhone: '+91 99200 44556',
+        holdingDepot: 'Dadar Depot Office',
+        status: 'Claimed by Owner',
+        claimed: true,
+        date: '2026-11-01'
+    },
+    {
+        id: 'LF-2026-116',
+        type: 'found',
+        item: 'Boat Airdopes Wireless Earbuds (Black case)',
+        category: 'Electronics & Phones',
+        busNumber: 'KA-29-B-5510',
+        route: 'BGK-01 (Bagalkot Navanagar to Bus Stand)',
+        location: 'Under seat 4',
+        description: 'Black charging case with both wireless earbuds inside.',
+        reporterName: 'Conductor Basavaraj (Staff)',
+        reporterPhone: '+91 98800 11223',
+        holdingDepot: 'Bagalkot Old Bus Stand Control Room',
+        status: 'Safeguarded at Depot Hub',
+        claimed: false,
+        date: '2026-11-04'
+    }
+];
+
+if (!Array.isArray(db.lostFound) || !db.lostFound.length || !db.lostFound[0].type) {
+    db.lostFound = defaultLostFoundSeed;
+}
+save();
 
 // Response Helpers
 const ok = (res, d = { ok: true }) => { save(); res.json(d); };
@@ -305,33 +382,247 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Routes Catalog
+// ============================================================================
+// TRANSIT NETWORK MANAGEMENT: ROUTES, DRIVERS & CITIES
+// ============================================================================
+
+// Routes Catalog & Management
 app.get('/api/routes', (req, res) => {
-    const city = req.query.city || 'Delhi';
-    const routes = cityRoutesCatalog[city] || cityRoutesCatalog['Delhi'];
+    const cityQuery = req.query.city;
+    if (cityQuery && cityQuery.toLowerCase() !== 'all') {
+        const foundCity = Object.keys(db.routes || {}).find(c => c.toLowerCase() === cityQuery.toLowerCase());
+        const routes = (foundCity && db.routes[foundCity]) ? db.routes[foundCity] : (db.routes['Delhi'] || []);
+        return res.json({
+            success: true,
+            city: foundCity || cityQuery,
+            count: routes.length,
+            routes: routes.map(r => ({ ...r, city: foundCity || cityQuery }))
+        });
+    }
+
+    // Return all routes aggregated across all operating cities
+    const allRoutes = [];
+    for (const [cityName, rList] of Object.entries(db.routes || {})) {
+        if (Array.isArray(rList)) {
+            rList.forEach(r => allRoutes.push({ ...r, city: cityName }));
+        }
+    }
     res.json({
         success: true,
-        city: city,
-        count: routes.length,
-        routes: routes
+        city: 'all',
+        count: allRoutes.length,
+        routes: allRoutes
     });
 });
 
 app.get('/api/routes/:id', (req, res) => {
-    const routeId = req.params.id;
+    const routeId = String(req.params.id).trim().toLowerCase();
     let found = null;
-    for (const city of Object.keys(cityRoutesCatalog)) {
-        const r = cityRoutesCatalog[city].find(x => x.id.toLowerCase() === routeId.toLowerCase());
-        if (r) {
-            found = { ...r, city };
-            break;
+    for (const [cityName, rList] of Object.entries(db.routes || {})) {
+        if (Array.isArray(rList)) {
+            const r = rList.find(x => String(x.id).toLowerCase() === routeId);
+            if (r) {
+                found = { ...r, city: cityName };
+                break;
+            }
         }
     }
     if (found) {
         res.json({ success: true, route: found });
     } else {
-        res.status(404).json({ success: false, error: `Route ${routeId} not found` });
+        res.status(404).json({ success: false, error: `Route ${req.params.id} not found` });
     }
+});
+
+app.post('/api/routes', (req, res) => {
+    const { id, name, city, type, category, fare, frequency, stops, status, firstBus, lastBus } = req.body || {};
+    if (!id || !name) {
+        return res.status(400).json({ success: false, error: 'Route ID and Route Name/Path are required' });
+    }
+    const targetCity = (city || 'Delhi').trim();
+    if (!db.routes) db.routes = {};
+    if (!db.routes[targetCity]) {
+        db.routes[targetCity] = [];
+    }
+
+    let parsedStops = [];
+    if (Array.isArray(stops)) {
+        parsedStops = stops;
+    } else if (typeof stops === 'string' && stops.trim()) {
+        parsedStops = stops.split(/[,➔\->]+/).map(s => s.trim()).filter(Boolean);
+    }
+    if (!parsedStops.length) {
+        parsedStops = [name];
+    }
+
+    const newRoute = {
+        id: String(id).trim(),
+        name: String(name).trim(),
+        type: type || 'Electric',
+        category: category || 'Standard',
+        stops: parsedStops,
+        fare: Number(fare) || 25,
+        frequency: frequency || 'Every 15 min',
+        status: status || 'On Time',
+        firstBus: firstBus || '06:00 AM',
+        lastBus: lastBus || '10:30 PM',
+        city: targetCity
+    };
+
+    const existingIndex = db.routes[targetCity].findIndex(r => String(r.id).toLowerCase() === String(id).toLowerCase());
+    if (existingIndex >= 0) {
+        db.routes[targetCity][existingIndex] = { ...db.routes[targetCity][existingIndex], ...newRoute };
+    } else {
+        db.routes[targetCity].push(newRoute);
+    }
+
+    // Update routesCount for the city if registered in db.cities
+    if (Array.isArray(db.cities)) {
+        const cityRecord = db.cities.find(c => c.name.toLowerCase() === targetCity.toLowerCase());
+        if (cityRecord) {
+            cityRecord.routesCount = db.routes[targetCity].length;
+        }
+    }
+
+    save();
+    res.status(201).json({ success: true, message: 'Route registered successfully', route: newRoute });
+});
+
+app.delete('/api/routes/:id', (req, res) => {
+    const routeId = String(req.params.id).trim().toLowerCase();
+    let deleted = false;
+    let foundCity = null;
+
+    if (db.routes) {
+        for (const [cityName, rList] of Object.entries(db.routes)) {
+            if (Array.isArray(rList)) {
+                const idx = rList.findIndex(r => String(r.id).toLowerCase() === routeId);
+                if (idx >= 0) {
+                    rList.splice(idx, 1);
+                    deleted = true;
+                    foundCity = cityName;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (deleted) {
+        if (foundCity && Array.isArray(db.cities)) {
+            const cityRecord = db.cities.find(c => c.name.toLowerCase() === foundCity.toLowerCase());
+            if (cityRecord) {
+                cityRecord.routesCount = db.routes[foundCity].length;
+            }
+        }
+        save();
+        return res.json({ success: true, message: `Route ${req.params.id} removed successfully` });
+    }
+    return res.status(404).json({ success: false, error: `Route ${req.params.id} not found` });
+});
+
+// Drivers Management Endpoints
+app.get('/api/drivers', (req, res) => {
+    res.json({ success: true, count: (db.drivers || []).length, data: db.drivers || [] });
+});
+
+app.post('/api/drivers', (req, res) => {
+    const { name, license, phone, assignedBus, route, city, shift, rating, status } = req.body || {};
+    if (!name || !String(name).trim()) {
+        return res.status(400).json({ success: false, error: 'Driver full name is required' });
+    }
+    const driverCity = city || 'Delhi';
+    const newDriver = {
+        id: req.body.id || ('DRV-' + Math.floor(100 + Math.random() * 900)),
+        name: String(name).trim(),
+        license: license || `DL-${driverCity.slice(0, 2).toUpperCase()}-2024-${Math.floor(1000 + Math.random() * 9000)}`,
+        phone: phone || '+91 98765 43210',
+        assignedBus: assignedBus || 'IN-01-EB-1001',
+        route: route || 'City Express Line',
+        city: driverCity,
+        shift: shift || '06:00 AM – 02:00 PM',
+        rating: Number(rating) || 5.0,
+        status: status || 'On Route'
+    };
+
+    if (!Array.isArray(db.drivers)) db.drivers = [];
+    db.drivers.unshift(newDriver);
+    save();
+    res.status(201).json({ success: true, message: 'Driver onboarded successfully', data: newDriver });
+});
+
+app.patch('/api/drivers/:id', (req, res) => {
+    if (!Array.isArray(db.drivers)) db.drivers = [];
+    const driver = db.drivers.find(d => String(d.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (!driver) return res.status(404).json({ success: false, error: 'Driver record not found' });
+    for (const field of ['name', 'license', 'phone', 'assignedBus', 'route', 'city', 'shift', 'rating', 'status']) {
+        if (req.body[field] !== undefined) driver[field] = req.body[field];
+    }
+    save();
+    res.json({ success: true, message: 'Driver details updated', data: driver });
+});
+
+app.delete('/api/drivers/:id', (req, res) => {
+    if (!Array.isArray(db.drivers)) db.drivers = [];
+    const idx = db.drivers.findIndex(d => String(d.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (idx >= 0) {
+        const removed = db.drivers.splice(idx, 1)[0];
+        save();
+        return res.json({ success: true, message: `Driver ${removed.name} deleted successfully`, data: removed });
+    }
+    res.status(404).json({ success: false, error: 'Driver not found' });
+});
+
+// Operating Cities Endpoints
+app.get('/api/cities', (req, res) => {
+    res.json({ success: true, count: (db.cities || []).length, data: db.cities || [] });
+});
+
+app.post('/api/cities', (req, res) => {
+    const { name, state, activeFleet, routesCount, status, authority, fareBase } = req.body || {};
+    if (!name || !String(name).trim()) {
+        return res.status(400).json({ success: false, error: 'City name is required' });
+    }
+    const cityName = String(name).trim();
+    if (!Array.isArray(db.cities)) db.cities = [];
+    if (!db.routes) db.routes = {};
+    if (!db.routes[cityName]) {
+        db.routes[cityName] = [];
+    }
+
+    const existingIdx = db.cities.findIndex(c => c.name.toLowerCase() === cityName.toLowerCase());
+    const cityRecord = {
+        name: cityName,
+        state: state || 'Urban Metropolitan Zone',
+        activeFleet: Number(activeFleet) || 25,
+        routesCount: Number(routesCount) || db.routes[cityName].length || 1,
+        status: status || 'Active',
+        authority: authority || `${cityName} Smart Transport Authority`,
+        fareBase: fareBase || '₹15'
+    };
+
+    if (existingIdx >= 0) {
+        db.cities[existingIdx] = { ...db.cities[existingIdx], ...cityRecord };
+    } else {
+        db.cities.push(cityRecord);
+    }
+    save();
+    res.status(201).json({ success: true, message: 'City registered successfully', data: cityRecord });
+});
+
+app.delete('/api/cities/:name', (req, res) => {
+    if (!Array.isArray(db.cities)) db.cities = [];
+    const cityName = String(req.params.name).trim().toLowerCase();
+    const idx = db.cities.findIndex(c => c.name.toLowerCase() === cityName);
+    if (idx >= 0) {
+        const removed = db.cities.splice(idx, 1)[0];
+        // Also remove city routes if present
+        if (db.routes && db.routes[removed.name]) {
+            delete db.routes[removed.name];
+        }
+        save();
+        return res.json({ success: true, message: `City ${removed.name} removed from operating network`, data: removed });
+    }
+    res.status(404).json({ success: false, error: 'City not found' });
 });
 
 // Live GPS Telemetry
@@ -559,32 +850,73 @@ app.patch('/api/complaints/:id', (req, res) => {
 // LOST & FOUND REPOSITORY ENDPOINTS
 // ============================================================================
 app.get('/api/lost-found', (req, res) => {
-    res.json({ success: true, count: db.lostFound.length, data: db.lostFound });
+    let list = Array.isArray(db.lostFound) ? [...db.lostFound] : [];
+    if (req.query.type && req.query.type !== 'all') {
+        const queryType = req.query.type.toLowerCase();
+        list = list.filter(item => (item.type || 'lost').toLowerCase() === queryType);
+    }
+    if (req.query.claimed !== undefined) {
+        const isClaimed = req.query.claimed === 'true';
+        list = list.filter(item => item.claimed === isClaimed);
+    }
+    res.json({ success: true, count: list.length, data: list });
 });
 
 app.post('/api/lost-found', (req, res) => {
-    const { item, busNumber, route } = req.body || {};
+    const b = req.body || {};
+    const itemTitle = (b.item || b.title || '').trim();
+    if (!itemTitle) {
+        return res.status(400).json({ success: false, error: 'Item description/title is required' });
+    }
+    const type = (b.type || 'lost').toLowerCase();
     const newLF = {
-        id: 'LF-' + Date.now().toString().slice(-4),
-        item: item || 'Unspecified Item',
-        busNumber: busNumber || 'N/A',
-        route: route || 'N/A',
-        status: 'Safeguarded at Depot Hub',
-        claimed: false,
-        date: new Date().toISOString().split('T')[0]
+        id: b.id || ('LF-' + Date.now().toString().slice(-4)),
+        type: type === 'found' ? 'found' : 'lost',
+        item: itemTitle,
+        category: b.category || 'Personal Belongings',
+        busNumber: b.busNumber || b.bus || 'N/A',
+        route: b.route || 'City Transit',
+        location: b.location || (b.bus ? `Bus ${b.bus}` : 'Transit Vehicle / Terminal'),
+        description: b.description || b.desc || 'Reported via smart portal',
+        reporterName: b.reporterName || b.commuter || (b.phone ? `Commuter (${b.phone})` : 'Commuter'),
+        reporterPhone: b.reporterPhone || b.phone || '+91 98765 00000',
+        holdingDepot: b.holdingDepot || (type === 'found' ? 'Central Station Depot Office' : 'Not Recovered Yet'),
+        status: b.status || (type === 'found' ? 'Safeguarded at Depot Hub' : 'Search in Progress'),
+        claimed: b.claimed === true || false,
+        date: b.date || new Date().toISOString().split('T')[0]
     };
+
+    if (!Array.isArray(db.lostFound)) db.lostFound = [];
     db.lostFound.unshift(newLF);
     save();
-    res.status(201).json({ success: true, message: 'Lost property registered', data: newLF });
+    res.status(201).json({
+        success: true,
+        message: `${type === 'found' ? 'Found' : 'Lost'} item logged successfully`,
+        data: newLF
+    });
 });
 
 app.patch('/api/lost-found/:id', (req, res) => {
-    const item = db.lostFound.find(l => l.id === req.params.id);
-    if (!item) return res.status(404).json({ success: false, error: 'Record not found' });
+    if (!Array.isArray(db.lostFound)) db.lostFound = [];
+    const item = db.lostFound.find(l => String(l.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (!item) return res.status(404).json({ success: false, error: 'Item record not found' });
     if (req.body.claimed !== undefined) item.claimed = req.body.claimed;
     if (req.body.status) item.status = req.body.status;
+    if (req.body.holdingDepot) item.holdingDepot = req.body.holdingDepot;
+    if (req.body.location) item.location = req.body.location;
     save();
     res.json({ success: true, message: 'Lost item status updated', data: item });
+});
+
+app.delete('/api/lost-found/:id', (req, res) => {
+    if (!Array.isArray(db.lostFound)) db.lostFound = [];
+    const idx = db.lostFound.findIndex(l => String(l.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (idx >= 0) {
+        const removed = db.lostFound.splice(idx, 1)[0];
+        save();
+        return res.json({ success: true, message: `Item ${removed.item} removed from repository`, data: removed });
+    }
+    res.status(404).json({ success: false, error: 'Item not found' });
 });
 
 // ============================================================================

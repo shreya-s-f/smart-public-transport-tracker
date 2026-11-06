@@ -245,21 +245,67 @@
   "lostFound": [
     {
       "id": "LF-2026-114",
-      "item": "Black Dell Laptop Bag",
+      "type": "lost",
+      "item": "Black Dell ThinkPad Laptop Bag",
+      "category": "Bags & Backpacks",
       "busNumber": "KA-01-FA-4421",
       "route": "500D (Hebbal to Silk Board)",
-      "status": "Safeguarded at Depot 4",
+      "location": "Rear Row Seat 28",
+      "description": "Contains charger, notebook and company ID badge.",
+      "reporterName": "Aditya Verma",
+      "reporterPhone": "+91 98451 22334",
+      "holdingDepot": "Majestic Depot Locker #12",
+      "status": "Safeguarded at Depot Hub",
       "claimed": false,
       "date": "2026-11-02"
     },
     {
+      "id": "LF-2026-115",
+      "type": "found",
+      "item": "Titan Automatic Men Watch (Silver)",
+      "category": "Keys & Watches",
+      "busNumber": "DL-01-EXP-507",
+      "route": "Route 507 (Delhi Okhla to CP)",
+      "location": "Found on window sill seat 12",
+      "description": "Silver steel strap Titan watch found during evening sweep.",
+      "reporterName": "Driver Devendra Singh (Staff)",
+      "reporterPhone": "+91 91234 56789",
+      "holdingDepot": "Okhla Depot Security Desk",
+      "status": "Safeguarded at Depot Hub",
+      "claimed": false,
+      "date": "2026-11-03"
+    },
+    {
       "id": "LF-2026-098",
-      "item": "Titan Automatic Wristwatch",
+      "type": "lost",
+      "item": "Brown Leather Fossil Wallet",
+      "category": "Wallets & Identity Cards",
       "busNumber": "MH-01-BT-301",
       "route": "BEST-301 (CSMT to BKC)",
+      "location": "Near middle exit door",
+      "description": "Brown Fossil wallet with driving license and SBI metro debit card.",
+      "reporterName": "Rohit Kulkarni",
+      "reporterPhone": "+91 99200 44556",
+      "holdingDepot": "Dadar Depot Office",
       "status": "Claimed by Owner",
       "claimed": true,
       "date": "2026-11-01"
+    },
+    {
+      "id": "LF-2026-116",
+      "type": "found",
+      "item": "Boat Airdopes Wireless Earbuds (Black case)",
+      "category": "Electronics & Phones",
+      "busNumber": "KA-29-B-5510",
+      "route": "BGK-01 (Bagalkot Navanagar to Bus Stand)",
+      "location": "Under seat 4",
+      "description": "Black charging case with both wireless earbuds inside.",
+      "reporterName": "Conductor Basavaraj (Staff)",
+      "reporterPhone": "+91 98800 11223",
+      "holdingDepot": "Bagalkot Old Bus Stand Control Room",
+      "status": "Safeguarded at Depot Hub",
+      "claimed": false,
+      "date": "2026-11-04"
     }
   ],
   "maintenance": [
@@ -286,6 +332,573 @@
       "batteryBrake": "Battery Cell 98%",
       "nextService": "In 28 days",
       "status": "Optimal"
+    }
+  ],
+  "routes": {
+    "Delhi": [
+      {
+        "id": "507",
+        "name": "Okhla Phase 1 ➔ Connaught Place",
+        "type": "Electric",
+        "category": "Express",
+        "stops": [
+          "Okhla Phase 1",
+          "Nehru Place",
+          "Moolchand",
+          "Lajpat Nagar",
+          "India Gate",
+          "Connaught Place"
+        ],
+        "fare": 40,
+        "frequency": "Every 10 min",
+        "status": "On Time",
+        "firstBus": "05:30 AM",
+        "lastBus": "11:15 PM"
+      },
+      {
+        "id": "Airport-Exp",
+        "name": "New Delhi Railway Station ➔ IGI Terminal 3",
+        "type": "AC",
+        "category": "Airport Express",
+        "stops": [
+          "New Delhi Station",
+          "Shivaji Stadium",
+          "Dhaula Kuan",
+          "Delhi Aerocity",
+          "IGI Airport T3"
+        ],
+        "fare": 60,
+        "frequency": "Every 8 min",
+        "status": "On Time",
+        "firstBus": "04:45 AM",
+        "lastBus": "11:45 PM"
+      },
+      {
+        "id": "GL-23",
+        "name": "ISBT Kashmiri Gate ➔ Anand Vihar ISBT",
+        "type": "Electric",
+        "category": "Metro Feeder",
+        "stops": [
+          "Kashmiri Gate",
+          "Red Fort",
+          "Delhi Gate",
+          "Preet Vihar",
+          "Anand Vihar"
+        ],
+        "fare": 25,
+        "frequency": "Every 12 min",
+        "status": "On Time",
+        "firstBus": "06:00 AM",
+        "lastBus": "10:30 PM"
+      },
+      {
+        "id": "390",
+        "name": "Mayur Vihar Phase 1 ➔ Central Secretariat",
+        "type": "AC",
+        "category": "City Express",
+        "stops": [
+          "Mayur Vihar 1",
+          "Akshardham",
+          "Indraprastha",
+          "Mandi House",
+          "Central Secretariat"
+        ],
+        "fare": 35,
+        "frequency": "Every 15 min",
+        "status": "Delayed",
+        "firstBus": "06:15 AM",
+        "lastBus": "10:45 PM"
+      },
+      {
+        "id": "Metro-F1",
+        "name": "Hauz Khas Metro ➔ Saket City Center",
+        "type": "Electric",
+        "category": "Metro Feeder",
+        "stops": [
+          "Hauz Khas",
+          "IIT Gate",
+          "Panchsheel Park",
+          "Saket Metro",
+          "Select Citywalk"
+        ],
+        "fare": 15,
+        "frequency": "Every 7 min",
+        "status": "On Time",
+        "firstBus": "06:00 AM",
+        "lastBus": "11:00 PM"
+      }
+    ],
+    "Mumbai": [
+      {
+        "id": "BEST-301",
+        "name": "CSMT ➔ Bandra Kurla Complex (BKC)",
+        "type": "Electric",
+        "category": "Express",
+        "stops": [
+          "CSMT Station",
+          "Byculla",
+          "Dadar TT",
+          "Sion Circle",
+          "BKC Diamond Market"
+        ],
+        "fare": 35,
+        "frequency": "Every 10 min",
+        "status": "On Time",
+        "firstBus": "05:45 AM",
+        "lastBus": "11:30 PM"
+      },
+      {
+        "id": "AC-10",
+        "name": "Colaba Bus Station ➔ Worli Seaface",
+        "type": "AC",
+        "category": "Coastal Express",
+        "stops": [
+          "Colaba",
+          "Regal Cinema",
+          "Nariman Point",
+          "Marine Drive",
+          "Haji Ali",
+          "Worli Seaface"
+        ],
+        "fare": 45,
+        "frequency": "Every 12 min",
+        "status": "On Time",
+        "firstBus": "06:00 AM",
+        "lastBus": "11:00 PM"
+      },
+      {
+        "id": "C-71",
+        "name": "Andheri East Station ➔ SEEPZ / Powai",
+        "type": "Electric",
+        "category": "IT Feeder",
+        "stops": [
+          "Andheri East",
+          "Chakala Metro",
+          "MIDC Central Road",
+          "SEEPZ Gate 1",
+          "Powai Lake"
+        ],
+        "fare": 20,
+        "frequency": "Every 8 min",
+        "status": "On Time",
+        "firstBus": "06:30 AM",
+        "lastBus": "10:45 PM"
+      },
+      {
+        "id": "BEST-42",
+        "name": "Borivali Station West ➔ Thane Station West",
+        "type": "Standard",
+        "category": "Suburban Link",
+        "stops": [
+          "Borivali West",
+          "National Park",
+          "Ghodbunder Road",
+          "Kapurbawdi",
+          "Thane Station"
+        ],
+        "fare": 50,
+        "frequency": "Every 15 min",
+        "status": "Delayed",
+        "firstBus": "05:30 AM",
+        "lastBus": "11:00 PM"
+      }
+    ],
+    "Bangalore": [
+      {
+        "id": "V-500D",
+        "name": "Hebbal Flyover ➔ Central Silk Board",
+        "type": "AC",
+        "category": "Outer Ring Road Volvo",
+        "stops": [
+          "Hebbal",
+          "Nagawara",
+          "Manyata Tech Park",
+          "Marathahalli",
+          "Bellandur",
+          "HSR Layout",
+          "Silk Board"
+        ],
+        "fare": 55,
+        "frequency": "Every 8 min",
+        "status": "On Time",
+        "firstBus": "05:30 AM",
+        "lastBus": "11:30 PM"
+      },
+      {
+        "id": "KIA-9",
+        "name": "Kempegowda Bus Station (Majestic) ➔ KIA Airport",
+        "type": "AC",
+        "category": "Airport Express",
+        "stops": [
+          "Majestic",
+          "Mekhri Circle",
+          "Hebbal",
+          "Yelahanka Bypass",
+          "KIA Airport Terminal 1 & 2"
+        ],
+        "fare": 260,
+        "frequency": "Every 15 min",
+        "status": "On Time",
+        "firstBus": "24 Hours",
+        "lastBus": "24 Hours"
+      },
+      {
+        "id": "335E",
+        "name": "Majestic ➔ Whitefield ITPL",
+        "type": "Electric",
+        "category": "IT Express",
+        "stops": [
+          "Majestic",
+          "Corporation",
+          "Domlur",
+          "HAL Main Gate",
+          "Marathahalli",
+          "Kundalahalli",
+          "ITPL"
+        ],
+        "fare": 50,
+        "frequency": "Every 10 min",
+        "status": "Delayed",
+        "firstBus": "06:00 AM",
+        "lastBus": "10:45 PM"
+      },
+      {
+        "id": "G-4",
+        "name": "Brigade Road / MG Road ➔ Bannerghatta National Park",
+        "type": "Electric",
+        "category": "City Corridor",
+        "stops": [
+          "MG Road Metro",
+          "Dairy Circle",
+          "Jayadeva Hospital",
+          "IIM Bangalore",
+          "Gottigere",
+          "Bannerghatta Zoo"
+        ],
+        "fare": 40,
+        "frequency": "Every 12 min",
+        "status": "On Time",
+        "firstBus": "06:30 AM",
+        "lastBus": "09:30 PM"
+      }
+    ],
+    "Bagalkot": [
+      {
+        "id": "BGK-01",
+        "name": "Navanagar Bus Stand ➔ Old Bagalkot Bus Stand",
+        "type": "Electric",
+        "category": "City Shuttle",
+        "stops": [
+          "Navanagar Sector 1",
+          "DC Office Complex",
+          "Kallolli Cross",
+          "Vidyagiri Circle",
+          "Railway Station",
+          "Old Bus Stand"
+        ],
+        "fare": 15,
+        "frequency": "Every 10 min",
+        "status": "On Time",
+        "firstBus": "06:00 AM",
+        "lastBus": "10:00 PM"
+      },
+      {
+        "id": "BGK-02",
+        "name": "Navanagar ➔ Kerur / Badami Heritage Route",
+        "type": "Standard",
+        "category": "Heritage Express",
+        "stops": [
+          "Navanagar Sector 25",
+          "Muchakhandi Cross",
+          "Gaddanakeri Cross",
+          "Badami Caves Junction",
+          "Kerur Bus Stand"
+        ],
+        "fare": 30,
+        "frequency": "Every 20 min",
+        "status": "On Time",
+        "firstBus": "06:30 AM",
+        "lastBus": "09:30 PM"
+      },
+      {
+        "id": "BGK-03",
+        "name": "Vidyagiri Campus ➔ BVVS Engineering College Circle",
+        "type": "Electric",
+        "category": "Student Shuttle",
+        "stops": [
+          "Vidyagiri Bus Stop",
+          "Hunasikatti Layout",
+          "Basaveshwar Hospital",
+          "BVVS Engineering Campus"
+        ],
+        "fare": 10,
+        "frequency": "Every 8 min",
+        "status": "On Time",
+        "firstBus": "07:30 AM",
+        "lastBus": "08:00 PM"
+      }
+    ],
+    "Hyderabad": [
+      {
+        "id": "TSRTC-100M",
+        "name": "Secunderabad Station ➔ Hitec City Cyber Towers",
+        "type": "AC",
+        "category": "IT Express",
+        "stops": [
+          "Secunderabad",
+          "Paradise",
+          "Begumpet",
+          "Panjagutta",
+          "Jubilee Hills",
+          "Madhapur",
+          "Cyber Towers"
+        ],
+        "fare": 45,
+        "frequency": "Every 10 min",
+        "status": "On Time",
+        "firstBus": "05:45 AM",
+        "lastBus": "11:15 PM"
+      },
+      {
+        "id": "Pushpak-Airport",
+        "name": "JBS Jubilee Bus Station ➔ RGIA Shamshabad Airport",
+        "type": "AC",
+        "category": "Airport Luxury",
+        "stops": [
+          "JBS",
+          "Secunderabad",
+          "Tarnaka",
+          "LB Nagar",
+          "RGIA Airport"
+        ],
+        "fare": 250,
+        "frequency": "Every 20 min",
+        "status": "On Time",
+        "firstBus": "24 Hours",
+        "lastBus": "24 Hours"
+      },
+      {
+        "id": "216-IT",
+        "name": "Mehdipatnam ➔ Gachibowli Financial District",
+        "type": "Electric",
+        "category": "Green Corridor",
+        "stops": [
+          "Mehdipatnam",
+          "Tolichowki",
+          "Shaikpet Dargah",
+          "Gachibowli Stadium",
+          "Wipro Circle"
+        ],
+        "fare": 35,
+        "frequency": "Every 12 min",
+        "status": "On Time",
+        "firstBus": "06:15 AM",
+        "lastBus": "10:30 PM"
+      }
+    ],
+    "Chennai": [
+      {
+        "id": "MTC-23C",
+        "name": "Ayanavaram ➔ Besant Nagar Beach",
+        "type": "Electric",
+        "category": "Metro Corridor",
+        "stops": [
+          "Ayanavaram",
+          "Kilpauk Medical College",
+          "Thousand Lights",
+          "Adyar Signal",
+          "Besant Nagar"
+        ],
+        "fare": 30,
+        "frequency": "Every 12 min",
+        "status": "On Time",
+        "firstBus": "05:30 AM",
+        "lastBus": "10:45 PM"
+      },
+      {
+        "id": "MTC-570",
+        "name": "CMBT Koyambedu ➔ Siruseri IT Park (OMR)",
+        "type": "AC",
+        "category": "OMR Express",
+        "stops": [
+          "CMBT",
+          "Ashok Nagar",
+          "Guindy",
+          "Tidel Park",
+          "Sholinganallur",
+          "Siruseri IT Park"
+        ],
+        "fare": 55,
+        "frequency": "Every 10 min",
+        "status": "Delayed",
+        "firstBus": "06:00 AM",
+        "lastBus": "11:00 PM"
+      }
+    ],
+    "Pune": [
+      {
+        "id": "Rainbow-102",
+        "name": "Katraj Bus Terminal ➔ Swargate BRTS Hub",
+        "type": "Electric",
+        "category": "BRTS Priority",
+        "stops": [
+          "Katraj",
+          "Dhankawadi",
+          "Padmavati",
+          "Swargate Terminal"
+        ],
+        "fare": 20,
+        "frequency": "Every 6 min",
+        "status": "On Time",
+        "firstBus": "05:30 AM",
+        "lastBus": "11:30 PM"
+      },
+      {
+        "id": "Hinjawadi-348",
+        "name": "Pune Railway Station ➔ Hinjawadi Phase 3",
+        "type": "AC",
+        "category": "IT Express",
+        "stops": [
+          "Pune Station",
+          "Shivajinagar",
+          "Aundh",
+          "Wakad Bridge",
+          "Hinjawadi Phase 1",
+          "Phase 3 Circle"
+        ],
+        "fare": 50,
+        "frequency": "Every 10 min",
+        "status": "On Time",
+        "firstBus": "06:00 AM",
+        "lastBus": "11:00 PM"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "id": "DRV-441",
+      "name": "Ramesh Kumar",
+      "license": "DL-KA-2018-9941",
+      "phone": "+91 98765 43210",
+      "assignedBus": "KA-01-F-2024",
+      "route": "500A (Electric)",
+      "city": "Bangalore",
+      "shift": "06:00 AM – 02:00 PM",
+      "rating": 4.9,
+      "status": "On Route"
+    },
+    {
+      "id": "DRV-108",
+      "name": "Suresh Patil",
+      "license": "DL-KA-2016-1108",
+      "phone": "+91 98765 43211",
+      "assignedBus": "KA-29-B-5510",
+      "route": "BGK-01 (City Shuttle)",
+      "city": "Bagalkot",
+      "shift": "08:00 AM – 04:00 PM",
+      "rating": 5,
+      "status": "On Route"
+    },
+    {
+      "id": "DRV-309",
+      "name": "Devendra Singh",
+      "license": "DL-DL-2019-3309",
+      "phone": "+91 98765 43212",
+      "assignedBus": "DL-01-A-4412",
+      "route": "507 (Express)",
+      "city": "Delhi",
+      "shift": "02:00 PM – 10:00 PM",
+      "rating": 4.8,
+      "status": "Scheduled"
+    },
+    {
+      "id": "DRV-512",
+      "name": "Anand Shinde",
+      "license": "DL-MH-2020-5512",
+      "phone": "+91 98765 43213",
+      "assignedBus": "MH-02-B-9910",
+      "route": "BEST-301 (Coastal)",
+      "city": "Mumbai",
+      "shift": "06:00 AM – 02:00 PM",
+      "rating": 4.9,
+      "status": "On Route"
+    },
+    {
+      "id": "DRV-220",
+      "name": "Karthik Rao",
+      "license": "DL-TN-2017-8820",
+      "phone": "+91 98765 43214",
+      "assignedBus": "TN-01-G-3390",
+      "route": "MTC-23C (Metro)",
+      "city": "Chennai",
+      "shift": "10:00 AM – 06:00 PM",
+      "rating": 4.7,
+      "status": "Scheduled"
+    }
+  ],
+  "cities": [
+    {
+      "name": "Delhi",
+      "state": "National Capital Territory",
+      "activeFleet": 84,
+      "routesCount": 12,
+      "status": "Active",
+      "authority": "DTC / DIMTS",
+      "fareBase": "₹15"
+    },
+    {
+      "name": "Mumbai",
+      "state": "Maharashtra",
+      "activeFleet": 72,
+      "routesCount": 10,
+      "status": "Active",
+      "authority": "BEST Undertaking",
+      "fareBase": "₹20"
+    },
+    {
+      "name": "Bangalore",
+      "state": "Karnataka",
+      "activeFleet": 90,
+      "routesCount": 14,
+      "status": "Active",
+      "authority": "BMTC Volvo & EV",
+      "fareBase": "₹25"
+    },
+    {
+      "name": "Bagalkot",
+      "state": "Karnataka",
+      "activeFleet": 28,
+      "routesCount": 6,
+      "status": "Active",
+      "authority": "NWKRTC Smart City",
+      "fareBase": "₹10"
+    },
+    {
+      "name": "Hyderabad",
+      "state": "Telangana",
+      "activeFleet": 65,
+      "routesCount": 9,
+      "status": "Active",
+      "authority": "TSRTC Pushpak",
+      "fareBase": "₹20"
+    },
+    {
+      "name": "Chennai",
+      "state": "Tamil Nadu",
+      "activeFleet": 58,
+      "routesCount": 8,
+      "status": "Active",
+      "authority": "MTC Express & EV",
+      "fareBase": "₹15"
+    },
+    {
+      "name": "Pune",
+      "state": "Maharashtra",
+      "activeFleet": 48,
+      "routesCount": 7,
+      "status": "Active",
+      "authority": "PMPML Rainbow BRTS",
+      "fareBase": "₹15"
     }
   ]
 }
