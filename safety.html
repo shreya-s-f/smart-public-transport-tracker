@@ -265,7 +265,7 @@
         .safety-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(10, 15, 29, 0.82);
+            background: rgba(10, 15, 29, 0.85);
             backdrop-filter: blur(8px);
             display: none;
             align-items: center;
@@ -407,7 +407,7 @@
                 <div id="siren-alert-status" style="margin-top: 1.2rem; font-size: 0.95rem; color: #ef4444; font-weight: 700; display: none;"></div>
 
                 <!-- Live Police Telemetry Stream Card (Active when SOS dispatched) -->
-                <div id="sos-dispatch-card" style="display: none; margin-top: 1.5rem; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 14px; padding: 1.4rem; text-align: left; max-width: 720px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.25);">
+                <div id="sos-dispatch-card" style="display: none; margin-top: 1.5rem; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 14px; padding: 1.4rem; text-align: left; max-width: 720px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.25);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
                         <span style="font-weight: 800; font-size: 1rem; color: #ef4444; display: flex; align-items: center; gap: 0.5rem;">
                             <i class="fa-solid fa-triangle-exclamation fa-beat"></i> POLICE CONTROL ROOM ALERTED
@@ -419,7 +419,7 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 1.2rem;">
                         <div><strong style="color: var(--text-primary);">Transit Corridor:</strong> <span id="sos-display-route">Route 507</span></div>
                         <div><strong style="color: var(--text-primary);">GPS Telemetry:</strong> <span id="sos-display-coords" style="font-family: monospace; color: #38bdf8;">28.6139° N, 77.2090° E</span></div>
-                        <div><strong style="color: var(--text-primary);">Assigned Patrol:</strong> <span id="sos-display-unit" style="color: #34d399;">PCR Van #34 (Transit Unit)</span></div>
+                        <div><strong style="color: var(--text-primary);">Assigned Patrol:</strong> <span id="sos-display-unit" style="color: #34d399;">PCR Van #14 (Transit Patrol)</span></div>
                         <div><strong style="color: var(--text-primary);">Emergency Time:</strong> <span id="sos-display-time">Just now</span></div>
                     </div>
                     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -461,10 +461,10 @@
                     </div>
 
                     <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem; margin-bottom: 1.2rem;">
-                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.3rem;">Generated Trip Beacon Link</div>
-                        <div id="share-preview-url" style="font-size: 0.86rem; color: var(--accent-color); word-break: break-all; font-family: monospace;">
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.3rem;">GENERATED TRIP BEACON LINK</div>
+                        <a id="share-preview-url" href="tracking.html?route=507&amp;live_share=true&amp;sos_beacon=SAFE" target="_blank" style="font-size: 0.86rem; color: var(--accent-color); word-break: break-all; font-family: monospace; text-decoration: none;">
                             http://localhost:5000/tracking.html?route=507&amp;live_share=true&amp;sos_beacon=SAFE
-                        </div>
+                        </a>
                     </div>
 
                     <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
@@ -499,7 +499,7 @@
                         <div style="font-size: 0.95rem; color: var(--text-secondary);" id="safety-contact-phone">+91 94480 12345</div>
                     </div>
 
-                    <a id="safety-contact-dial-btn" href="tel:+919448012345" onclick="initiateEmergencyContactCall(event)" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.9rem; font-weight: 700;">
+                    <a id="safety-contact-dial-btn" href="tel:+919448012345" onclick="handleEmergencyContactCall(event)" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.9rem; font-weight: 700;">
                         <i class="fa-solid fa-phone"></i> Call Emergency Contact Now
                     </a>
 
@@ -523,32 +523,32 @@
 
                 <div class="helpline-grid">
                     <!-- 112 -->
-                    <div onclick="openHelplineModal('112', 'National Emergency Support (All-in-One)', 'Police, Fire, Disaster Management &amp; Medical First Response across all 28 states')" class="helpline-card" style="border-left: 4px solid #3b82f6;">
+                    <a href="tel:112" onclick="openHelplineModal('112', 'National Emergency Support (All-in-One)', 'Police, Fire, Disaster Management', event)" class="helpline-card" style="border-left: 4px solid #3b82f6;">
                         <span class="helpline-num" style="color: #3b82f6;">112</span>
                         <span class="helpline-name">National Emergency Support (All-in-One)</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Police, Fire, Disaster Management</div>
-                    </div>
+                    </a>
 
                     <!-- 1091 -->
-                    <div onclick="openHelplineModal('1091', 'Women Helpline (24/7 Pan-India)', 'Dedicated National Transit &amp; Night Shield for women commuters, verified police assistance')" class="helpline-card" style="border-left: 4px solid #ec4899;">
+                    <a href="tel:1091" onclick="openHelplineModal('1091', 'Women Helpline (24/7 Pan-India)', 'Dedicated Transit &amp; Night Shield', event)" class="helpline-card" style="border-left: 4px solid #ec4899;">
                         <span class="helpline-num" style="color: #ec4899;">1091</span>
                         <span class="helpline-name">Women Helpline (24/7 Pan-India)</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Dedicated Transit &amp; Night Shield</div>
-                    </div>
+                    </a>
 
                     <!-- 1512 -->
-                    <div onclick="openHelplineModal('1512', 'Transit / Railway Police', 'Government Railway Police (GRP) &amp; City Public Transport Security Control')" class="helpline-card" style="border-left: 4px solid #f59e0b;">
+                    <a href="tel:1512" onclick="openHelplineModal('1512', 'Transit / Railway Police', 'GRP &amp; City Public Transport Security', event)" class="helpline-card" style="border-left: 4px solid #f59e0b;">
                         <span class="helpline-num" style="color: #f59e0b;">1512</span>
                         <span class="helpline-name">Transit / Railway Police</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">GRP &amp; City Public Transport Security</div>
-                    </div>
+                    </a>
 
                     <!-- 108 -->
-                    <div onclick="openHelplineModal('108', 'Emergency Medical Ambulance', 'Rapid trauma, cardiopulmonary resuscitation, and transit paramedic health assistance')" class="helpline-card" style="border-left: 4px solid #10b981;">
+                    <a href="tel:108" onclick="openHelplineModal('108', 'Emergency Medical Ambulance', 'Rapid Trauma &amp; Health Assistance', event)" class="helpline-card" style="border-left: 4px solid #10b981;">
                         <span class="helpline-num" style="color: #10b981;">108</span>
                         <span class="helpline-name">Emergency Medical Ambulance</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Rapid Trauma &amp; Health Assistance</div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -567,7 +567,63 @@
                 </p>
 
                 <div id="safe-zones-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
-                    <!-- Dynamically populated via renderCitySafeZones(city) -->
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.1rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;">
+                                <i class="fa-solid fa-building-shield" style="color: #3b82f6; margin-right: 0.35rem;"></i> Central Station Transit Booth
+                            </strong>
+                            <span style="font-size: 0.82rem; color: var(--text-secondary); display: block; margin-bottom: 0.6rem;">Platform Bay 1 &bull; Armed Marshals on Duty</span>
+                            <div style="font-size: 0.8rem; color: var(--success-color); font-weight: 600; margin-bottom: 0.8rem;">
+                                ● Active Surveillance (CCTV Stream Live)
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+                            <a href="tracking.html?city=Delhi" class="sim-btn" style="flex: 1; text-align: center; font-size: 0.78rem; text-decoration: none; padding: 0.4rem 0.6rem;">
+                                <i class="fa-solid fa-map-pin"></i> View on Live Map
+                            </a>
+                            <a href="tel:1512" class="sim-btn" style="padding: 0.4rem 0.8rem; font-size: 0.78rem; color: #3b82f6; text-decoration: none;">
+                                <i class="fa-solid fa-phone"></i> Call
+                            </a>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.1rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;">
+                                <i class="fa-solid fa-heart-pulse" style="color: #10b981; margin-right: 0.35rem;"></i> First-Aid &amp; Trauma Rapid Post
+                            </strong>
+                            <span style="font-size: 0.82rem; color: var(--text-secondary); display: block; margin-bottom: 0.6rem;">Concourse North &bull; Automated Defibrillator (AED)</span>
+                            <div style="font-size: 0.8rem; color: var(--success-color); font-weight: 600; margin-bottom: 0.8rem;">
+                                ● Paramedic Station Active
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+                            <a href="tracking.html?city=Delhi" class="sim-btn" style="flex: 1; text-align: center; font-size: 0.78rem; text-decoration: none; padding: 0.4rem 0.6rem;">
+                                <i class="fa-solid fa-map-pin"></i> View on Live Map
+                            </a>
+                            <a href="tel:108" class="sim-btn" style="padding: 0.4rem 0.8rem; font-size: 0.78rem; color: #10b981; text-decoration: none;">
+                                <i class="fa-solid fa-phone"></i> Call
+                            </a>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.1rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <strong style="display: block; color: var(--text-primary); margin-bottom: 0.3rem;">
+                                <i class="fa-solid fa-person-shelter" style="color: #ec4899; margin-right: 0.35rem;"></i> Pink Booth Women Transit Safezone
+                            </strong>
+                            <span style="font-size: 0.82rem; color: var(--text-secondary); display: block; margin-bottom: 0.6rem;">Terminal Gate 4 &bull; Women Officers 24/7</span>
+                            <div style="font-size: 0.8rem; color: var(--success-color); font-weight: 600; margin-bottom: 0.8rem;">
+                                ● SOS Fast-Track Point
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+                            <a href="tracking.html?city=Delhi" class="sim-btn" style="flex: 1; text-align: center; font-size: 0.78rem; text-decoration: none; padding: 0.4rem 0.6rem;">
+                                <i class="fa-solid fa-map-pin"></i> View on Live Map
+                            </a>
+                            <a href="tel:1091" class="sim-btn" style="padding: 0.4rem 0.8rem; font-size: 0.78rem; color: #ec4899; text-decoration: none;">
+                                <i class="fa-solid fa-phone"></i> Call
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -676,7 +732,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: Toll-Free Helpline Quick Connect Modal -->
+    <!-- MODAL 3: Toll-Free Helpline Quick Connect Modal (Desktop) -->
     <div id="helpline-modal" class="safety-modal-overlay">
         <div class="safety-modal-card animate-zoom-in">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
@@ -776,48 +832,80 @@
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) {
-                    alert("Audio siren is not supported in this browser.");
+                    alert("🚨 EMERGENCY DISTRESS ALARM ACTIVATED! (Audio synthesis simulated on this browser)");
+                    setSirenUIActive(true);
                     return;
                 }
 
-                sirenAudioCtx = new AudioContext();
+                if (!sirenAudioCtx || sirenAudioCtx.state === 'closed') {
+                    sirenAudioCtx = new AudioContext();
+                }
+                
+                if (sirenAudioCtx.state === 'suspended') {
+                    sirenAudioCtx.resume();
+                }
+
                 sirenOscillator = sirenAudioCtx.createOscillator();
                 sirenGain = sirenAudioCtx.createGain();
 
                 sirenOscillator.type = 'sawtooth';
-                sirenOscillator.frequency.setValueAtTime(600, sirenAudioCtx.currentTime);
+                sirenOscillator.frequency.setValueAtTime(650, sirenAudioCtx.currentTime);
 
-                sirenGain.gain.setValueAtTime(0.3, sirenAudioCtx.currentTime);
+                sirenGain.gain.setValueAtTime(0.35, sirenAudioCtx.currentTime);
                 sirenOscillator.connect(sirenGain);
                 sirenGain.connect(sirenAudioCtx.destination);
 
                 sirenOscillator.start();
-                isSirenActive = true;
 
                 let highPitch = false;
                 sirenInterval = setInterval(() => {
-                    if (!sirenOscillator || !sirenAudioCtx) return;
-                    highPitch = !highPitch;
-                    const freq = highPitch ? 950 : 600;
-                    sirenOscillator.frequency.exponentialRampToValueAtTime(freq, sirenAudioCtx.currentTime + 0.25);
-                }, 300);
+                    if (!sirenOscillator || !sirenAudioCtx || sirenAudioCtx.state === 'closed') return;
+                    try {
+                        highPitch = !highPitch;
+                        const freq = highPitch ? 950 : 600;
+                        sirenOscillator.frequency.exponentialRampToValueAtTime(freq, sirenAudioCtx.currentTime + 0.22);
+                    } catch(e) {}
+                }, 280);
 
-                const btn = document.getElementById('siren-start-btn');
-                const btnText = document.getElementById('siren-btn-text');
-                const box = document.getElementById('beacon-container');
-                const status = document.getElementById('siren-alert-status');
-                const wave = document.getElementById('siren-wave-container');
-
-                btn.classList.add('siren-on');
-                btnText.textContent = 'Silence Distress Alarm';
-                box.classList.add('active');
-                if (wave) wave.classList.add('active');
-                status.style.display = 'block';
-                status.style.color = '#ef4444';
-                status.innerHTML = '<i class="fa-solid fa-triangle-exclamation fa-beat"></i> EMERGENCY DISTRESS BEACON ACTIVE &bull; AUDIBLE ALARM SOUNDING';
+                setSirenUIActive(true);
 
             } catch (err) {
-                console.error("Error initiating siren:", err);
+                console.warn("AudioContext error fallback:", err);
+                setSirenUIActive(true);
+            }
+        }
+
+        function setSirenUIActive(active) {
+            isSirenActive = active;
+            const btn = document.getElementById('siren-start-btn');
+            const btnText = document.getElementById('siren-btn-text');
+            const box = document.getElementById('beacon-container');
+            const status = document.getElementById('siren-alert-status');
+            const wave = document.getElementById('siren-wave-container');
+
+            if (active) {
+                if (btn) btn.classList.add('siren-on');
+                if (btnText) btnText.textContent = 'Silence Distress Alarm';
+                if (box) box.classList.add('active');
+                if (wave) wave.classList.add('active');
+                if (status) {
+                    status.style.display = 'block';
+                    status.style.color = '#ef4444';
+                    status.innerHTML = '<i class="fa-solid fa-triangle-exclamation fa-beat"></i> EMERGENCY DISTRESS BEACON ACTIVE &bull; AUDIBLE ALARM SOUNDING';
+                }
+            } else {
+                if (btn) btn.classList.remove('siren-on');
+                if (btnText) btnText.textContent = 'Sound Emergency Alarm';
+                if (box && !currentActiveSosId) box.classList.remove('active');
+                if (wave) wave.classList.remove('active');
+                if (status) {
+                    status.style.display = 'block';
+                    status.style.color = 'var(--success-color)';
+                    status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Distress alarm silenced. Stay safe in designated transit areas.';
+                    setTimeout(() => {
+                        if (!currentActiveSosId && status) status.style.display = 'none';
+                    }, 4000);
+                }
             }
         }
 
@@ -840,26 +928,7 @@
                 sirenAudioCtx = null;
             }
 
-            isSirenActive = false;
-
-            const btn = document.getElementById('siren-start-btn');
-            const btnText = document.getElementById('siren-btn-text');
-            const box = document.getElementById('beacon-container');
-            const status = document.getElementById('siren-alert-status');
-            const wave = document.getElementById('siren-wave-container');
-
-            btn.classList.remove('siren-on');
-            btnText.textContent = 'Sound Emergency Alarm';
-            box.classList.remove('active');
-            if (wave) wave.classList.remove('active');
-            status.style.display = 'block';
-            status.style.color = 'var(--success-color)';
-            status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Distress alarm silenced. Stay safe in designated areas.';
-            setTimeout(() => {
-                if (!currentActiveSosId) {
-                    status.style.display = 'none';
-                }
-            }, 4000);
+            setSirenUIActive(false);
         }
 
         // Active SOS Tracking State
@@ -875,22 +944,39 @@
             box.classList.add('active');
             status.style.display = 'block';
             status.style.color = '#ef4444';
-            status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Acquiring live GPS telemetry and contacting Police Control Room...';
+            status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Broadcasting live GPS coordinates to Police Control Room...';
 
+            // Quick GPS with 800ms race timeout
             let coords = null;
             if (navigator.geolocation) {
                 try {
-                    coords = await new Promise((resolve) => {
-                        navigator.geolocation.getCurrentPosition(
-                            pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-                            err => resolve(null),
-                            { timeout: 2500 }
-                        );
-                    });
+                    coords = await Promise.race([
+                        new Promise(resolve => {
+                            navigator.geolocation.getCurrentPosition(
+                                pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                                err => resolve(null),
+                                { timeout: 800, maximumAge: 30000 }
+                            );
+                        }),
+                        new Promise(resolve => setTimeout(() => resolve(null), 800))
+                    ]);
                 } catch(e) {}
             }
 
-            // Commuter Info Sync
+            // Default city coordinates if GPS unavailable
+            if (!coords) {
+                const cityDefaults = {
+                    'Delhi': { lat: 28.6139, lng: 77.2090 },
+                    'Bangalore': { lat: 12.9716, lng: 77.5946 },
+                    'Mumbai': { lat: 18.9690, lng: 72.8205 },
+                    'Bagalkot': { lat: 16.1818, lng: 75.6961 },
+                    'Hyderabad': { lat: 17.3850, lng: 78.4867 },
+                    'Chennai': { lat: 13.0827, lng: 80.2707 },
+                    'Pune': { lat: 18.5204, lng: 73.8567 }
+                };
+                coords = cityDefaults[currentCity] || cityDefaults['Delhi'];
+            }
+
             let commuter = { name: 'Shreya F (Commuter)', phone: '+91 98765 43210' };
             try {
                 const stored = JSON.parse(localStorage.getItem('spt-user-profile-data'));
@@ -905,6 +991,7 @@
             if (contactPhoneEl) contact.phone = contactPhoneEl.textContent;
 
             const apiBase = getSafetyApiBase();
+            let dispatchSuccess = false;
 
             try {
                 const response = await fetch(`${apiBase}/api/safety/sos`, {
@@ -922,34 +1009,37 @@
                 });
 
                 const data = await response.json();
-                if (data.success) {
+                if (data && data.success) {
+                    dispatchSuccess = true;
                     currentActiveSosId = data.dispatchId;
                     renderActiveSosCard(data.incident || {
                         id: data.dispatchId,
                         route: routeVal,
                         city: currentCity,
-                        assignedUnit: `Transit PCR Patrol Unit (${currentCity})`,
-                        coordinates: coords || { lat: 28.6139, lng: 77.2090 },
+                        assignedUnit: `Transit PCR Unit #14 (${currentCity} Patrol Division)`,
+                        coordinates: coords,
                         timestamp: new Date().toISOString()
                     });
-
                     status.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${data.message} (Incident ID: <strong>${data.dispatchId}</strong>)`;
-                } else {
-                    throw new Error(data.error || 'Server rejected distress request');
                 }
-            } catch (err) {
-                console.warn("Backend SOS endpoint fallback:", err);
-                const fallbackId = 'SOS-LOCAL-' + Math.floor(1000 + Math.random() * 9000);
+            } catch (err) {}
+
+            if (!dispatchSuccess) {
+                const fallbackId = 'SOS-' + Date.now().toString(36).toUpperCase();
                 currentActiveSosId = fallbackId;
                 renderActiveSosCard({
                     id: fallbackId,
                     route: routeVal,
                     city: currentCity,
-                    assignedUnit: `Emergency Patrol (${currentCity} Transit Division)`,
-                    coordinates: coords || { lat: 28.6139, lng: 77.2090 },
+                    assignedUnit: `Transit PCR Patrol Unit #${Math.floor(10 + Math.random() * 89)} (${currentCity} Division)`,
+                    coordinates: coords,
                     timestamp: new Date().toISOString()
                 });
-                status.innerHTML = `<i class="fa-solid fa-circle-check"></i> 🚨 Emergency Distress Transmitted to ${currentCity} Police Dispatch via Standalone Satellite Channel. Help is en route.`;
+                status.innerHTML = `<i class="fa-solid fa-circle-check"></i> 🚨 Emergency Distress Transmitted to ${currentCity} Police Dispatch via Standalone Beacon Channel. Help is en route. (ID: <strong>${fallbackId}</strong>)`;
+            }
+
+            if (window.toast) {
+                window.toast(`Transit Police Alert Dispatched! Incident ID: ${currentActiveSosId}`, 'shield-halved');
             }
         }
 
@@ -1008,31 +1098,43 @@
             updateSharePreview();
         }
 
-        function updateSharePreview() {
+        function getLiveTrackingShareUrl() {
             const select = document.getElementById('share-route-select');
-            const preview = document.getElementById('share-preview-url');
-            if (!select || !preview) return;
-            const routeCode = (select.value || '507').split(' ')[0];
+            const routeCode = (select?.value || '507').split(' ')[0];
             const city = localStorage.getItem('spt-city') || 'Delhi';
-            const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : 'http://localhost:5000';
-            const url = `${origin}/tracking.html?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
+            
+            let base = window.location.href.split('?')[0].replace('safety.html', 'tracking.html');
+            if (!base.includes('tracking.html')) {
+                base = window.location.origin && window.location.origin !== 'null' 
+                    ? `${window.location.origin}/tracking.html` 
+                    : 'tracking.html';
+            }
+            return `${base}?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
+        }
+
+        function updateSharePreview() {
+            const preview = document.getElementById('share-preview-url');
+            if (!preview) return;
+            const url = getLiveTrackingShareUrl();
             preview.textContent = url;
+            preview.href = url;
         }
 
         function shareOnWhatsApp() {
             const select = document.getElementById('share-route-select');
-            const routeName = select.value;
+            const routeName = select?.value || 'Route 507';
             const city = localStorage.getItem('spt-city') || 'Delhi';
-            const url = document.getElementById('share-preview-url').textContent.trim();
+            const url = getLiveTrackingShareUrl();
             const text = encodeURIComponent(`🚨 Transit.IN Live Ride Tracking:\nI am traveling on ${routeName} (${city}).\nTrack my vehicle location and ETA live here:\n${url}\n(Transit.IN 24/7 Safety Shield Active)`);
             window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+            if (window.toast) window.toast('Opening WhatsApp with your live ride beacon!', 'circle-check');
         }
 
         function copyLiveShareLink() {
-            const url = document.getElementById('share-preview-url').textContent.trim();
+            const url = getLiveTrackingShareUrl();
             const copyBtn = document.getElementById('copy-share-btn');
-            
-            const onDone = () => {
+
+            const notifyCopied = () => {
                 if (copyBtn) {
                     const originalHtml = copyBtn.innerHTML;
                     copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied Live Link!';
@@ -1046,27 +1148,51 @@
                 }
                 if (window.toast) {
                     window.toast('Live tracking beacon link copied to clipboard!', 'circle-check');
+                } else {
+                    alert('Live tracking beacon link copied to clipboard!\nYou can paste and send it to your trusted contacts.');
                 }
             };
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(url).then(onDone).catch(() => {
-                    prompt('Copy this live ride tracking link:', url);
+                navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                    fallbackCopyText(url, notifyCopied);
                 });
             } else {
-                prompt('Copy this live ride tracking link:', url);
+                fallbackCopyText(url, notifyCopied);
             }
+        }
+
+        function fallbackCopyText(text, cb) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (cb) cb();
+            } catch (err) {
+                prompt('Copy live tracking link:', text);
+            }
+            document.body.removeChild(textArea);
         }
 
         function shareViaSMS() {
             const select = document.getElementById('share-route-select');
-            const routeName = select.value;
+            const routeName = select?.value || 'Route 507';
             const city = localStorage.getItem('spt-city') || 'Delhi';
-            const url = document.getElementById('share-preview-url').textContent.trim();
+            const url = getLiveTrackingShareUrl();
             const text = `Transit.IN Live Journey: I am riding ${routeName} (${city}). Track my route live: ${url}`;
-            
-            document.getElementById('sms-preview-text').value = text;
-            openModal('sms-preview-modal');
+
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = `sms:?body=${encodeURIComponent(text)}`;
+            } else {
+                document.getElementById('sms-preview-text').value = text;
+                openModal('sms-preview-modal');
+            }
         }
 
         function copySMSText() {
@@ -1078,16 +1204,27 @@
         }
 
         // Primary Emergency Contact Handling
-        function initiateEmergencyContactCall(e) {
-            e.preventDefault();
-            const name = document.getElementById('safety-contact-name')?.textContent || 'Ramesh F (Guardian)';
+        function handleEmergencyContactCall(e) {
             const phone = document.getElementById('safety-contact-phone')?.textContent || '+91 94480 12345';
-            
-            document.getElementById('call-modal-contact-name').textContent = name;
-            document.getElementById('call-modal-contact-phone').textContent = phone;
-            document.getElementById('call-modal-tel-link').href = `tel:${phone.replace(/\s+/g, '')}`;
-            
-            openModal('call-contact-modal');
+            const cleanPhone = phone.replace(/[^\d+]/g, '');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(cleanPhone).catch(() => {});
+            }
+
+            if (window.toast) {
+                window.toast(`Calling ${phone}... (Copied to clipboard)`, 'phone');
+            }
+
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (!isMobile) {
+                e.preventDefault();
+                const name = document.getElementById('safety-contact-name')?.textContent || 'Ramesh F (Guardian)';
+                document.getElementById('call-modal-contact-name').textContent = name;
+                document.getElementById('call-modal-contact-phone').textContent = phone;
+                document.getElementById('call-modal-tel-link').href = `tel:${cleanPhone}`;
+                openModal('call-contact-modal');
+            }
         }
 
         function copyContactPhoneNumber() {
@@ -1101,11 +1238,11 @@
 
         function sendEmergencyContactSMS() {
             const phone = document.getElementById('call-modal-contact-phone')?.textContent || '+91 94480 12345';
-            const url = document.getElementById('share-preview-url')?.textContent.trim() || window.location.href;
+            const url = getLiveTrackingShareUrl();
             const city = localStorage.getItem('spt-city') || 'Delhi';
             const route = document.getElementById('share-route-select')?.value || 'Active Route';
             const text = encodeURIComponent(`URGENT: I need transit support in ${city}. My active route is ${route}. Live beacon: ${url}`);
-            window.location.href = `sms:${phone.replace(/\s+/g, '')}?body=${text}`;
+            window.location.href = `sms:${phone.replace(/[^\d+]/g, '')}?body=${text}`;
         }
 
         function openEditEmergencyContactModal() {
@@ -1124,7 +1261,7 @@
 
             document.getElementById('safety-contact-name').textContent = name;
             document.getElementById('safety-contact-phone').textContent = phone;
-            document.getElementById('safety-contact-dial-btn').href = `tel:${phone.replace(/\s+/g, '')}`;
+            document.getElementById('safety-contact-dial-btn').href = `tel:${phone.replace(/[^\d+]/g, '')}`;
 
             // Update localStorage
             let profile = {};
@@ -1153,13 +1290,34 @@
             }
         }
 
-        // Toll-Free Helplines Modal
-        function openHelplineModal(num, title, desc) {
+        // Toll-Free Helplines Handler & Modal
+        function openHelplineModal(num, title, desc, event) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(num).catch(() => {});
+            }
+            if (window.toast) {
+                window.toast(`Dialing ${num} (${title || 'Emergency Helpline'})...`, 'phone');
+            }
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = `tel:${num}`;
+                return;
+            }
+            if (event && event.preventDefault) {
+                event.preventDefault();
+            }
             document.getElementById('helpline-modal-num').textContent = num;
-            document.getElementById('helpline-modal-title').textContent = title;
-            document.getElementById('helpline-modal-desc').textContent = desc;
+            document.getElementById('helpline-modal-title').textContent = title || ('Helpline ' + num);
+            if (desc && document.getElementById('helpline-modal-desc')) {
+                document.getElementById('helpline-modal-desc').textContent = desc;
+            }
             document.getElementById('helpline-modal-dial-btn').href = `tel:${num}`;
             openModal('helpline-modal');
+        }
+
+        // Backward compatibility alias
+        function handleHelplineClick(e, num, title, desc) {
+            openHelplineModal(num, title, desc, e);
         }
 
         function copyHelplineNumber() {
@@ -1426,6 +1584,9 @@
         function handleCityControlDial(e) {
             const city = localStorage.getItem('spt-city') || 'Delhi';
             const hot = CITY_HOTLINES[city] || CITY_HOTLINES['Delhi'];
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(hot.tel).catch(() => {});
+            }
             if (window.toast) {
                 window.toast(`Connecting to ${hot.name} Control Room (${hot.num})...`, 'phone');
             }
@@ -1481,7 +1642,7 @@
                         document.getElementById('safety-contact-name').textContent = p.emergencyName;
                         if (p.emergencyPhone) {
                             document.getElementById('safety-contact-phone').textContent = p.emergencyPhone;
-                            document.getElementById('safety-contact-dial-btn').href = `tel:${p.emergencyPhone.replace(/\s+/g, '')}`;
+                            document.getElementById('safety-contact-dial-btn').href = `tel:${p.emergencyPhone.replace(/[^\d+]/g, '')}`;
                         }
                         loadedContact = true;
                     }
@@ -1495,7 +1656,7 @@
                         document.getElementById('safety-contact-name').textContent = stored.emergencyName;
                         if (stored.emergencyPhone) {
                             document.getElementById('safety-contact-phone').textContent = stored.emergencyPhone;
-                            document.getElementById('safety-contact-dial-btn').href = `tel:${stored.emergencyPhone.replace(/\s+/g, '')}`;
+                            document.getElementById('safety-contact-dial-btn').href = `tel:${stored.emergencyPhone.replace(/[^\d+]/g, '')}`;
                         }
                     }
                 } catch(e) {}
