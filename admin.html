@@ -291,14 +291,14 @@
             </div>
 
             <!-- KPI 5: Emergency Reports -->
-            <div class="glass-panel" style="padding: 1.3rem; border-color: rgba(16, 185, 129, 0.35);">
+            <div class="glass-panel" onclick="switchAdminTab('emergencies')" style="padding: 1.3rem; border-color: rgba(239, 68, 68, 0.45); cursor: pointer;" title="Click to view SOS Emergency Dispatch Grid">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">ACTIVE SOS ALERTS</span>
-                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #34D399; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 0.78rem; color: #F87171; font-weight: 600;">ACTIVE SOS ALERTS</span>
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.2); color: #EF4444; display: flex; align-items: center; justify-content: center;">
                         <i class="fa-solid fa-shield-heart"></i>
                     </div>
                 </div>
-                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #34D399;" id="stat-admin-emergencies">0</div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #EF4444;" id="stat-admin-emergencies">0</div>
                 <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;"><i class="fa-solid fa-circle-check"></i> Grid 100% Secure</div>
             </div>
 
@@ -352,6 +352,9 @@
             </button>
             <button id="tab-passengers" class="admin-tab-btn" onclick="switchAdminTab('passengers')">
                 <i class="fa-solid fa-users-gear"></i> Passenger Accounts
+            </button>
+            <button id="tab-emergencies" class="admin-tab-btn" onclick="switchAdminTab('emergencies')" style="border-color: rgba(239, 68, 68, 0.4); color: #F87171;">
+                <i class="fa-solid fa-shield-heart"></i> SOS Emergencies (<span id="tab-emergencies-count">0</span>)
             </button>
         </div>
 
@@ -702,6 +705,47 @@
                         <tr>
                             <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                                 <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading passenger accounts...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 9: SOS EMERGENCIES & POLICE DISPATCH LOGS -->
+        <div id="section-emergencies" class="glass-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-shield-heart" style="color: #EF4444;"></i> 24/7 Transit Emergency &amp; Police SOS Log</h2>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Live distress beacons, police patrol dispatch status, and commuter rescue resolution.</p>
+                </div>
+                <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                    <button class="btn-primary-gradient" onclick="triggerTestEmergency()" style="background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);">
+                        <i class="fa-solid fa-tower-broadcast"></i> Simulate SOS Drill
+                    </button>
+                    <button class="sim-btn" onclick="renderEmergenciesTable()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh SOS Grid
+                    </button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Commuter</th>
+                            <th>City &amp; Route</th>
+                            <th>GPS Coordinates</th>
+                            <th>Assigned Unit</th>
+                            <th>Timestamp</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="emergencies-table-body">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading SOS distress logs...
                             </td>
                         </tr>
                     </tbody>

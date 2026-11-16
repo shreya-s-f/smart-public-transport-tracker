@@ -114,7 +114,7 @@ function switchAdminTab(tab) {
     const targetBtn = document.getElementById(`tab-${tab}`);
     if (targetBtn) targetBtn.classList.add('active');
 
-    const sections = ['buses', 'drivers', 'maintenance', 'complaints', 'lostfound', 'cities', 'subscribers', 'passengers'];
+    const sections = ['buses', 'drivers', 'maintenance', 'complaints', 'lostfound', 'cities', 'subscribers', 'passengers', 'emergencies'];
     sections.forEach(s => {
         const el = document.getElementById(`section-${s}`);
         if (el) el.style.display = (s === tab ? 'block' : 'none');
@@ -128,6 +128,7 @@ function switchAdminTab(tab) {
     if (tab === 'cities') renderAdminCities();
     if (tab === 'subscribers') renderAdminSubscribers();
     if (tab === 'passengers') renderAdminPassengers();
+    if (tab === 'emergencies') renderEmergenciesTable();
 
     loadAdminOverviewStats();
 }
@@ -143,6 +144,7 @@ async function renderAllAdminData() {
     await renderAdminCities();
     await renderAdminSubscribers();
     await renderAdminPassengers();
+    await renderEmergenciesTable();
 }
 
 // --- LIVE OVERVIEW KPI METRICS ---
@@ -165,6 +167,8 @@ async function loadAdminOverviewStats() {
             if (elDrivers) elDrivers.textContent = s.totalDrivers || 5;
             if (elRoutes) elRoutes.textContent = s.totalRoutes || 23;
             if (elEmg) elEmg.textContent = s.activeEmergencies || 0;
+            const elTabEmg = document.getElementById('tab-emergencies-count');
+            if (elTabEmg) elTabEmg.textContent = s.activeEmergencies || 0;
             if (elCmp) elCmp.textContent = s.pendingComplaints || 0;
             if (elSubs) elSubs.textContent = s.totalSubscribers || 0;
         }
@@ -1551,12 +1555,153 @@ async function deletePassengerAccount(email) {
     }
 }
 
+async function renderEmergenciesTable() {
+    const tbody = document.getElementById('emergencies-table-body');
+    if (!tbody) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/safety/sos`);
+        const data = await res.json();
+        const emergencies = (data && data.success && Array.isArray(data.data)) ? data.data : [];
+
+        const elCount = document.getElementById('tab-emergencies-count');
+        const activeCount = emergencies.filter(e => e.status !== 'RESOLVED').length;
+        if (elCount) elCount.textContent = activeCount;
+
+        const statEmg = document.getElementById('stat-admin-emergencies');
+        if (statEmg) statEmg.textContent = activeCount;
+
+        if (!emergencies.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-circle-check" style="color: #34D399; font-size: 1.5rem; display: block; margin-bottom: 0.5rem;"></i>
+                        No active distress beacons. All transit corridors are verified secure.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = emergencies.map(emg => {
+            const isResolved = emg.status === 'RESOLVED';
+            const statusBadge = isResolved
+                ? `<span style="padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: rgba(16, 185, 129, 0.15); color: #34D399; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-circle-check"></i> Resolved</span>`
+                : `<span style="padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: rgba(239, 68, 68, 0.2); color: #EF4444; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-triangle-exclamation fa-beat"></i> Active Dispatch</span>`;
+
+            const coordsText = emg.coordinates 
+                ? (typeof emg.coordinates.lat === 'number' 
+                    ? `${emg.coordinates.lat.toFixed(4)}°N, ${emg.coordinates.lng.toFixed(4)}°E` 
+                    : `${emg.coordinates.lat}, ${emg.coordinates.lng}`) 
+                : 'Sector Hub Center';
+
+            const timeStr = emg.timestamp ? new Date(emg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Recent';
+
+            return `
+                <tr style="${isResolved ? 'opacity: 0.75;' : 'background: rgba(239, 68, 68, 0.05);'}">
+                    <td><strong style="color: #EF4444; font-family: monospace;">${emg.id}</strong></td>
+                    <td>
+                        <strong style="color: #FFFFFF; display: block;">${emg.commuterName || 'Verified Commuter'}</strong>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">${emg.commuterPhone || '+91 98765 43210'}</span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 700; color: #FFFFFF;">${emg.city || 'Delhi'}</span>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">${emg.route || 'Transit Line'}</div>
+                    </td>
+                    <td><span style="font-family: monospace; font-size: 0.82rem; color: #38BDF8;">${coordsText}</span></td>
+                    <td><span style="font-size: 0.85rem; color: #C4B5FD;">${emg.assignedUnit || 'Patrol Unit #12'}</span></td>
+                    <td style="font-size: 0.82rem; color: var(--text-muted);">${timeStr}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.4rem;">
+                            ${!isResolved ? `
+                                <button onclick="resolveEmergencyRecord('${emg.id}')" class="sim-btn" style="padding: 0.35rem 0.7rem; font-size: 0.78rem; color: #34D399; border-color: rgba(16, 185, 129, 0.4);" title="Mark Incident Resolved">
+                                    <i class="fa-solid fa-check"></i> Resolve
+                                </button>
+                            ` : `
+                                <span style="font-size: 0.75rem; color: #34D399;"><i class="fa-solid fa-shield"></i> Safe</span>
+                            `}
+                            <button onclick="deleteEmergencyRecord('${emg.id}')" class="sim-btn" style="padding: 0.35rem 0.6rem; font-size: 0.78rem; color: #EF4444; border-color: rgba(239, 68, 68, 0.3);" title="Remove Record">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Error rendering emergencies:', err);
+    }
+}
+
+async function resolveEmergencyRecord(id) {
+    try {
+        const res = await fetch(`${API_BASE}/api/safety/sos/${id}/resolve`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes: 'Resolved by Admin Dispatch Controller.' })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showAdminToast(`SOS Emergency [${id}] marked as RESOLVED.`);
+            await renderEmergenciesTable();
+            await loadAdminOverviewStats();
+        }
+    } catch(err) {
+        console.error('Error resolving emergency:', err);
+    }
+}
+
+async function deleteEmergencyRecord(id) {
+    if (!confirm(`Delete SOS record ${id}?`)) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/safety/sos/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            showAdminToast(`SOS record [${id}] deleted.`);
+            await renderEmergenciesTable();
+            await loadAdminOverviewStats();
+        }
+    } catch(err) {
+        console.error('Error deleting emergency:', err);
+    }
+}
+
+async function triggerTestEmergency() {
+    try {
+        const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+        const res = await fetch(`${API_BASE}/api/safety/sos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                city: currentCity,
+                route: 'Route 507 (Emergency Drill)',
+                notes: 'Simulated SOS drill dispatched from Transit Control Room',
+                commuterName: 'Simulated Drill Beacon',
+                commuterPhone: '+91 99999 11111'
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showAdminToast(`Simulated SOS Drill broadcasted! (ID: ${data.dispatchId})`);
+            await renderEmergenciesTable();
+            await loadAdminOverviewStats();
+        }
+    } catch(err) {
+        console.error('Error triggering test emergency:', err);
+    }
+}
+
 // Global window bindings for inline HTML triggers
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.showAdminToast = showAdminToast;
 window.switchAdminTab = switchAdminTab;
 window.renderAllAdminData = renderAllAdminData;
+window.renderEmergenciesTable = renderEmergenciesTable;
+window.resolveEmergencyRecord = resolveEmergencyRecord;
+window.deleteEmergencyRecord = deleteEmergencyRecord;
+window.triggerTestEmergency = triggerTestEmergency;
 
 window.openAddRouteModal = openAddRouteModal;
 window.openEditRouteModal = openEditRouteModal;

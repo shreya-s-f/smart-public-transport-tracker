@@ -58,6 +58,51 @@ document.addEventListener('DOMContentLoaded', () => {
         fare: 40
     };
 
+    // Live Journey Share Beacon Banner
+    if (urlParams.get('live_share') === 'true') {
+        const isSafe = urlParams.get('sos_beacon') !== 'ALERT';
+        const beaconBanner = document.createElement('div');
+        beaconBanner.className = 'animate-fade-in-down';
+        beaconBanner.style.cssText = `
+            background: ${isSafe ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(15, 23, 42, 0.6) 100%)'};
+            border: 1px solid ${isSafe ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.5)'};
+            border-radius: 14px;
+            padding: 1rem 1.4rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        `;
+        beaconBanner.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                <div style="width: 42px; height: 42px; border-radius: 10px; background: ${isSafe ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.25)'}; color: ${isSafe ? '#34D399' : '#EF4444'}; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid ${isSafe ? 'fa-shield-heart' : 'fa-triangle-exclamation fa-beat'}"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #FFFFFF;">
+                        ${isSafe ? '🛡️ Live Shared Transit Journey Active' : '🚨 EMERGENCY SOS BEACON ACTIVE'}
+                    </h4>
+                    <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-secondary);">
+                        Streaming real-time GPS telemetry for <strong>Route ${currentRoute.id} (${currentCity})</strong>. 24/7 Safety Shield Active.
+                    </p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.6rem;">
+                <a href="safety.html" class="sim-btn" style="padding: 0.5rem 1rem; font-size: 0.82rem; color: #38BDF8; text-decoration: none;">
+                    <i class="fa-solid fa-shield-halved"></i> Safety Shield
+                </a>
+                <a href="tel:112" class="sim-btn" style="padding: 0.5rem 1rem; font-size: 0.82rem; color: #EF4444; text-decoration: none;">
+                    <i class="fa-solid fa-phone"></i> Emergency 112
+                </a>
+            </div>
+        `;
+        const container = document.querySelector('.tracking-container') || document.querySelector('main');
+        if (container) container.insertBefore(beaconBanner, container.firstChild);
+    }
+
     // UI Elements
     const titleEl = document.getElementById('tracking-route-title');
     const pathEl = document.getElementById('tracking-route-path');

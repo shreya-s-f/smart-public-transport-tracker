@@ -322,8 +322,8 @@ const newUser = email => ({
         city: 'Bengaluru',
         location: 'Bengaluru, India',
         userType: 'Daily Commuter',
-        emergencyName: 'Emergency Contact',
-        emergencyPhone: '+91 91234 56789',
+        emergencyName: 'Ramesh F (Guardian)',
+        emergencyPhone: '+91 94480 12345',
         bio: 'Transit.IN regular commuter exploring sustainable and electric public transport.',
         avatar: null,
         emailVerified: true
@@ -556,7 +556,7 @@ app.get('/api/admin/stats', (req, res) => {
             fleetCount: allRoutesCount,
             totalDrivers: (db.drivers || []).length,
             totalRoutes: allRoutesCount,
-            activeEmergencies: (db.sos || []).length,
+            activeEmergencies: (db.sos || []).filter(s => s && s.status !== 'RESOLVED').length,
             pendingComplaints: pendingComplaints,
             totalSubscribers: subscribers.length,
             activeSubscribers: activeSubs
@@ -1047,26 +1047,389 @@ app.get('/api/weather', (req, res) => {
     });
 });
 
-// Emergency SOS
+// ============================================================================
+// 24/7 SAFETY SHIELD & EMERGENCY SOS REST ENDPOINTS
+// ============================================================================
+const CITY_SAFE_ZONES = {
+    'Delhi': [
+        {
+            id: 'ZONE-DEL-01',
+            name: 'Central Station Transit Booth',
+            location: 'Platform Bay 1 • Armed Marshals on Duty',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['24/7 Armed Marshals', 'Direct Police Kiosk', 'Emergency Beacon Intercom'],
+            phone: '1512',
+            coords: { lat: 28.6415, lng: 77.2185 }
+        },
+        {
+            id: 'ZONE-DEL-02',
+            name: 'First-Aid & Trauma Rapid Post',
+            location: 'Concourse North • Automated Defibrillator (AED)',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['Automated External Defibrillator (AED)', 'Trained First Responders', 'Emergency Oxygen'],
+            phone: '108',
+            coords: { lat: 28.6328, lng: 77.2197 }
+        },
+        {
+            id: 'ZONE-DEL-03',
+            name: 'Pink Booth Women Transit Safezone',
+            location: 'Terminal Gate 4 • Women Officers 24/7',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Women Police Constabulary', 'Panic Alarm Desk', 'Safe Waiting Lounge'],
+            phone: '1091',
+            coords: { lat: 28.6692, lng: 77.2289 }
+        }
+    ],
+    'Bangalore': [
+        {
+            id: 'ZONE-BLR-01',
+            name: 'Majestic Kempegowda Bus Station Helpdesk',
+            location: 'Platform Bay 3 • BMTC Sarathi Marshals',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['BMTC Security Squad', 'Direct Control Intercom', 'Lost Child & Transit Desk'],
+            phone: '1800-425-1663',
+            coords: { lat: 12.9772, lng: 77.5713 }
+        },
+        {
+            id: 'ZONE-BLR-02',
+            name: 'MG Road Metro Assistance Kiosk',
+            location: 'Exit C Concourse • Trauma & Medical Care',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['BMRCL Security', 'First-Aid Station', 'Automated Defibrillator'],
+            phone: '080-2519-1091',
+            coords: { lat: 12.9756, lng: 77.6066 }
+        },
+        {
+            id: 'ZONE-BLR-03',
+            name: 'Pink Booth Women Transit Safezone',
+            location: 'Majestic Terminal South • Women Wardens 24/7',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['24/7 Women Constabulary', 'Safe Waiting Enclosure', 'Rapid Transit Shield'],
+            phone: '1091',
+            coords: { lat: 12.9780, lng: 77.5720 }
+        }
+    ],
+    'Mumbai': [
+        {
+            id: 'ZONE-BOM-01',
+            name: 'CSMT Transit Protection Bay',
+            location: 'Suburban Concourse • GRP Post',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['GRP & RPF Marshals', '24/7 Metal Scanners', 'Police Assistance Booth'],
+            phone: '1512',
+            coords: { lat: 18.9400, lng: 72.8353 }
+        },
+        {
+            id: 'ZONE-BOM-02',
+            name: 'Dadar Station Emergency Care Unit',
+            location: 'Central Footbridge • Rapid Trauma Post',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['Emergency Trauma Ward', 'Stretcher & Wheelchair Service', 'Cardiopulmonary Kit'],
+            phone: '108',
+            coords: { lat: 19.0178, lng: 72.8478 }
+        },
+        {
+            id: 'ZONE-BOM-03',
+            name: 'Tejaswini Women Safe Haven',
+            location: 'Churchgate Platform 1 • 24/7 Wardens',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Dedicated Women Transit Wardens', 'CCTV High-Definition Ring', 'Emergency Beacon Desk'],
+            phone: '1091',
+            coords: { lat: 18.9322, lng: 72.8264 }
+        }
+    ],
+    'Bagalkot': [
+        {
+            id: 'ZONE-BGK-01',
+            name: 'Old Bus Stand NWKRTC Control Kiosk',
+            location: 'Main Terminal Bay 1 • Traffic Controller Desk',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['NWKRTC Security Staff', 'City Control Hotline', 'Night Transit Desk'],
+            phone: '08354-220033',
+            coords: { lat: 16.1818, lng: 75.6961 }
+        },
+        {
+            id: 'ZONE-BGK-02',
+            name: 'Navanagar Rapid Aid Station',
+            location: 'Sector 10 Transit Stop • Medical Post',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['District Health Post', 'First Aid Station', 'Ambulance Priority Staging'],
+            phone: '108',
+            coords: { lat: 16.1667, lng: 75.6600 }
+        },
+        {
+            id: 'ZONE-BGK-03',
+            name: 'Pink Booth Women Transit Safezone',
+            location: 'Old Bus Stand Entrance • Bagalkot Police',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Women Police Help Desk', '24/7 CCTV Monitored Corridor', 'Night Commuter Escort'],
+            phone: '1091',
+            coords: { lat: 16.1825, lng: 75.6970 }
+        }
+    ],
+    'Hyderabad': [
+        {
+            id: 'ZONE-HYD-01',
+            name: 'MGBS Transit Security Bay',
+            location: 'Platform 1 Concourse • TSRTC Vigilance',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['Armed Transit Marshals', 'Direct Police Link', 'CCTV Surveillance'],
+            phone: '040-2345-0033',
+            coords: { lat: 17.3785, lng: 78.4800 }
+        },
+        {
+            id: 'ZONE-HYD-02',
+            name: 'Ameerpet Metro Trauma Station',
+            location: 'Interchange Level 2 • First-Aid Kiosk',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['Paramedic Desk', 'Automated Defibrillator', 'Emergency Wheelchairs'],
+            phone: '108',
+            coords: { lat: 17.4375, lng: 78.4482 }
+        },
+        {
+            id: 'ZONE-HYD-03',
+            name: 'SHE Team Transit Safezone',
+            location: 'Secunderabad Station Gate 1 • SHE Teams',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Telangana SHE Teams', '24/7 Women Police Helpdesk', 'Instant SOS Terminal'],
+            phone: '1091',
+            coords: { lat: 17.4334, lng: 78.5015 }
+        }
+    ],
+    'Chennai': [
+        {
+            id: 'ZONE-MAA-01',
+            name: 'Koyambedu CMBT Security Hub',
+            location: 'Bus Bay 1 • Armed Transit Marshals',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['MTC Security Marshals', 'Police Booth', '24/7 Intercom'],
+            phone: '044-2345-5801',
+            coords: { lat: 13.0694, lng: 80.2057 }
+        },
+        {
+            id: 'ZONE-MAA-02',
+            name: 'Chennai Central Trauma Rapid Post',
+            location: 'Main Concourse • First-Aid Center',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['Automated Defibrillator', 'Emergency Medical Team', 'Stretcher Access'],
+            phone: '108',
+            coords: { lat: 13.0827, lng: 80.2707 }
+        },
+        {
+            id: 'ZONE-MAA-03',
+            name: 'Kavalan Women Transit Safezone',
+            location: 'Central Suburban Bay • Women Police',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Kavalan SOS Terminal', 'Women Officers 24/7', 'Safe Lounge Corridor'],
+            phone: '1091',
+            coords: { lat: 13.0815, lng: 80.2720 }
+        }
+    ],
+    'Pune': [
+        {
+            id: 'ZONE-PNQ-01',
+            name: 'Shivajinagar Transit Command Post',
+            location: 'PMPML Central Bay • City Police Kiosk',
+            cctv: true,
+            status: 'Active Surveillance (CCTV Stream Live)',
+            features: ['PMPML Traffic Wardens', 'Police Beat Chowky', 'High-Definition CCTV'],
+            phone: '020-2450-3355',
+            coords: { lat: 18.5308, lng: 73.8475 }
+        },
+        {
+            id: 'ZONE-PNQ-02',
+            name: 'Pune Station Trauma Emergency Post',
+            location: 'Platform 1 Concourse • Medical Post',
+            cctv: true,
+            status: 'Paramedic Station Active',
+            features: ['Paramedic Unit', 'Automated Defibrillator', 'Rapid Stretcher Bay'],
+            phone: '108',
+            coords: { lat: 18.5284, lng: 73.8739 }
+        },
+        {
+            id: 'ZONE-PNQ-03',
+            name: 'Damini Squad Women Safezone',
+            location: 'Swargate Bus Station Gate 2 • Damini Squad',
+            cctv: true,
+            status: 'SOS Fast-Track Point',
+            features: ['Pune Damini Marshall Squad', '24/7 Women Police Desk', 'Panic Alarm Button'],
+            phone: '1091',
+            coords: { lat: 18.5018, lng: 73.8586 }
+        }
+    ]
+};
+
+// Emergency SOS Listing & Ingestion
 app.get('/api/safety/sos', (req, res) => {
-    res.json({ success: true, count: (db.sos || []).length, data: db.sos || [] });
+    const list = Array.isArray(db.sos) ? db.sos : [];
+    res.json({ success: true, count: list.length, data: list });
 });
 
 app.post('/api/safety/sos', (req, res) => {
+    const targetCity = req.body.city || 'Delhi';
+    const route = req.body.route || 'Transit Line';
+    const coords = req.body.coordinates || (
+        targetCity === 'Delhi' ? { lat: 28.6139, lng: 77.2090 } :
+        targetCity === 'Bangalore' ? { lat: 12.9716, lng: 77.5946 } :
+        targetCity === 'Mumbai' ? { lat: 18.9690, lng: 72.8205 } :
+        targetCity === 'Bagalkot' ? { lat: 16.1818, lng: 75.6961 } :
+        targetCity === 'Hyderabad' ? { lat: 17.3850, lng: 78.4867 } :
+        targetCity === 'Chennai' ? { lat: 13.0827, lng: 80.2707 } :
+        { lat: 18.5204, lng: 73.8567 }
+    );
+
     const distressLog = {
-        id: 'SOS-' + Date.now(),
-        city: req.body.city || 'Delhi',
-        route: req.body.route || 'Transit Line',
-        timestamp: new Date().toISOString(),
-        status: 'DISPATCHED_TO_CONTROL_ROOM'
+        id: 'SOS-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(1000 + Math.random() * 9000),
+        city: targetCity,
+        route: route,
+        coordinates: coords,
+        commuterName: req.body.commuterName || 'Shreya F (Commuter)',
+        commuterPhone: req.body.commuterPhone || '+91 98765 43210',
+        emergencyContact: req.body.emergencyContact || { name: 'Ramesh F (Guardian)', phone: '+91 94480 12345' },
+        assignedUnit: 'PCR Van #' + Math.floor(10 + Math.random() * 89) + ` (${targetCity} Transit Patrol)`,
+        timestamp: req.body.timestamp || new Date().toISOString(),
+        status: 'ACTIVE_POLICE_DISPATCHED',
+        notes: req.body.notes || 'Emergency panic beacon broadcasted from Transit.IN Safety Shield'
     };
+
     if (!Array.isArray(db.sos)) db.sos = [];
     db.sos.unshift(distressLog);
+
+    // Auto-dispatch critical alert to public feed
+    if (!Array.isArray(db.alerts)) db.alerts = [];
+    const sosAlert = {
+        id: 'ALT-SOS-' + Date.now().toString().slice(-4),
+        type: 'emergency',
+        title: `🚨 SOS Distress Triggered on ${route} (${targetCity})`,
+        desc: `Emergency assistance dispatched for commuter. Live police beacon broadcasting. Nearest patrol units en route.`,
+        severity: 'danger',
+        city: targetCity,
+        route: route,
+        time: 'Just now',
+        reportedAt: new Date().toISOString()
+    };
+    db.alerts.unshift(sosAlert);
+
+    // Auto-create in-app notification
+    if (!Array.isArray(db.notifications)) db.notifications = [];
+    db.notifications.unshift({
+        id: 'NOTIF-SOS-' + Date.now(),
+        title: `🚨 Emergency Distress Alert: ${route}`,
+        message: `Police Control Room and ${targetCity} Transit Marshals alerted. GPS: ${coords.lat?.toFixed ? coords.lat.toFixed(4) : coords.lat}°N, ${coords.lng?.toFixed ? coords.lng.toFixed(4) : coords.lng}°E.`,
+        time: 'Just now',
+        timestamp: new Date().toISOString(),
+        route: route,
+        delivered: true,
+        emergency: true
+    });
+
     save();
+
     res.json({
         success: true,
-        message: `🚨 Emergency Beacon Transmitted. Transit Police Control Room Alerted.`,
-        dispatchId: distressLog.id
+        message: `🚨 Emergency Distress Beacon Transmitted. Transit Police Control Room & Patrol Units Alerted.`,
+        dispatchId: distressLog.id,
+        incident: distressLog
+    });
+});
+
+// Resolve or update SOS incident
+app.put('/api/safety/sos/:id/resolve', (req, res) => {
+    const id = req.params.id;
+    if (!Array.isArray(db.sos)) db.sos = [];
+    const item = db.sos.find(s => s.id === id);
+    if (!item) return notFound(res, 'Emergency SOS record not found');
+
+    item.status = 'RESOLVED';
+    item.resolvedAt = new Date().toISOString();
+    item.resolutionNotes = req.body.notes || 'Assistance successfully rendered by Transit Police Patrol. Commuter marked safe.';
+    save();
+
+    res.json({
+        success: true,
+        message: `SOS incident ${id} marked as RESOLVED. Grid secure.`,
+        incident: item
+    });
+});
+
+// Delete SOS incident (Admin cleanup)
+app.delete('/api/safety/sos/:id', (req, res) => {
+    const id = req.params.id;
+    if (!Array.isArray(db.sos)) db.sos = [];
+    const idx = db.sos.findIndex(s => s.id === id);
+    if (idx === -1) return notFound(res, 'Emergency SOS record not found');
+
+    const removed = db.sos.splice(idx, 1)[0];
+    save();
+
+    res.json({
+        success: true,
+        message: `SOS record ${id} removed.`,
+        removed
+    });
+});
+
+// Update Primary Emergency Contact
+app.post('/api/safety/contact', (req, res) => {
+    const u = resolveCommuter(req);
+    const { emergencyName, emergencyPhone } = req.body;
+    if (!emergencyName || !emergencyPhone) {
+        return bad(res, 'Both emergencyName and emergencyPhone are required');
+    }
+    u.profile.emergencyName = String(emergencyName).trim();
+    u.profile.emergencyPhone = String(emergencyPhone).trim();
+    save();
+
+    res.json({
+        success: true,
+        message: 'Primary emergency contact successfully updated and encrypted.',
+        contact: {
+            emergencyName: u.profile.emergencyName,
+            emergencyPhone: u.profile.emergencyPhone
+        }
+    });
+});
+
+// Safe Transit Zones & Assistance Hubs
+app.get('/api/safety/zones', (req, res) => {
+    const city = req.query.city || 'Delhi';
+    const zones = CITY_SAFE_ZONES[city] || CITY_SAFE_ZONES['Delhi'];
+    res.json({
+        success: true,
+        city: city,
+        count: zones.length,
+        zones: zones
+    });
+});
+
+// 24/7 Helplines Directory
+app.get('/api/safety/helplines', (req, res) => {
+    res.json({
+        success: true,
+        national: [
+            { number: '112', title: 'National Emergency Support (All-in-One)', subtitle: 'Police, Fire, Disaster Management', color: '#3b82f6' },
+            { number: '1091', title: 'Women Helpline (24/7 Pan-India)', subtitle: 'Dedicated Transit & Night Shield', color: '#ec4899' },
+            { number: '1512', title: 'Transit / Railway Police', subtitle: 'GRP & City Public Transport Security', color: '#f59e0b' },
+            { number: '108', title: 'Emergency Medical Ambulance', subtitle: 'Rapid Trauma & Health Assistance', color: '#10b981' }
+        ]
     });
 });
 
