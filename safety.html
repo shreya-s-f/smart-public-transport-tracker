@@ -461,57 +461,62 @@
                     </div>
 
                     <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 1rem; margin-bottom: 1.2rem;">
-                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.3rem;">GENERATED TRIP BEACON LINK</div>
-                        <a id="share-preview-url" href="tracking.html?route=507&amp;live_share=true&amp;sos_beacon=SAFE" target="_blank" style="font-size: 0.86rem; color: var(--accent-color); word-break: break-all; font-family: monospace; text-decoration: none;">
-                            http://localhost:5000/tracking.html?route=507&amp;live_share=true&amp;sos_beacon=SAFE
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span>GENERATED TRIP BEACON LINK</span>
+                            <span style="font-size: 0.72rem; color: var(--success-color); font-weight: 600;"><i class="fa-solid fa-satellite-dish"></i> Live Ready</span>
+                        </div>
+                        <a id="share-preview-url" href="tracking.html?route=507&amp;city=Delhi&amp;live_share=true&amp;sos_beacon=SAFE" target="_blank" style="font-size: 0.86rem; color: var(--accent-color); word-break: break-all; font-family: monospace; text-decoration: underline; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                            <span id="share-preview-text">tracking.html?route=507&amp;city=Delhi&amp;live_share=true&amp;sos_beacon=SAFE</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; flex-shrink: 0;"></i>
                         </a>
                     </div>
 
                     <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
-                        <button onclick="shareOnWhatsApp()" class="share-btn share-btn-wa">
+                        <button id="share-wa-btn" onclick="shareOnWhatsApp()" class="share-btn share-btn-wa" style="cursor: pointer;">
                             <i class="fa-brands fa-whatsapp"></i> Share on WhatsApp
                         </button>
-                        <button id="copy-share-btn" onclick="copyLiveShareLink()" class="share-btn share-btn-copy">
+                        <button id="copy-share-btn" onclick="copyLiveShareLink()" class="share-btn share-btn-copy" style="cursor: pointer;">
                             <i class="fa-solid fa-copy"></i> Copy Live Link
                         </button>
-                        <button onclick="shareViaSMS()" class="share-btn share-btn-sms">
+                        <button onclick="shareViaSMS()" class="share-btn share-btn-sms" style="cursor: pointer;">
                             <i class="fa-solid fa-comment-sms"></i> SMS Link
                         </button>
                     </div>
                 </div>
 
                 <!-- Card 2: Emergency Contact & Profile Status -->
-                <div class="glass-card animate-fade-in-up">
-                    <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
-                        <i class="fa-solid fa-user-shield" style="color: #ef4444;"></i> Primary Emergency Contact
-                    </h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
-                        Linked from your verified commuter profile. One tap directly initiates an encrypted voice call.
-                    </p>
+                <div class="glass-card animate-fade-in-up" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem;">
+                            <i class="fa-solid fa-user-shield" style="color: #ef4444;"></i> Primary Emergency Contact
+                        </h3>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">
+                            Linked from your verified commuter profile. One tap directly initiates an encrypted voice call.
+                        </p>
 
-                    <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 14px; padding: 1.2rem; margin-bottom: 1.2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <strong style="font-size: 1.1rem; color: var(--text-primary);" id="safety-contact-name">Ramesh F (Guardian)</strong>
-                            <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 20px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-weight: 700;">
-                                <i class="fa-solid fa-circle-check"></i> Linked
-                            </span>
+                        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 14px; padding: 1.2rem; margin-bottom: 1.2rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <strong style="font-size: 1.1rem; color: var(--text-primary);" id="safety-contact-name">Ramesh F (Guardian)</strong>
+                                <span style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 20px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-weight: 700;">
+                                    <i class="fa-solid fa-circle-check"></i> Linked
+                                </span>
+                            </div>
+                            <div style="font-size: 0.95rem; color: var(--text-secondary);" id="safety-contact-phone">+91 94480 12345</div>
                         </div>
-                        <div style="font-size: 0.95rem; color: var(--text-secondary);" id="safety-contact-phone">+91 94480 12345</div>
-                    </div>
 
-                    <a id="safety-contact-dial-btn" href="tel:+919448012345" onclick="handleEmergencyContactCall(event)" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.9rem; font-weight: 700;">
-                        <i class="fa-solid fa-phone"></i> Call Emergency Contact Now
-                    </a>
-
-                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                        <button onclick="openEditEmergencyContactModal()" class="sim-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem; color: var(--accent-color); border-color: rgba(56, 189, 248, 0.3);">
-                            <i class="fa-solid fa-pen-to-square"></i> Quick Edit Contact
-                        </button>
-                        <a href="profile.html" style="font-size: 0.85rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">
-                            Change Emergency Contact in Profile &rarr;
+                        <a id="safety-contact-dial-btn" href="tel:+919448012345" onclick="handleEmergencyContactCall(event)" class="btn-primary" style="width: 100%; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.9rem; font-weight: 700; cursor: pointer;">
+                            <i class="fa-solid fa-phone"></i> Call Emergency Contact Now
                         </a>
+
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 0.5rem;">
+                            <button type="button" onclick="openEditEmergencyContactModal()" class="sim-btn" style="padding: 0.4rem 0.8rem; font-size: 0.82rem; color: var(--accent-color); border-color: rgba(56, 189, 248, 0.3); cursor: pointer;">
+                                <i class="fa-solid fa-pen-to-square"></i> Quick Edit Contact
+                            </button>
+                            <a href="profile.html" style="font-size: 0.85rem; color: var(--accent-color); text-decoration: none; font-weight: 600;">
+                                Change Emergency Contact in Profile &rarr;
+                            </a>
+                        </div>
                     </div>
-                </div>
 
             </div>
 
@@ -523,28 +528,28 @@
 
                 <div class="helpline-grid">
                     <!-- 112 -->
-                    <a href="tel:112" onclick="openHelplineModal('112', 'National Emergency Support (All-in-One)', 'Police, Fire, Disaster Management', event)" class="helpline-card" style="border-left: 4px solid #3b82f6;">
+                    <a href="tel:112" onclick="openHelplineModal('112', 'National Emergency Support (All-in-One)', 'Police, Fire, Disaster Management', event)" class="helpline-card" style="border-left: 4px solid #3b82f6; cursor: pointer; text-decoration: none;">
                         <span class="helpline-num" style="color: #3b82f6;">112</span>
                         <span class="helpline-name">National Emergency Support (All-in-One)</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Police, Fire, Disaster Management</div>
                     </a>
 
                     <!-- 1091 -->
-                    <a href="tel:1091" onclick="openHelplineModal('1091', 'Women Helpline (24/7 Pan-India)', 'Dedicated Transit &amp; Night Shield', event)" class="helpline-card" style="border-left: 4px solid #ec4899;">
+                    <a href="tel:1091" onclick="openHelplineModal('1091', 'Women Helpline (24/7 Pan-India)', 'Dedicated Transit &amp; Night Shield', event)" class="helpline-card" style="border-left: 4px solid #ec4899; cursor: pointer; text-decoration: none;">
                         <span class="helpline-num" style="color: #ec4899;">1091</span>
                         <span class="helpline-name">Women Helpline (24/7 Pan-India)</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Dedicated Transit &amp; Night Shield</div>
                     </a>
 
                     <!-- 1512 -->
-                    <a href="tel:1512" onclick="openHelplineModal('1512', 'Transit / Railway Police', 'GRP &amp; City Public Transport Security', event)" class="helpline-card" style="border-left: 4px solid #f59e0b;">
+                    <a href="tel:1512" onclick="openHelplineModal('1512', 'Transit / Railway Police', 'GRP &amp; City Public Transport Security', event)" class="helpline-card" style="border-left: 4px solid #f59e0b; cursor: pointer; text-decoration: none;">
                         <span class="helpline-num" style="color: #f59e0b;">1512</span>
                         <span class="helpline-name">Transit / Railway Police</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">GRP &amp; City Public Transport Security</div>
                     </a>
 
                     <!-- 108 -->
-                    <a href="tel:108" onclick="openHelplineModal('108', 'Emergency Medical Ambulance', 'Rapid Trauma &amp; Health Assistance', event)" class="helpline-card" style="border-left: 4px solid #10b981;">
+                    <a href="tel:108" onclick="openHelplineModal('108', 'Emergency Medical Ambulance', 'Rapid Trauma &amp; Health Assistance', event)" class="helpline-card" style="border-left: 4px solid #10b981; cursor: pointer; text-decoration: none;">
                         <span class="helpline-num" style="color: #10b981;">108</span>
                         <span class="helpline-name">Emergency Medical Ambulance</span>
                         <div style="margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-secondary);">Rapid Trauma &amp; Health Assistance</div>
@@ -792,6 +797,27 @@
     <script src="js/backend-api.js"></script>
 
     <script>
+        // Self-contained Transit Toast Notification System
+        window.toast = window.toast || function(msg, icon = 'circle-check') {
+            let container = document.getElementById('toasts');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toasts';
+                container.style.cssText = 'position: fixed; right: 1.2rem; bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; z-index: 100001; pointer-events: none;';
+                document.body.appendChild(container);
+            }
+            const t = document.createElement('div');
+            t.className = 'toast animate-fade-in-up';
+            t.style.cssText = 'pointer-events: auto; padding: 0.85rem 1.25rem; border-radius: 12px; background: rgba(15, 23, 42, 0.95); color: #fff; border: 1px solid rgba(56, 189, 248, 0.45); backdrop-filter: blur(12px); display: flex; gap: 0.7rem; align-items: center; font-size: 0.92rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.3s ease;';
+            t.innerHTML = `<i class="fa-solid fa-${icon}" style="color: #38bdf8; font-size: 1.1rem;"></i> <span>${msg}</span>`;
+            container.appendChild(t);
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateY(12px)';
+                setTimeout(() => t.remove(), 350);
+            }, 3200);
+        };
+
         // API Base URL Resolver
         const getSafetyApiBase = () => {
             if (window.TransitBackendAPI && typeof TransitBackendAPI.getBaseUrl === 'function') {
@@ -1100,34 +1126,60 @@
 
         function getLiveTrackingShareUrl() {
             const select = document.getElementById('share-route-select');
-            const routeCode = (select?.value || '507').split(' ')[0];
+            let routeCode = '507';
+            if (select && select.value) {
+                const val = select.value.trim();
+                const match = val.match(/^([A-Za-z0-9\-]+)/);
+                if (match && match[1]) routeCode = match[1];
+            }
             const city = localStorage.getItem('spt-city') || 'Delhi';
             
-            let base = window.location.href.split('?')[0].replace('safety.html', 'tracking.html');
-            if (!base.includes('tracking.html')) {
-                base = window.location.origin && window.location.origin !== 'null' 
-                    ? `${window.location.origin}/tracking.html` 
-                    : 'tracking.html';
+            let fullUrl = '';
+            if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                const path = window.location.pathname.replace(/safety\.html.*$/i, '');
+                fullUrl = `${window.location.origin}${path}tracking.html?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
+            } else {
+                fullUrl = `tracking.html?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
             }
-            return `${base}?route=${encodeURIComponent(routeCode)}&city=${encodeURIComponent(city)}&live_share=true&sos_beacon=SAFE`;
+            return fullUrl;
         }
 
         function updateSharePreview() {
             const preview = document.getElementById('share-preview-url');
-            if (!preview) return;
+            const previewText = document.getElementById('share-preview-text');
             const url = getLiveTrackingShareUrl();
-            preview.textContent = url;
-            preview.href = url;
+            if (preview) {
+                preview.href = url;
+            }
+            if (previewText) {
+                previewText.textContent = url;
+            } else if (preview) {
+                preview.textContent = url;
+            }
         }
 
         function shareOnWhatsApp() {
             const select = document.getElementById('share-route-select');
-            const routeName = select?.value || 'Route 507';
+            let routeName = select?.options[select.selectedIndex]?.text || select?.value || 'Route 507';
+            routeName = routeName.replace(/\s+/g, ' ').trim();
             const city = localStorage.getItem('spt-city') || 'Delhi';
             const url = getLiveTrackingShareUrl();
-            const text = encodeURIComponent(`🚨 Transit.IN Live Ride Tracking:\nI am traveling on ${routeName} (${city}).\nTrack my vehicle location and ETA live here:\n${url}\n(Transit.IN 24/7 Safety Shield Active)`);
-            window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-            if (window.toast) window.toast('Opening WhatsApp with your live ride beacon!', 'circle-check');
+            const text = `🚨 Transit.IN Live Ride Tracking:\nI am traveling on ${routeName} (${city}).\nTrack my route and live vehicle ETA here:\n${url}\n(Transit.IN 24/7 Safety Shield Active)`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).catch(() => {});
+            }
+
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const waUrl = isMobile 
+                ? `whatsapp://send?text=${encodeURIComponent(text)}`
+                : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+            const win = window.open(waUrl, '_blank');
+            if (!win) {
+                window.location.href = waUrl;
+            }
+            window.toast('Opening WhatsApp with your live ride beacon!', 'circle-check');
         }
 
         function copyLiveShareLink() {
@@ -1137,7 +1189,7 @@
             const notifyCopied = () => {
                 if (copyBtn) {
                     const originalHtml = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied Live Link!';
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #10b981;"></i> Copied Live Link!';
                     copyBtn.style.borderColor = 'var(--success-color)';
                     copyBtn.style.color = 'var(--success-color)';
                     setTimeout(() => {
@@ -1146,11 +1198,7 @@
                         copyBtn.style.color = '';
                     }, 2500);
                 }
-                if (window.toast) {
-                    window.toast('Live tracking beacon link copied to clipboard!', 'circle-check');
-                } else {
-                    alert('Live tracking beacon link copied to clipboard!\nYou can paste and send it to your trusted contacts.');
-                }
+                window.toast('Live tracking beacon link copied to clipboard!', 'circle-check');
             };
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1172,26 +1220,32 @@
             textArea.select();
             try {
                 document.execCommand('copy');
-                if (cb) cb();
-            } catch (err) {
-                prompt('Copy live tracking link:', text);
-            }
+            } catch (err) {}
             document.body.removeChild(textArea);
+            if (cb) cb();
         }
 
         function shareViaSMS() {
             const select = document.getElementById('share-route-select');
-            const routeName = select?.value || 'Route 507';
+            let routeName = select?.options[select.selectedIndex]?.text || select?.value || 'Route 507';
+            routeName = routeName.replace(/\s+/g, ' ').trim();
             const city = localStorage.getItem('spt-city') || 'Delhi';
             const url = getLiveTrackingShareUrl();
             const text = `Transit.IN Live Journey: I am riding ${routeName} (${city}). Track my route live: ${url}`;
 
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).catch(() => {});
+            }
+
             const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if (isMobile) {
-                window.location.href = `sms:?body=${encodeURIComponent(text)}`;
+                const separator = /iPad|iPhone|iPod/.test(navigator.userAgent) ? '&' : '?';
+                window.location.href = `sms:${separator}body=${encodeURIComponent(text)}`;
+                window.toast('Opening SMS Messenger with tracking link...', 'comment-sms');
             } else {
                 document.getElementById('sms-preview-text').value = text;
                 openModal('sms-preview-modal');
+                window.toast('SMS text copied to clipboard! Opening SMS dialog...', 'comment-sms');
             }
         }
 
@@ -1199,7 +1253,7 @@
             const textarea = document.getElementById('sms-preview-text');
             textarea.select();
             document.execCommand('copy');
-            alert('SMS text copied to clipboard! You can paste and send it to your contact.');
+            window.toast('SMS text copied to clipboard!', 'circle-check');
             closeModal('sms-preview-modal');
         }
 
@@ -1207,30 +1261,21 @@
         function handleEmergencyContactCall(e) {
             const phone = document.getElementById('safety-contact-phone')?.textContent || '+91 94480 12345';
             const cleanPhone = phone.replace(/[^\d+]/g, '');
+            const name = document.getElementById('safety-contact-name')?.textContent || 'Primary Emergency Contact';
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(cleanPhone).catch(() => {});
             }
 
-            if (window.toast) {
-                window.toast(`Calling ${phone}... (Copied to clipboard)`, 'phone');
-            }
+            window.toast(`Calling ${name} (${phone})... Copied to clipboard!`, 'phone');
 
-            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (!isMobile) {
-                e.preventDefault();
-                const name = document.getElementById('safety-contact-name')?.textContent || 'Ramesh F (Guardian)';
-                document.getElementById('call-modal-contact-name').textContent = name;
-                document.getElementById('call-modal-contact-phone').textContent = phone;
-                document.getElementById('call-modal-tel-link').href = `tel:${cleanPhone}`;
-                openModal('call-contact-modal');
-            }
+            // Do not call e.preventDefault() so browser natively executes tel: link on phone/desktop
         }
 
         function copyContactPhoneNumber() {
             const phone = document.getElementById('call-modal-contact-phone')?.textContent || '+91 94480 12345';
             navigator.clipboard.writeText(phone).then(() => {
-                alert(`Phone number [${phone}] copied to clipboard!`);
+                window.toast(`Phone number [${phone}] copied to clipboard!`, 'circle-check');
             }).catch(() => {
                 prompt('Copy phone number:', phone);
             });
@@ -1254,7 +1299,7 @@
         }
 
         async function saveEmergencyContact(e) {
-            e.preventDefault();
+            if (e && e.preventDefault) e.preventDefault();
             const name = document.getElementById('modal-contact-name').value.trim();
             const phone = document.getElementById('modal-contact-phone').value.trim();
             if (!name || !phone) return;
@@ -1270,6 +1315,12 @@
             profile.emergencyPhone = phone;
             localStorage.setItem('spt-user-profile-data', JSON.stringify(profile));
 
+            let profileGeneral = {};
+            try { profileGeneral = JSON.parse(localStorage.getItem('spt-user-profile')) || {}; } catch(err) {}
+            profileGeneral.emergencyName = name;
+            profileGeneral.emergencyPhone = phone;
+            localStorage.setItem('spt-user-profile', JSON.stringify(profileGeneral));
+
             // Sync with backend API
             const apiBase = getSafetyApiBase();
             try {
@@ -1283,11 +1334,7 @@
             }
 
             closeModal('edit-contact-modal');
-            if (window.toast) {
-                window.toast('Emergency Contact updated successfully!', 'circle-check');
-            } else {
-                alert('Primary emergency contact updated successfully!');
-            }
+            window.toast('Emergency Contact updated successfully!', 'circle-check');
         }
 
         // Toll-Free Helplines Handler & Modal
@@ -1295,24 +1342,22 @@
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(num).catch(() => {});
             }
-            if (window.toast) {
-                window.toast(`Dialing ${num} (${title || 'Emergency Helpline'})...`, 'phone');
+            window.toast(`Dialing ${num} (${title || 'Emergency Helpline'})... Toll-Free`, 'phone');
+
+            if (document.getElementById('helpline-modal-num')) {
+                document.getElementById('helpline-modal-num').textContent = num;
             }
-            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
-                window.location.href = `tel:${num}`;
-                return;
+            if (document.getElementById('helpline-modal-title')) {
+                document.getElementById('helpline-modal-title').textContent = title || ('Helpline ' + num);
             }
-            if (event && event.preventDefault) {
-                event.preventDefault();
-            }
-            document.getElementById('helpline-modal-num').textContent = num;
-            document.getElementById('helpline-modal-title').textContent = title || ('Helpline ' + num);
             if (desc && document.getElementById('helpline-modal-desc')) {
                 document.getElementById('helpline-modal-desc').textContent = desc;
             }
-            document.getElementById('helpline-modal-dial-btn').href = `tel:${num}`;
-            openModal('helpline-modal');
+            if (document.getElementById('helpline-modal-dial-btn')) {
+                document.getElementById('helpline-modal-dial-btn').href = `tel:${num}`;
+            }
+
+            // Do not call event.preventDefault() so browser natively executes tel: link on phone/desktop
         }
 
         // Backward compatibility alias
@@ -1323,7 +1368,7 @@
         function copyHelplineNumber() {
             const num = document.getElementById('helpline-modal-num')?.textContent || '112';
             navigator.clipboard.writeText(num).then(() => {
-                alert(`Helpline number [${num}] copied to clipboard!`);
+                window.toast(`Helpline number [${num}] copied to clipboard!`, 'circle-check');
             });
         }
 
@@ -1661,6 +1706,15 @@
                     }
                 } catch(e) {}
             }
+
+            // Close modals when clicking anywhere on backdrop overlay
+            document.querySelectorAll('.safety-modal-overlay').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
         });
     </script>
     <script src="js/onboarding-tour.js" defer></script>
