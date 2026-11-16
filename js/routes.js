@@ -10,9 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentCity = localStorage.getItem('spt-city') || 'Delhi';
     
     // Retrieve all routes using centralized TransitData (includes custom routes from Admin)
-    const routesData = window.TransitData 
+    let routesData = window.TransitData 
         ? window.TransitData.getAllRoutesForCity(currentCity)
         : [];
+
+    // Asynchronously fetch fresh live routes from backend API
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+    fetch(`${API_BASE}/api/routes?city=${encodeURIComponent(currentCity)}`)
+        .then(r => r.json())
+        .then(d => {
+            if (d && d.success && Array.isArray(d.routes) && d.routes.length) {
+                routesData = d.routes;
+                filterAndRender();
+            }
+        })
+        .catch(() => {});
 
     let activeFilter = 'all';
 

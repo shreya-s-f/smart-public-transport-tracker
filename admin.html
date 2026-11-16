@@ -240,18 +240,18 @@
             </div>
         </div>
 
-        <!-- Section 6: Overview KPI Cards (6 Core Metrics) -->
-        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+        <!-- Section 6: Overview KPI Cards (7 Core Metrics - Synchronized with Backend) -->
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
             <!-- KPI 1: Total Passengers -->
             <div class="glass-panel" style="padding: 1.3rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">TOTAL PASSENGERS</span>
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">REGISTERED PASSENGERS</span>
                     <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38BDF8; display: flex; align-items: center; justify-content: center;">
                         <i class="fa-solid fa-users"></i>
                     </div>
                 </div>
-                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-passengers">148,230</div>
-                <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;"><i class="fa-solid fa-arrow-trend-up"></i> +12% this week</div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-passengers">1</div>
+                <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;"><i class="fa-solid fa-circle-check"></i> Verified Accounts</div>
             </div>
 
             <!-- KPI 2: Active Buses -->
@@ -263,7 +263,7 @@
                     </div>
                 </div>
                 <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #38BDF8;" id="stat-admin-buses">84 / 90</div>
-                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;">93.3% Fleet Availability</div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;">Fleet Online</div>
             </div>
 
             <!-- KPI 3: Registered Drivers -->
@@ -274,8 +274,8 @@
                         <i class="fa-solid fa-id-badge"></i>
                     </div>
                 </div>
-                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-drivers">92</div>
-                <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;">78 on active duty shifts</div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-drivers">5</div>
+                <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;">Active Roster</div>
             </div>
 
             <!-- KPI 4: Total Routes -->
@@ -286,7 +286,7 @@
                         <i class="fa-solid fa-route"></i>
                     </div>
                 </div>
-                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-routes">45</div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #FFFFFF;" id="stat-admin-routes">23</div>
                 <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.2rem;">Across 7 Metro Networks</div>
             </div>
 
@@ -310,12 +310,24 @@
                         <i class="fa-solid fa-inbox"></i>
                     </div>
                 </div>
-                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #C4B5FD;" id="stat-admin-complaints">4</div>
-                <div style="font-size: 0.76rem; color: #F59E0B; margin-top: 0.2rem;">Avg. Resolution: 18 mins</div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #C4B5FD;" id="stat-admin-complaints">1</div>
+                <div style="font-size: 0.76rem; color: #F59E0B; margin-top: 0.2rem;">Live Resolution Desk</div>
+            </div>
+
+            <!-- KPI 7: Email Subscribers (Feature Highlight) -->
+            <div class="glass-panel" style="padding: 1.3rem; border-color: rgba(56, 189, 248, 0.4);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                    <span style="font-size: 0.78rem; color: #38BDF8; font-weight: 600;">EMAIL SUBSCRIBERS</span>
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); color: #38BDF8; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-envelope-circle-check"></i>
+                    </div>
+                </div>
+                <div style="font-family: var(--font-futuristic); font-size: 1.7rem; font-weight: 800; color: #38BDF8;" id="stat-admin-subscribers">2</div>
+                <div style="font-size: 0.76rem; color: #34D399; margin-top: 0.2rem;"><i class="fa-solid fa-bell"></i> Receiving Service Alerts</div>
             </div>
         </div>
 
-        <!-- Admin Control Navigation Tabs -->
+        <!-- Admin Control Navigation Tabs (All Sections Storable & Modifiable) -->
         <div style="display: flex; gap: 0.8rem; margin-bottom: 1.8rem; flex-wrap: wrap;">
             <button id="tab-buses" class="admin-tab-btn active" onclick="switchAdminTab('buses')">
                 <i class="fa-solid fa-bus-simple"></i> Fleet &amp; Routes Control
@@ -334,6 +346,12 @@
             </button>
             <button id="tab-cities" class="admin-tab-btn" onclick="switchAdminTab('cities')">
                 <i class="fa-solid fa-city"></i> Operating Cities
+            </button>
+            <button id="tab-subscribers" class="admin-tab-btn" onclick="switchAdminTab('subscribers')" style="border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
+                <i class="fa-solid fa-envelope-open-text"></i> Service Alerts &amp; Subscribers
+            </button>
+            <button id="tab-passengers" class="admin-tab-btn" onclick="switchAdminTab('passengers')">
+                <i class="fa-solid fa-users-gear"></i> Passenger Accounts
             </button>
         </div>
 
@@ -406,7 +424,10 @@
                     <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-wrench" style="color: #F59E0B;"></i> Predictive Fleet Maintenance Telemetry</h2>
                     <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Vehicle health sensors, brake lining wear, battery state-of-charge, and service logs.</p>
                 </div>
-                <button class="btn-secondary-glass" onclick="triggerHealthScan()"><i class="fa-solid fa-rotate"></i> Run Sensor Diagnostic</button>
+                <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                    <button class="btn-primary-gradient" onclick="openAddMaintenanceModal()"><i class="fa-solid fa-plus"></i> Log Maintenance Ticket</button>
+                    <button class="btn-secondary-glass" onclick="triggerHealthScan()"><i class="fa-solid fa-rotate"></i> Run Sensor Diagnostic</button>
+                </div>
             </div>
             <div style="overflow-x: auto;">
                 <table class="admin-table">
@@ -421,42 +442,11 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="admin-maintenance-tbody">
                         <tr>
-                            <td><strong style="color: #38BDF8;">KA-01-F-2024</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">Route 500A (Bengaluru)</span></td>
-                            <td><span class="pill-badge pill-badge-blue">100% Electric</span></td>
-                            <td>
-                                <div class="health-bar-bg"><div class="health-bar-fill" style="width: 14%; background: #34D399;"></div></div>
-                                <span>14%</span>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading fleet maintenance telemetry...
                             </td>
-                            <td><strong style="color: #34D399;">88% SoC (Good)</strong></td>
-                            <td>34 PSI (Normal)</td>
-                            <td><span class="pill-badge pill-badge-green">Optimal Health</span></td>
-                            <td><button type="button" class="btn-secondary-glass" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="logService('KA-01-F-2024')">Log Check</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong style="color: #38BDF8;">DL-01-A-4412</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">Route 507 (Delhi)</span></td>
-                            <td><span class="pill-badge pill-badge-purple">CNG Hybrid</span></td>
-                            <td>
-                                <div class="health-bar-bg"><div class="health-bar-fill" style="width: 48%; background: #F59E0B;"></div></div>
-                                <span>48%</span>
-                            </td>
-                            <td>92°C (Engine Coolant)</td>
-                            <td>33 PSI (Normal)</td>
-                            <td><span class="pill-badge" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">Review at 400km</span></td>
-                            <td><button type="button" class="btn-secondary-glass" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="logService('DL-01-A-4412')">Schedule Oil</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong style="color: #38BDF8;">MH-02-B-9910</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">BEST-301 (Mumbai)</span></td>
-                            <td><span class="pill-badge pill-badge-blue">100% Electric</span></td>
-                            <td>
-                                <div class="health-bar-bg"><div class="health-bar-fill" style="width: 72%; background: #EF4444;"></div></div>
-                                <span>72%</span>
-                            </td>
-                            <td><strong style="color: #F59E0B;">64% SoC</strong></td>
-                            <td><span style="color: #EF4444;">29 PSI (Low)</span></td>
-                            <td><span class="pill-badge" style="background: rgba(239, 68, 68, 0.15); color: #F87171;">Inspection Due</span></td>
-                            <td><button type="button" class="btn-primary-gradient" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="alert('Depot maintenance ticket dispatched for MH-02-B-9910!')">Dispatch Bay</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -470,6 +460,7 @@
                     <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-triangle-exclamation" style="color: #C4B5FD;"></i> Commuter Grievance Resolution Desk</h2>
                     <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Review, investigate, and close passenger grievances submitted via portal or app.</p>
                 </div>
+                <button class="btn-primary-gradient" onclick="openAddComplaintModal()"><i class="fa-solid fa-plus"></i> File Grievance Ticket</button>
             </div>
             <div style="overflow-x: auto;">
                 <table class="admin-table">
@@ -479,26 +470,16 @@
                             <th>Category</th>
                             <th>Route / Bus</th>
                             <th>Description</th>
+                            <th>Priority</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="admin-complaints-tbody">
                         <tr>
-                            <td><strong style="color: #8B5CF6;">TKT-8841</strong></td>
-                            <td><span class="pill-badge pill-badge-blue">Severe Route Delay</span></td>
-                            <td>Route 500A (Bengaluru)</td>
-                            <td>Bus arrived 18 mins late at Marathahalli junction due to flyover construction.</td>
-                            <td><span class="pill-badge" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">Under Review</span></td>
-                            <td><button type="button" class="btn-primary-gradient" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="resolveComplaintRow(this, 'TKT-8841')">Mark Resolved</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong style="color: #8B5CF6;">TKT-4920</strong></td>
-                            <td><span class="pill-badge pill-badge-purple">Cleanliness Defect</span></td>
-                            <td>Route BGK-01 (Bagalkot)</td>
-                            <td>Seat 14 window latch broken and rattling heavily during morning shuttle.</td>
-                            <td><span class="pill-badge pill-badge-blue">Investigating</span></td>
-                            <td><button type="button" class="btn-primary-gradient" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="resolveComplaintRow(this, 'TKT-4920')">Mark Resolved</button></td>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading commuter grievances from database...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -557,6 +538,174 @@
             </div>
             <div id="admin-cities-container" class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem;">
                 <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- TAB 7: SERVICE ALERTS & SUBSCRIBERS -->
+        <div id="section-subscribers" class="glass-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-envelope-open-text" style="color: #38BDF8;"></i> Service Alerts &amp; Inbox Subscribers</h2>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Subscribers enrolled via homepage alerts portal. Manage subscriptions, dispatch route diversions &amp; send instant service notifications.</p>
+                </div>
+                <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                    <button class="btn-primary-gradient" onclick="openBroadcastAlertModal()"><i class="fa-solid fa-bullhorn"></i> Broadcast Service Alert</button>
+                    <button class="btn-secondary-glass" onclick="renderAdminSubscribers()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Subscriber ID &amp; Email</th>
+                            <th>Operating City</th>
+                            <th>Subscribed Date</th>
+                            <th>Alert Preferences</th>
+                            <th>Status</th>
+                            <th>Alerts Sent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-subscribers-tbody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading subscribers from database...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SMTP Delivery Configuration & Outbox Logs -->
+            <div style="margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; flex-wrap: wrap;">
+                <!-- Card 1: SMTP Email Delivery Gateway -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 1.3rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; font-size: 1.05rem; color: #FFFFFF;"><i class="fa-solid fa-server" style="color: #38BDF8;"></i> Live SMTP Mail Delivery Gateway</h3>
+                        <span id="admin-smtp-status-badge" class="pill-badge pill-badge-blue">Checking...</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 1rem 0;">Connect your Gmail or SMTP host to deliver actual service alert emails directly to passenger inboxes.</p>
+                    
+                    <form id="admin-smtp-form" onsubmit="saveAdminSmtpSettings(event); return false;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div>
+                                <label style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">SMTP Host</label>
+                                <input type="text" id="admin-smtp-host" class="search-input" value="smtp.gmail.com" required style="width: 100%; margin-top: 0.25rem; font-size: 0.82rem;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Port &amp; Security</label>
+                                <select id="admin-smtp-port" class="search-input" style="width: 100%; margin-top: 0.25rem; font-size: 0.82rem;">
+                                    <option value="465">465 (SSL / TLS - Gmail Default)</option>
+                                    <option value="587">587 (STARTTLS)</option>
+                                    <option value="25">25 (Unencrypted)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div>
+                                <label style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">Sender Email / Username</label>
+                                <input type="email" id="admin-smtp-user" class="search-input" placeholder="you@gmail.com" style="width: 100%; margin-top: 0.25rem; font-size: 0.82rem;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">App Password (16 chars)</label>
+                                <input type="password" id="admin-smtp-pass" class="search-input" placeholder="Google App Password" style="width: 100%; margin-top: 0.25rem; font-size: 0.82rem;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;">From Name / Brand</label>
+                            <input type="text" id="admin-smtp-fromname" class="search-input" value="Transit.IN Service Alerts" style="width: 100%; margin-top: 0.25rem; font-size: 0.82rem;">
+                        </div>
+
+                        <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                            <button type="submit" class="btn-primary-gradient" style="padding: 0.45rem 1rem; font-size: 0.82rem;">
+                                <i class="fa-solid fa-floppy-disk"></i> Save SMTP Settings
+                            </button>
+                            <button type="button" class="btn-secondary-glass" onclick="sendAdminTestEmail()" style="padding: 0.45rem 1rem; font-size: 0.82rem; color: #38BDF8;">
+                                <i class="fa-solid fa-paper-plane"></i> Send Test Email
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Card 2: Quick Delivery Overview & EmailJS -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.3rem; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.05rem; color: #FFFFFF;"><i class="fa-solid fa-shield-halved" style="color: #34D399;"></i> Real Email Delivery Instructions</h3>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 0.8rem 0;">
+                            When passengers enter their email into the homepage subscription box, the backend generates a real-time service alert bulletin.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.25); border-radius: 8px; padding: 0.8rem; font-size: 0.78rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 0.8rem;">
+                            <div><strong>1. Free Gmail Setup:</strong> Enable 2-Step Verification ➔ Generate a 16-char App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color: #38BDF8; text-decoration: underline;">Google App Passwords</a>.</div>
+                            <div><strong>2. Automatic Outbox:</strong> If SMTP is not yet entered, emails are staged into the Outbox with full HTML previews for inspection.</div>
+                            <div><strong>3. Direct Alerts:</strong> Broadcast alerts will email all registered commuters in the selected region automatically.</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.6rem; align-items: center;">
+                        <button class="btn-secondary-glass" onclick="renderAdminEmailOutbox()" style="padding: 0.45rem 1rem; font-size: 0.82rem; width: 100%;">
+                            <i class="fa-solid fa-rotate"></i> Refresh Outbox Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outbox Logs Table -->
+            <div style="margin-top: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <h3 style="margin: 0; font-size: 1.15rem; color: #FFFFFF;"><i class="fa-solid fa-inbox" style="color: #38BDF8;"></i> Dispatched Email Outbox &amp; Delivery History</h3>
+                    <span id="outbox-count-badge" class="pill-badge pill-badge-blue">0 sent</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Outbox ID</th>
+                                <th>Recipient Email</th>
+                                <th>Subject</th>
+                                <th>Metro City</th>
+                                <th>Delivery Status</th>
+                                <th>Dispatched Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-email-outbox-tbody">
+                            <tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Loading email logs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 8: PASSENGER ACCOUNTS MANAGEMENT -->
+        <div id="section-passengers" class="glass-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0 0 0.25rem 0; font-size: 1.35rem; color: #FFFFFF;"><i class="fa-solid fa-users-gear" style="color: #8B5CF6;"></i> Verified Passenger Accounts</h2>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Registered commuter identities, contact phone, operating city, and user roles.</p>
+                </div>
+                <button class="btn-primary-gradient" onclick="openAddPassengerModal()"><i class="fa-solid fa-user-plus"></i> Register Passenger</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Passenger Name</th>
+                            <th>Email Address</th>
+                            <th>Phone Contact</th>
+                            <th>Metro City</th>
+                            <th>Commuter Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-passengers-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading passenger accounts...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -782,6 +931,250 @@
         </div>
     </div>
 
+    <!-- Modal 5: Broadcast Service Alert to Subscribers -->
+    <div id="broadcast-alert-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-bullhorn" style="color: #38BDF8;"></i> Broadcast Live Service Alert</h3>
+                <button onclick="closeBroadcastAlertModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="broadcast-alert-form" onsubmit="broadcastServiceAlert(event); return false;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Target Metro Network</label>
+                        <select id="alert-city-select" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="All Cities">All Operating Cities</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Bangalore">Bangalore</option>
+                            <option value="Bagalkot">Bagalkot</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Chennai">Chennai</option>
+                            <option value="Pune">Pune</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Alert Type</label>
+                        <select id="alert-type-select" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="diversion">Route Diversion / Road Work</option>
+                            <option value="traffic">Traffic Bottleneck / Congestion</option>
+                            <option value="weather">Weather &amp; Waterlogging Warning</option>
+                            <option value="breakdown">Fleet Maintenance / Delay</option>
+                            <option value="info">General Advisory / Schedule Change</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Affected Route / Corridor</label>
+                    <input type="text" id="alert-route-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Route 500D, 507, Airport Express, or All Network" required>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Alert Headline</label>
+                    <input type="text" id="alert-title-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Heavy Rain Diversion on Outer Ring Road" required>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Detailed Advisory Message</label>
+                    <textarea id="alert-msg-input" class="search-input" style="width: 100%; height: 80px; margin-top: 0.3rem; resize: none;" placeholder="Explain diversion path, expected delay, and guidance for passengers..." required></textarea>
+                </div>
+
+                <div style="margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; background: rgba(56, 189, 248, 0.1); padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                    <input type="checkbox" id="alert-send-email-cb" checked style="width: 18px; height: 18px; accent-color: #38bdf8; cursor: pointer;">
+                    <label for="alert-send-email-cb" style="font-size: 0.82rem; color: #FFFFFF; cursor: pointer; font-weight: 500;">
+                        <i class="fa-solid fa-paper-plane" style="color: #38bdf8; margin-right: 0.3rem;"></i> Dispatch real email bulletins to all matching subscribers
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%);">
+                    <i class="fa-solid fa-bullhorn"></i> Dispatch Alert to All Subscriber Inboxes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 6: Passenger Account Modal -->
+    <div id="passenger-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 id="passenger-modal-title" style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-user-plus" style="color: #8B5CF6;"></i> Register Passenger Account</h3>
+                <button onclick="closePassengerModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="passenger-form" onsubmit="savePassenger(event); return false;">
+                <input type="hidden" id="pass-edit-mode" value="false">
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Full Name</label>
+                    <input type="text" id="pass-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. Aditya Verma" required>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Email Address</label>
+                    <input type="email" id="pass-email-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="aditya@example.com" required>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Phone Contact</label>
+                        <input type="text" id="pass-phone-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Operating Metro</label>
+                        <select id="pass-city-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Commuter Role / User Type</label>
+                    <select id="pass-role-input" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                        <option value="Daily Commuter">Daily Commuter</option>
+                        <option value="Student Pass Holder">Student Pass Holder</option>
+                        <option value="Senior Citizen">Senior Citizen</option>
+                        <option value="Corporate Fleet">Corporate Fleet</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-floppy-disk"></i> Save Passenger Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 7: Schedule Fleet Maintenance Modal -->
+    <div id="maintenance-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-wrench" style="color: #F59E0B;"></i> Log Fleet Maintenance Ticket</h3>
+                <button onclick="closeAddMaintenanceModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="maintenance-form" onsubmit="saveMaintenance(event); return false;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Vehicle Registration</label>
+                        <input type="text" id="maint-bus-id" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="e.g. KA-01-FA-4421" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Assigned Route</label>
+                        <input type="text" id="maint-route" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="Route 500D (Bengaluru)" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Propulsion Type</label>
+                        <select id="maint-propulsion" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                            <option value="100% Electric">100% Electric</option>
+                            <option value="CNG Hybrid">CNG Hybrid</option>
+                            <option value="Diesel BS-VI">Diesel BS-VI</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Brake Pad Wear (%)</label>
+                        <input type="number" id="maint-wear" class="search-input" style="width: 100%; margin-top: 0.3rem;" value="20" min="0" max="100" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Battery / Coolant Status</label>
+                        <input type="text" id="maint-battery" class="search-input" style="width: 100%; margin-top: 0.3rem;" value="88% SoC (Good)">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Tire Pressure</label>
+                        <input type="text" id="maint-tire" class="search-input" style="width: 100%; margin-top: 0.3rem;" value="34 PSI (Normal)">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Health Evaluation</label>
+                    <select id="maint-status" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                        <option value="Optimal Health">Optimal Health</option>
+                        <option value="Review at 400km">Review at 400km</option>
+                        <option value="Inspection Due">Inspection Due</option>
+                        <option value="Depot Service Bay">Depot Service Bay</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-floppy-disk"></i> Save Vehicle Record</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 8: File Grievance Ticket Modal -->
+    <div id="complaint-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; color: #FFFFFF; font-family: var(--font-heading);"><i class="fa-solid fa-triangle-exclamation" style="color: #C4B5FD;"></i> File Grievance Ticket</h3>
+                <button onclick="closeAddComplaintModal()" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="complaint-form" onsubmit="saveComplaint(event); return false;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Commuter Name</label>
+                        <input type="text" id="cmp-name-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="Shreya F" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Grievance Category</label>
+                        <select id="cmp-category-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" required>
+                            <option value="Severe Route Delay">Severe Route Delay</option>
+                            <option value="AC Temperature">AC Temperature / Comfort</option>
+                            <option value="Rash Driving">Rash Driving / Safety Risk</option>
+                            <option value="Cleanliness Defect">Cleanliness Defect</option>
+                            <option value="Ticketing / Fare Error">Ticketing / Fare Error</option>
+                            <option value="General Grievance">General Grievance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Bus Plate / Route</label>
+                        <input type="text" id="cmp-bus-input" class="search-input" style="width: 100%; margin-top: 0.3rem;" placeholder="Route 500D (KA-01-FA-4421)" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Priority</label>
+                        <select id="cmp-priority-input" class="search-input" style="width: 100%; margin-top: 0.3rem;">
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Detailed Grievance Description</label>
+                    <textarea id="cmp-notes-input" class="search-input" style="width: 100%; height: 75px; margin-top: 0.3rem; resize: none;" placeholder="Details about what occurred on the transit corridor..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary-gradient" style="width: 100%; padding: 0.75rem;"><i class="fa-solid fa-floppy-disk"></i> Register Grievance Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 8: Admin Email Outbox Inspection Modal -->
+    <div id="admin-email-preview-modal" class="modal-overlay">
+        <div class="modal-box animate-fade-in-up" style="max-width: 680px; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.8rem;">
+                <h3 style="margin: 0; color: #FFFFFF;"><i class="fa-solid fa-envelope-open-text" style="color: #38BDF8;"></i> Dispatched Email Inspection</h3>
+                <button onclick="closeModal('admin-email-preview-modal')" style="background: none; border: none; font-size: 1.2rem; color: var(--text-secondary); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="admin-email-meta-info" style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.8rem; background: rgba(0,0,0,0.25); padding: 0.8rem; border-radius: 8px;"></div>
+            <div style="border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #ffffff;">
+                <iframe id="admin-email-frame" style="width: 100%; height: 380px; border: none; display: block;"></iframe>
+            </div>
+            <div style="margin-top: 1rem; text-align: right;">
+                <button class="btn-primary-gradient" onclick="closeModal('admin-email-preview-modal')" style="padding: 0.45rem 1.2rem; font-size: 0.82rem;">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="saas-footer" style="margin-top: 4rem;">
         <div class="footer-bottom-bar" style="border: none; padding: 0;">
@@ -799,28 +1192,13 @@
     <script src="js/backend-api.js"></script>
     <script src="js/admin.js?v=8"></script>
     <script>
-        function triggerHealthScan() {
-            alert('Sensor diagnostics initialized across 84 onboard units. All CAN bus telematics reported healthy.');
-        }
-
         function logService(vehId) {
-            alert(`Service log updated for vehicle ${vehId}. Scheduled inspection timestamp recorded.`);
+            if (window.logServiceAction) window.logServiceAction(vehId, 'Log Check');
+            else showAdminToast(`Service check recorded for ${vehId}`);
         }
 
         function resolveComplaintRow(btn, tktId) {
-            const row = btn.closest('tr');
-            if (row) {
-                row.style.opacity = '0.4';
-                btn.textContent = 'Resolved';
-                btn.disabled = true;
-                btn.classList.remove('btn-primary-gradient');
-                btn.classList.add('btn-secondary-glass');
-            }
-            alert(`Complaint [${tktId}] marked RESOLVED and closed in the central database.`);
-        }
-
-        function exportAdminAuditLog() {
-            alert('Generating encrypted fleet audit report (CSV / PDF)... Download starting.');
+            if (window.updateComplaintStatus) window.updateComplaintStatus(tktId, 'Resolved');
         }
     </script>
 <script src="js/onboarding-tour.js" defer></script>

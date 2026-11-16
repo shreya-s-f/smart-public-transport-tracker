@@ -226,7 +226,7 @@
       "commuter": "Shreya F",
       "category": "AC Temperature",
       "busNumber": "KA-01-FA-4421",
-      "status": "In Review",
+      "status": "Resolved",
       "priority": "Medium",
       "timestamp": "2026-11-02 11:20 AM",
       "notes": "Cabin temperature reported warm on Route 500D."
@@ -309,6 +309,28 @@
     }
   ],
   "maintenance": [
+    {
+      "busId": "DL-01-A-4412",
+      "route": "Corridor Route",
+      "wear": 10,
+      "status": "Optimal Health",
+      "propulsion": "Electric AC",
+      "battery": "100% Diagnostic Passed",
+      "tirePressure": "34 PSI (Normal)",
+      "lastService": "2026-11-13",
+      "nextService": "In 30 days"
+    },
+    {
+      "busId": "KA-01-F-2024",
+      "route": "Corridor Route",
+      "wear": 10,
+      "status": "Optimal Health",
+      "propulsion": "Electric AC",
+      "battery": "100% Diagnostic Passed",
+      "tirePressure": "34 PSI (Normal)",
+      "lastService": "2026-11-13",
+      "nextService": "In 30 days"
+    },
     {
       "busId": "KA-01-FA-4421",
       "route": "500D",
@@ -900,5 +922,190 @@
       "authority": "PMPML Rainbow BRTS",
       "fareBase": "₹15"
     }
-  ]
+  ],
+  "subscribers": [
+    {
+      "id": "SUB-5348",
+      "email": "passenger.alerts@example.com",
+      "city": "Bengaluru",
+      "status": "Active",
+      "subscribedAt": "13 Nov 2026, 02:46 pm",
+      "preferences": {
+        "delays": true,
+        "diversions": true,
+        "newRoutes": true,
+        "weather": true
+      },
+      "notificationsCount": 2
+    },
+    {
+      "id": "SUB-1001",
+      "email": "shreya.f@example.com",
+      "city": "Bengaluru",
+      "status": "Active",
+      "subscribedAt": "2026-11-05 10:30 AM",
+      "preferences": {
+        "delays": true,
+        "diversions": true,
+        "newRoutes": true,
+        "weather": true
+      },
+      "notificationsCount": 4
+    },
+    {
+      "id": "SUB-1002",
+      "email": "commuter.delhi@example.com",
+      "city": "Delhi",
+      "status": "Active",
+      "subscribedAt": "2026-11-06 02:15 PM",
+      "preferences": {
+        "delays": true,
+        "diversions": true,
+        "newRoutes": true,
+        "weather": false
+      },
+      "notificationsCount": 3
+    }
+  ],
+  "alerts": [
+    {
+      "id": "ALT-7683",
+      "type": "diversion",
+      "title": "Ring Road Diversion",
+      "message": "Flyover maintenance in progress, please use service lane",
+      "city": "Delhi",
+      "route": "507",
+      "time": "Just now",
+      "reportedAt": "2026-11-13T09:26:37.683Z"
+    },
+    {
+      "id": "ALT-5452",
+      "type": "diversion",
+      "title": "Route Diversion Alert",
+      "message": "Flyover maintenance in progress",
+      "city": "Bengaluru",
+      "route": "500D",
+      "time": "Just now",
+      "reportedAt": "2026-11-13T09:16:55.452Z"
+    },
+    {
+      "id": "ALT-901",
+      "type": "diversion",
+      "title": "Route Diversion: Outer Ring Road Flyover",
+      "message": "Route 500D diverted via Silk Board service lane due to metro expansion work.",
+      "city": "Bangalore",
+      "route": "500D",
+      "time": "10 min ago",
+      "reportedAt": "2026-11-13T09:16:16.523Z"
+    },
+    {
+      "id": "ALT-902",
+      "type": "traffic",
+      "title": "Peak Hour Delay on Ring Road",
+      "message": "Corridor 507 experiencing 12-minute traffic slow-down near Moolchand underpass.",
+      "city": "Delhi",
+      "route": "507",
+      "time": "25 min ago",
+      "reportedAt": "2026-11-13T09:16:16.535Z"
+    },
+    {
+      "id": "ALT-903",
+      "type": "weather",
+      "title": "Monsoon Road Visibility Alert",
+      "message": "Passing coastal rain showers on Western Express Highway; bus speeds capped at 40 km/h.",
+      "city": "Mumbai",
+      "route": "BEST-301",
+      "time": "1 hour ago",
+      "reportedAt": "2026-11-13T09:16:16.535Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "NOTIF-7684-72",
+      "subscriberEmail": "commuter.delhi@example.com",
+      "city": "Delhi",
+      "type": "diversion",
+      "title": "Ring Road Diversion",
+      "message": "Flyover maintenance in progress, please use service lane",
+      "route": "507",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:26:37.684Z",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-7684-62",
+      "subscriberEmail": "commuter.test@transit.in",
+      "city": "Delhi",
+      "type": "diversion",
+      "title": "Ring Road Diversion",
+      "message": "Flyover maintenance in progress, please use service lane",
+      "route": "507",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:26:37.684Z",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-97673",
+      "subscriberEmail": "commuter.test@transit.in",
+      "city": "Delhi",
+      "type": "info",
+      "title": "Service Alerts Activated",
+      "message": "Welcome! Real-time alerts for delays, route diversions, and transit updates in Delhi are now active.",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:26:37.673Z",
+      "route": "All Corridors",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-5452-98",
+      "subscriberEmail": "shreya.f@example.com",
+      "city": "Bengaluru",
+      "type": "diversion",
+      "title": "Route Diversion Alert",
+      "message": "Flyover maintenance in progress",
+      "route": "500D",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:16:55.452Z",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-5452-33",
+      "subscriberEmail": "passenger.alerts@example.com",
+      "city": "Bengaluru",
+      "type": "diversion",
+      "title": "Route Diversion Alert",
+      "message": "Flyover maintenance in progress",
+      "route": "500D",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:16:55.452Z",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-15441",
+      "subscriberEmail": "passenger.alerts@example.com",
+      "city": "Bengaluru",
+      "type": "info",
+      "title": "Service Alerts Activated",
+      "message": "Welcome! Real-time alerts for delays, route diversions, and transit updates in Bengaluru are now active.",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:16:55.441Z",
+      "route": "All Corridors",
+      "delivered": true
+    },
+    {
+      "id": "NOTIF-1",
+      "subscriberEmail": "shreya.f@example.com",
+      "city": "Bengaluru",
+      "type": "info",
+      "title": "Welcome to Transit.IN Service Alerts!",
+      "message": "You are now subscribed to real-time delay warnings, route diversions, and transit advisories for Bengaluru.",
+      "time": "Just now",
+      "timestamp": "2026-11-13T09:16:16.535Z",
+      "route": "All Corridors",
+      "delivered": true
+    }
+  ],
+  "sos": [],
+  "tickets": [],
+  "sentEmails": []
 }

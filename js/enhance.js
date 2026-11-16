@@ -75,7 +75,10 @@ const html = `
 <h2 class="sec-title rv"><i class="fa-solid fa-circle-question" style="color:var(--ac)"></i> Quick answers</h2>
 <div class="faq rv">${faq.map(f => `<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</div>
 <div class="cta rv"><h2 style="margin:0 0 .4rem">Get service alerts in your inbox</h2><p style="margin:0;color:var(--text-secondary)">Delays, diversions and new routes for your city. No spam.</p>
-<form id="news"><input type="email" required placeholder="you@example.com" aria-label="Email"><button class="btn-primary" type="submit">Subscribe</button></form></div>`;
+<form id="news"><input type="email" required placeholder="you@example.com" aria-label="Email"><button class="btn-primary" type="submit">Subscribe</button></form>
+<div style="margin-top: 0.65rem; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">
+    <i class="fa-solid fa-bell" style="color: #38bdf8;"></i> Real-time alerts delivered to Outbox &amp; Email • <a href="javascript:void(0)" id="view-email-preview-link" style="color: #38bdf8; text-decoration: underline; font-weight: 500;"><i class="fa-solid fa-envelope-open-text"></i> View Dispatched Email &amp; SMTP Settings</a>
+</div></div>`;
 main.append(el('<div id="extra"></div>'));
 $('#extra').innerHTML = html;
 
@@ -92,7 +95,386 @@ const calc = () => {
 $('#fare-km').oninput = calc;
 $$('.mode-tabs button').forEach(b => b.onclick = () => { $$('.mode-tabs button').forEach(x => x.classList.remove('on')); b.classList.add('on'); m = b.dataset.m; calc(); });
 calc();
-$('#news').onsubmit = e => { e.preventDefault(); e.target.reset(); toast('Subscribed. Alerts are on.', 'bell'); };
+/* newsletter subscription -> backend persistence and instant notification delivery */
+const newsForm = $('#news');
+let lastSubscriptionEmailData = null;
+
+if (newsForm) {
+  newsForm.onsubmit = async e => {
+    e.preventDefault();
+    const input = $('input[type="email"]', newsForm);
+    const email = input ? input.value.trim() : '';
+    if (!email) return;
+
+    const btn = $('button[type="submit"]', newsForm);
+    const origText = btn ? btn.innerHTML : 'Subscribe';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane fa-bounce"></i> Sending alert...';
+    }
+
+    const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+    const API = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+
+    try {
+      const res = await fetch(`${API}/api/newsletter/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, city: currentCity })
+      });
+      const data = await res.json();
+
+      if (data && data.success) {
+        lastSubscriptionEmailData = data;
+        localStorage.setItem('spt-subscriber-email', email);
+        localStorage.setItem('spt-subscriber-active', 'true');
+
+        // Store notification locally for immediate visibility across tabs & pages
+        const notif = data.welcomeNotification || {
+          type: 'info',
+          title: 'Welcome to Transit.IN Service Alerts!',
+          message: `Live service alerts, diversions & transit updates are now active for ${email}.`,
+          time: 'Just now',
+          route: 'All Corridors'
+        };
+        let notifs = [];
+        try { notifs = JSON.parse(localStorage.getItem(`spt-crowdsourced-${currentCity}`)) || []; } catch(e){}
+        notifs.unshift(notif);
+        localStorage.setItem(`spt-crowdsourced-${currentCity}`, JSON.stringify(notifs));
+
+        if (data.emailSent) {
+          toast(`Welcome alert sent to ${email}! Check your inbox.`, 'envelope-circle-check');
+        } else {
+          toast(`Alerts activated! Staged in Outbox for ${email}`, 'bell');
+        }
+
+        if (btn) {
+          btn.style.background = '#10b981';
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Subscribed!';
+        }
+        input.value = '';
+
+        // Open Email Notification & Delivery Hub Modal
+        openEmailHubModal(email, data);
+
+        setTimeout(() => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+            btn.style.background = '';
+          }
+        }, 3500);
+      } else {
+        toast((data && data.error) || 'Could not subscribe. Please try again.', 'circle-exclamation');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      }
+    } catch(err) {
+      console.warn('Backend subscribe offline fallback:', err);
+      localStorage.setItem('spt-subscriber-email', email);
+      toast(`Alerts activated for ${email}!`, 'bell');
+      openEmailHubModal(email, {
+        emailSent: false,
+        emailPreview: {
+          to: email,
+          subject: `🚦 Transit.IN Service Alerts Activated - ${currentCity}`,
+          html: `<div style="font-family: sans-serif; padding: 20px;"><h3>Transit.IN Service Alerts Activated</h3><p>Service alerts registered for <strong>${email}</strong> in <strong>${currentCity}</strong>.</p></div>`
+        }
+      });
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }
+  };
+}
+
+// Bind "View Dispatched Email & SMTP Settings" link
+const viewEmailLink = document.getElementById('view-email-preview-link');
+if (viewEmailLink) {
+    viewEmailLink.onclick = async () => {
+        const storedEmail = localStorage.getItem('spt-subscriber-email') || 'you@example.com';
+        if (lastSubscriptionEmailData) {
+            openEmailHubModal(storedEmail, lastSubscriptionEmailData);
+        } else {
+            const API = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+            try {
+                const res = await fetch(`${API}/api/email/outbox?limit=1&email=${encodeURIComponent(storedEmail)}`);
+                const data = await res.json();
+                if (data && data.success && data.data && data.data.length > 0) {
+                    const latest = data.data[0];
+                    openEmailHubModal(latest.to || storedEmail, {
+                        emailSent: latest.delivered,
+                        emailPreview: latest
+                    });
+                    return;
+                }
+            } catch(e) {}
+            openEmailHubModal(storedEmail, null);
+        }
+    };
+}
+
+/* Email Notification & Delivery Hub Modal */
+function openEmailHubModal(email, emailData) {
+    let modal = document.getElementById('transit-email-hub-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'transit-email-hub-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); padding: 1.5rem;';
+        document.body.appendChild(modal);
+    }
+
+    const currentCity = localStorage.getItem('spt-city') || 'Delhi';
+    const recipientEmail = email || localStorage.getItem('spt-subscriber-email') || 'you@example.com';
+    const emailSent = emailData && emailData.emailSent;
+    const emailPreviewHtml = (emailData && emailData.emailPreview && emailData.emailPreview.html) 
+        ? emailData.emailPreview.html 
+        : `<div style="padding: 2.5rem; text-align: center; font-family: sans-serif; color: #475569;">
+            <h3 style="color: #0f172a; margin-top: 0;">Transit.IN Service Alerts</h3>
+            <p>Real-time transit delay notices, diversions, and network alerts are registered for <strong>${recipientEmail}</strong> in <strong>${currentCity}</strong>.</p>
+            <p style="color: #94a3b8; font-size: 13px;">To deliver directly to your real Gmail inbox, use the "Connect Gmail / SMTP" tab above.</p>
+           </div>`;
+    const emailSubject = (emailData && emailData.emailPreview && emailData.emailPreview.subject)
+        ? emailData.emailPreview.subject
+        : `🚦 Transit.IN Service Alerts Activated - ${currentCity}`;
+
+    modal.innerHTML = `
+        <div style="background: #1e293b; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; max-width: 760px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+            <!-- Modal Header -->
+            <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.6);">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #ffffff;">Transit.IN Service Alert Email Notification</h3>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Real-Time Alert Dispatcher &amp; Outbox Hub</div>
+                    </div>
+                </div>
+                <button id="close-email-hub-modal" style="background: transparent; border: none; color: #94a3b8; font-size: 1.3rem; cursor: pointer; padding: 0.2rem 0.5rem;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Status Banner -->
+            <div style="padding: 1rem 1.5rem 0.5rem 1.5rem;">
+                ${emailSent ? `
+                    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 10px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.8rem;">
+                        <i class="fa-solid fa-circle-check" style="color: #34d399; font-size: 1.3rem;"></i>
+                        <div>
+                            <strong style="color: #ffffff; font-size: 0.88rem;">Live SMTP Email Dispatched to: <span style="color: #34d399;">${recipientEmail}</span></strong>
+                            <div style="font-size: 0.78rem; color: #a7f3d0;">A real transit alert was transmitted directly to your email inbox! Please check your inbox or spam folder.</div>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.8rem;">
+                        <i class="fa-solid fa-inbox" style="color: #38bdf8; font-size: 1.3rem;"></i>
+                        <div>
+                            <strong style="color: #ffffff; font-size: 0.88rem;">Service Alert Email Generated &amp; Saved to Outbox</strong>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Delivered to Transit.IN Outbox for <span style="color: #38bdf8;">${recipientEmail}</span>. Below is your rendered live email. You can also connect Gmail / SMTP to forward future alerts straight to your personal inbox.</div>
+                        </div>
+                    </div>
+                `}
+            </div>
+
+            <!-- Tab Switcher -->
+            <div style="display: flex; gap: 0.5rem; padding: 0.8rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <button id="email-tab-preview" style="padding: 0.4rem 0.9rem; border-radius: 8px; border: 1px solid #38bdf8; background: rgba(56, 189, 248, 0.2); color: #ffffff; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-envelope"></i> Dispatched Email Preview
+                </button>
+                <button id="email-tab-setup" style="padding: 0.4rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: #94a3b8; font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-gear"></i> Connect Gmail / SMTP
+                </button>
+            </div>
+
+            <!-- Content Area (Scrollable) -->
+            <div style="flex: 1; overflow-y: auto; padding: 1.2rem 1.5rem;">
+                <!-- Pane 1: Preview -->
+                <div id="email-pane-preview">
+                    <!-- Envelope details -->
+                    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.82rem; line-height: 1.6;">
+                        <div style="color: #94a3b8;"><strong>From:</strong> Transit.IN Service Alerts &lt;alerts@transit.in&gt;</div>
+                        <div style="color: #94a3b8;"><strong>To:</strong> <span style="color: #38bdf8;">${recipientEmail}</span></div>
+                        <div style="color: #94a3b8;"><strong>Subject:</strong> <span style="color: #ffffff;">${emailSubject}</span></div>
+                        <div style="color: #94a3b8;"><strong>Status:</strong> ${emailSent ? '<span style="color: #34d399;">✓ Delivered via SMTP</span>' : '<span style="color: #fbbf24;">✓ Staged in Outbox</span>'}</div>
+                    </div>
+
+                    <!-- Email HTML iframe rendering -->
+                    <div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); background: #ffffff;">
+                        <iframe id="email-html-frame" style="width: 100%; height: 380px; border: none; display: block;"></iframe>
+                    </div>
+                </div>
+
+                <!-- Pane 2: SMTP Setup -->
+                <div id="email-pane-setup" style="display: none;">
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 10px; padding: 1.2rem; margin-bottom: 1.2rem;">
+                        <h4 style="margin: 0 0 0.4rem 0; color: #38bdf8; font-size: 0.95rem;"><i class="fa-solid fa-paper-plane"></i> Want real emails in your personal inbox?</h4>
+                        <p style="margin: 0 0 0.8rem 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">
+                            Transit.IN supports zero-config SMTP sending via your own Gmail or any mail server.
+                            For Gmail, simply generate a free 16-character <strong>App Password</strong> in your Google Account:
+                        </p>
+                        <ol style="margin: 0 0 1rem 0; padding-left: 1.2rem; font-size: 0.8rem; color: #94a3b8; line-height: 1.6;">
+                            <li>Go to <strong>Google Account</strong> (myaccount.google.com) ➔ <strong>Security</strong>.</li>
+                            <li>Ensure <strong>2-Step Verification</strong> is ON, then search for <strong>App Passwords</strong>.</li>
+                            <li>Create an app named <em>Transit.IN</em> and paste the 16-character code below:</li>
+                        </ol>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.3rem;">Your Gmail / Sender Address</label>
+                                <input type="email" id="modal-smtp-user" placeholder="yourname@gmail.com" value="${recipientEmail.includes('@') ? recipientEmail : ''}" style="width: 100%; padding: 0.5rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.3rem;">Gmail App Password (16 chars)</label>
+                                <input type="password" id="modal-smtp-pass" placeholder="xxxx xxxx xxxx xxxx" style="width: 100%; padding: 0.5rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                            <button id="modal-save-smtp-btn" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fa-solid fa-floppy-disk"></i> Save &amp; Send Real Test Email
+                            </button>
+                            <span id="modal-smtp-status-text" style="font-size: 0.8rem; color: #94a3b8;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; background: rgba(15, 23, 42, 0.6);">
+                <div style="display: flex; gap: 0.8rem;">
+                    <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" class="btn-secondary-glass" style="padding: 0.45rem 0.9rem; font-size: 0.82rem; text-decoration: none; color: #fff; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-brands fa-google" style="color: #EA4335;"></i> Open Gmail
+                    </a>
+                    <a href="notifications.html" class="btn-secondary-glass" style="padding: 0.45rem 0.9rem; font-size: 0.82rem; text-decoration: none; color: #fff; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-bell"></i> View Alerts Hub
+                    </a>
+                </div>
+                <button id="modal-done-btn" class="btn-primary" style="padding: 0.45rem 1.2rem; font-size: 0.82rem;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const frame = document.getElementById('email-html-frame');
+        if (frame && frame.contentWindow) {
+            frame.contentWindow.document.open();
+            frame.contentWindow.document.write(emailPreviewHtml);
+            frame.contentWindow.document.close();
+        }
+    }, 50);
+
+    const closeBtn = document.getElementById('close-email-hub-modal');
+    const doneBtn = document.getElementById('modal-done-btn');
+    const closeModal = () => { modal.style.display = 'none'; };
+    if (closeBtn) closeBtn.onclick = closeModal;
+    if (doneBtn) doneBtn.onclick = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+    const tabPrev = document.getElementById('email-tab-preview');
+    const tabSetup = document.getElementById('email-tab-setup');
+    const panePrev = document.getElementById('email-pane-preview');
+    const paneSetup = document.getElementById('email-pane-setup');
+
+    if (tabPrev && tabSetup) {
+        tabPrev.onclick = () => {
+            tabPrev.style.border = '1px solid #38bdf8';
+            tabPrev.style.background = 'rgba(56, 189, 248, 0.2)';
+            tabPrev.style.color = '#ffffff';
+            tabSetup.style.border = '1px solid rgba(255,255,255,0.15)';
+            tabSetup.style.background = 'transparent';
+            tabSetup.style.color = '#94a3b8';
+            panePrev.style.display = 'block';
+            paneSetup.style.display = 'none';
+        };
+
+        tabSetup.onclick = () => {
+            tabSetup.style.border = '1px solid #10b981';
+            tabSetup.style.background = 'rgba(16, 185, 129, 0.2)';
+            tabSetup.style.color = '#ffffff';
+            tabPrev.style.border = '1px solid rgba(255,255,255,0.15)';
+            tabPrev.style.background = 'transparent';
+            tabPrev.style.color = '#94a3b8';
+            panePrev.style.display = 'none';
+            paneSetup.style.display = 'block';
+        };
+    }
+
+    const saveSmtpBtn = document.getElementById('modal-save-smtp-btn');
+    const statusText = document.getElementById('modal-smtp-status-text');
+    if (saveSmtpBtn) {
+        saveSmtpBtn.onclick = async () => {
+            const user = (document.getElementById('modal-smtp-user').value || '').trim();
+            const pass = (document.getElementById('modal-smtp-pass').value || '').trim();
+            if (!user || !pass) {
+                alert('Please enter your Gmail address and 16-character App Password.');
+                return;
+            }
+
+            saveSmtpBtn.disabled = true;
+            saveSmtpBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating &amp; Sending Test Email...';
+            if (statusText) statusText.textContent = 'Connecting to smtp.gmail.com:465...';
+
+            const API = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '5000')) ? 'http://localhost:5000' : '';
+
+            try {
+                await fetch(`${API}/api/email/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        enabled: true,
+                        service: 'gmail',
+                        host: 'smtp.gmail.com',
+                        port: 465,
+                        secure: true,
+                        user,
+                        pass,
+                        fromName: 'Transit.IN Service Alerts',
+                        fromEmail: user
+                    })
+                });
+
+                const testRes = await fetch(`${API}/api/email/test`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: recipientEmail || user, user, pass })
+                });
+                const testData = await testRes.json();
+
+                if (testData.success) {
+                    saveSmtpBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Connected &amp; Delivered!';
+                    saveSmtpBtn.style.background = '#10b981';
+                    if (statusText) {
+                        statusText.style.color = '#34d399';
+                        statusText.innerHTML = `✓ Real test email delivered to <strong>${recipientEmail || user}</strong>!`;
+                    }
+                    if (typeof toast === 'function') toast('🎉 Live email delivered to your inbox!', 'envelope-circle-check');
+                } else {
+                    saveSmtpBtn.disabled = false;
+                    saveSmtpBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Retry SMTP Connection';
+                    if (statusText) {
+                        statusText.style.color = '#f87171';
+                        statusText.textContent = testData.error || 'SMTP Connection failed. Verify App Password.';
+                    }
+                }
+            } catch (err) {
+                saveSmtpBtn.disabled = false;
+                saveSmtpBtn.innerHTML = 'Save &amp; Send Real Test Email';
+                if (statusText) {
+                    statusText.style.color = '#f87171';
+                    statusText.textContent = 'Network or server error: ' + err.message;
+                }
+            }
+        };
+    }
+
+    modal.style.display = 'flex';
+}
 
 /* scroll reveal + leaderboard bars */
 const io = new IntersectionObserver(es => es.forEach(e => {

@@ -8,9 +8,9 @@
 
 **TRANSIT.IN** is a smart public transport tracking system designed to make travelling easier, safer, and more convenient.
 
-It helps passengers track buses, check arrival times, manage digital bus passes, report problems, and get emergency support.
+It helps passengers track buses, check arrival times, manage digital bus passes, receive live email service alerts, report problems, and get emergency support.
 
-It also helps transport administrators manage buses, drivers, routes, and passenger complaints from one place.
+It also helps transport administrators manage buses, drivers, routes, passenger accounts, email subscribers, and complaints from one place.
 
 **Tagline:** *Smarter Journeys. Connected Cities.*
 
@@ -66,6 +66,7 @@ Features:
 - **AI Arrival Prediction:** Shows estimated bus arrival times.
 - **Voice Assistant:** Helps passengers find routes using voice commands.
 - **QR Bus Pass:** Provides digital passes for easy boarding.
+- **Real-Time Service Alerts in Your Inbox:** Enter your email to receive live transit bulletins for your city. Includes interactive Outbox viewer and zero-dependency SMTP email delivery.
 - **Emergency Support:** Gives passengers quick access to safety features.
 - **Fleet Management:** Helps administrators manage buses and drivers.
 - **How It Works:** Explains the system through four simple steps.
@@ -113,11 +114,13 @@ The admin dashboard helps transport administrators manage the complete transport
 
 Features:
 
-- **Bus Management:** View and manage buses.
+- **Bus Management:** View, add, edit, and delete buses.
 - **Live Fleet Tracking:** Check bus locations and current status.
 - **Bus Status:** Identify active buses, buses under maintenance, and buses travelling on the wrong route.
 - **Driver Management:** View driver details, working hours, and assigned buses.
-- **Maintenance Management:** Check vehicle health and identify possible maintenance problems.
+- **Maintenance Management:** Check vehicle health, schedule service, and identify maintenance problems.
+- **Service Alerts & Subscribers:** Manage newsletter email subscribers, broadcast real-time route alerts to all subscriber inboxes, configure live SMTP credentials, and inspect dispatched outbox emails.
+- **Passenger Accounts:** View, register, modify, and delete passenger user accounts.
 - **Complaint Management:** View and respond to passenger complaints.
 - **Lost and Found:** Manage items lost by passengers and help them claim their belongings.
 
@@ -142,21 +145,27 @@ Features:
 
 ## 📡 REST API and Database
 
-The backend is managed using `server.js`. It provides APIs to connect the website with the server and database.
+The backend is managed using `server.js`. It provides a zero-dependency pure Node.js HTTP router and REST API with full `db.json` persistence.
 
 | API Endpoint | Method | Purpose |
 |---|---|---|
-| `/api/health` | GET | Checks whether the server is working. |
+| `/api/health` | GET | Checks whether the server is working and displays operational stats. |
 | `/api/profile` | GET / POST | Gets and saves passenger details. |
 | `/api/trips` | GET / POST | Gets and saves trip history. |
 | `/api/wallet` | GET / POST | Manages wallet balance and recharges. |
-| `/api/routes` | GET | Displays available bus routes and stops. |
+| `/api/routes` | GET / POST / DELETE | Displays and manages available bus routes and stops. |
 | `/api/track/:id` | GET | Gets bus location and passenger information. |
-| `/api/complaints` | GET / POST / PATCH | Manages passenger complaints. |
-| `/api/lost-found` | GET / POST / PATCH | Manages lost and found items. |
-| `/api/maintenance` | GET / POST | Manages bus maintenance information. |
+| `/api/newsletter/subscribe` | POST | Enrolls subscriber for real-time delay & diversion email alerts. |
+| `/api/subscribers` | GET / POST / PATCH / DELETE | Admin subscriber list and status management. |
+| `/api/subscribers/notify` | POST | Broadcasts service alerts to active subscribers and dispatches emails. |
+| `/api/email/config` | GET / POST | Manages SMTP credentials and mail gateway settings. |
+| `/api/email/test` | POST | Dispatches live test email to verify SMTP connection. |
+| `/api/email/outbox` | GET | Inspects dispatched email outbox logs and HTML previews. |
+| `/api/complaints` | GET / POST / PATCH | Manages passenger complaints and grievances. |
+| `/api/lost-found` | GET / POST / PATCH / DELETE | Manages lost and found items and depot custody. |
+| `/api/maintenance` | GET / POST | Manages bus maintenance, telemetry, and service scheduling. |
 | `/api/safety/sos` | POST | Sends emergency alerts with GPS location. |
-| `/api/alerts` | GET / POST | Manages traffic, weather, and travel alerts. |
+| `/api/alerts` | GET / POST | Manages traffic, weather, and travel disruption reports. |
 
 ---
 
@@ -226,33 +235,13 @@ These accounts are provided for testing the passenger and admin dashboards.
 
 TRANSIT.IN is designed to support public transport services across seven Indian cities.
 
-### 1. Delhi
-- DTC and Airport Express.
-- Connaught Place, Okhla, IGI Terminal 3, Anand Vihar.
-
-### 2. Mumbai
-- BEST and Coastal services.
-- CSMT, Bandra Kurla Complex, Nariman Point, Andheri.
-
-### 3. Bangalore
-- BMTC and Vayu Vajra.
-- Hebbal, Manyata, Silk Board, Whitefield ITPL, KIA Airport.
-
-### 4. Bagalkot
-- NWKRTC and City Bus Services.
-- Navanagar, Old Bus Stand, Vidyagiri, Medical College.
-
-### 5. Hyderabad
-- TSRTC and Hitec City feeder services.
-- Secunderabad, Hitec City, Charminar, Gachibowli.
-
-### 6. Chennai
-- MTC and Coastal services.
-- Central Railway, Marina Beach, OMR, Guindy.
-
-### 7. Pune
-- PMPML and Rainbow BRTS.
-- Swargate, Pune Station, Hinjewadi IT Park, Kothrud.
+1. **Delhi (DTC & Airport Express)** – Connaught Place, Okhla, IGI Terminal 3, Anand Vihar.
+2. **Mumbai (BEST & Coastal)** – CSMT, Bandra Kurla Complex (BKC), Nariman Point, Andheri.
+3. **Bangalore (BMTC & Vayu Vajra)** – Hebbal, Manyata, Silk Board, Whitefield ITPL, KIA Airport.
+4. **Bagalkot (NWKRTC & City Hub)** – Navanagar, Old Bus Stand, Vidyagiri, Medical College.
+5. **Hyderabad (TSRTC & Hitec Feeder)** – Secunderabad, Hitec City, Charminar, Gachibowli.
+6. **Chennai (MTC & Coastal Express)** – Central Railway, Marina Beach, OMR IT Corridor, Guindy.
+7. **Pune (PMPML & Rainbow BRTS)** – Swargate, Pune Station, Hinjewadi IT Park, Kothrud.
 
 ---
 

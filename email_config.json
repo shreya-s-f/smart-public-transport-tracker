@@ -1,0 +1,19 @@
+{
+  "smtp": {
+    "enabled": false,
+    "service": "gmail",
+    "host": "smtp.gmail.com",
+    "port": 465,
+    "secure": true,
+    "user": "",
+    "pass": "",
+    "fromName": "Transit.IN Service Alerts",
+    "fromEmail": "alerts@transit.in"
+  },
+  "emailjs": {
+    "enabled": false,
+    "publicKey": "",
+    "serviceId": "",
+    "templateId": ""
+  }
+}

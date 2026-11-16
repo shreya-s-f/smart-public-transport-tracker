@@ -1,79 +1,45 @@
 /**
  * Transit.IN - Enterprise Mobility REST API & Static Web Server
- * Built with Express & CORS
+ * Pure Node.js Standard Library Implementation (Zero external dependencies required)
  * Run: node server.js   (http://localhost:5000)
  */
 
-const express = require('express');
-const cors = require('cors');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const crypto = require('crypto');
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-const PUBLIC_DIR = __dirname;
-
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '6mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-// Persistent DB
-const FILE = path.join(__dirname, 'db.json');
-const db = fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, 'utf8')) : { users: {}, feedback: [] };
-const save = () => {
-    try {
-        fs.writeFileSync(FILE, JSON.stringify(db, null, 2), 'utf8');
-    } catch (err) {
-        console.error('Error saving db.json:', err);
-    }
-};
-
-const rid = p => p + '-' + crypto.randomInt(1000, 9999);
-const hash = (pw, salt = crypto.randomBytes(16).toString('hex')) => ({
-    salt,
-    h: crypto.scryptSync(pw, salt, 32).toString('hex')
-});
-
-const newUser = email => ({
-    profile: {
-        name: email.split('@')[0],
-        email,
-        phone: '+91 98765 43210',
-        city: 'Bengaluru',
-        location: 'Bengaluru, India',
-        userType: 'Daily Commuter',
-        emergencyName: 'Emergency Contact',
-        emergencyPhone: '+91 91234 56789',
-        bio: 'Transit.IN regular commuter exploring sustainable and electric public transport.',
-        avatar: null,
-        emailVerified: true
-    },
-    wallet: { balance: 480, upiId: 'shreya@okhdfcbank', methods: ['•••• 4242'], transactions: [] },
-    trips: [],
-    tickets: [],
-    password: null,
-    otherSessions: 1,
-    settings: {
-        notifications: { delays: true, arrival: true, offers: true, email: true, emergency: true },
-        security: { twoFactor: true, highGps: true, anonymize: true }
-    }
-});
-
-// Seed default user if not exists
-if (!db.users['shreya.f@example.com']) {
-    db.users['shreya.f@example.com'] = newUser('shreya.f@example.com');
-    save();
+let emailService;
+try {
+    emailService = require('./scripts/emailService');
+} catch (e) {
+    emailService = require('./js/emailService');
 }
 
+const PORT = process.env.PORT || 5000;
+const PUBLIC_DIR = __dirname;
+const FILE = path.join(__dirname, 'db.json');
 
-db.complaints = db.complaints || [
-    { id: 'CMP-2026-9041', commuter: 'Shreya F', category: 'AC Temperature', busNumber: 'KA-01-FA-4421', status: 'In Review', priority: 'Medium', timestamp: '2026-11-02 11:20 AM', notes: 'Cabin temperature reported warm on Route 500D.' },
-    { id: 'CMP-2026-8812', commuter: 'Aditya V', category: 'Rash Driving', busNumber: 'DL-01-EXP-507', status: 'Under Investigation', priority: 'High', timestamp: '2026-11-02 09:45 AM', notes: 'Speeding reported on Ring Road curve.' }
-];
+// MIME types dictionary for static file serving
+const MIME_TYPES = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon',
+    '.webp': 'image/webp',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
+    '.txt': 'text/plain; charset=utf-8'
+};
 
-// Supported Cities Route Catalog Seed
+// Initial Database Seeding
 const cityRoutesCatalog = {
     'Delhi': [
         { id: '507', name: 'Okhla Phase 1 ➔ Connaught Place', type: 'Electric', category: 'Express', stops: ['Okhla Phase 1', 'Nehru Place', 'Moolchand', 'Lajpat Nagar', 'India Gate', 'Connaught Place'], fare: 40, frequency: 'Every 10 min', status: 'On Time', firstBus: '05:30 AM', lastBus: '11:15 PM' },
@@ -114,10 +80,22 @@ const cityRoutesCatalog = {
     ]
 };
 
-// Persistent Database Collections
+// Load or initialize DB
+let db = { users: {}, feedback: [] };
+try {
+    if (fs.existsSync(FILE)) {
+        db = JSON.parse(fs.readFileSync(FILE, 'utf8'));
+    }
+} catch (e) {
+    console.error('Error reading db.json, starting with empty database:', e);
+}
+
+// Ensure all DB collections exist
+db.users = db.users || {};
+db.feedback = Array.isArray(db.feedback) ? db.feedback : [];
 db.routes = db.routes || cityRoutesCatalog;
 
-db.drivers = db.drivers || [
+db.drivers = Array.isArray(db.drivers) && db.drivers.length ? db.drivers : [
     { id: 'DRV-441', name: 'Ramesh Kumar', license: 'DL-KA-2018-9941', phone: '+91 98765 43210', assignedBus: 'KA-01-F-2024', route: '500A (Electric)', city: 'Bangalore', shift: '06:00 AM – 02:00 PM', rating: 4.9, status: 'On Route' },
     { id: 'DRV-108', name: 'Suresh Patil', license: 'DL-KA-2016-1108', phone: '+91 98765 43211', assignedBus: 'KA-29-B-5510', route: 'BGK-01 (City Shuttle)', city: 'Bagalkot', shift: '08:00 AM – 04:00 PM', rating: 5.0, status: 'On Route' },
     { id: 'DRV-309', name: 'Devendra Singh', license: 'DL-DL-2019-3309', phone: '+91 98765 43212', assignedBus: 'DL-01-A-4412', route: '507 (Express)', city: 'Delhi', shift: '02:00 PM – 10:00 PM', rating: 4.8, status: 'Scheduled' },
@@ -125,7 +103,7 @@ db.drivers = db.drivers || [
     { id: 'DRV-220', name: 'Karthik Rao', license: 'DL-TN-2017-8820', phone: '+91 98765 43214', assignedBus: 'TN-01-G-3390', route: 'MTC-23C (Metro)', city: 'Chennai', shift: '10:00 AM – 06:00 PM', rating: 4.7, status: 'Scheduled' }
 ];
 
-db.cities = db.cities || [
+db.cities = Array.isArray(db.cities) && db.cities.length ? db.cities : [
     { name: 'Delhi', state: 'National Capital Territory', activeFleet: 84, routesCount: 12, status: 'Active', authority: 'DTC / DIMTS', fareBase: '₹15' },
     { name: 'Mumbai', state: 'Maharashtra', activeFleet: 72, routesCount: 10, status: 'Active', authority: 'BEST Undertaking', fareBase: '₹20' },
     { name: 'Bangalore', state: 'Karnataka', activeFleet: 90, routesCount: 14, status: 'Active', authority: 'BMTC Volvo & EV', fareBase: '₹25' },
@@ -135,7 +113,12 @@ db.cities = db.cities || [
     { name: 'Pune', state: 'Maharashtra', activeFleet: 48, routesCount: 7, status: 'Active', authority: 'PMPML Rainbow BRTS', fareBase: '₹15' }
 ];
 
-const defaultLostFoundSeed = [
+db.complaints = Array.isArray(db.complaints) && db.complaints.length ? db.complaints : [
+    { id: 'CMP-2026-9041', commuter: 'Shreya F', category: 'AC Temperature', busNumber: 'KA-01-FA-4421', route: 'Route 500D (Bengaluru)', status: 'In Review', priority: 'Medium', timestamp: '2026-11-02 11:20 AM', notes: 'Cabin temperature reported warm on Route 500D.' },
+    { id: 'CMP-2026-8812', commuter: 'Aditya V', category: 'Rash Driving', busNumber: 'DL-01-EXP-507', route: 'Route 507 (Delhi)', status: 'Under Investigation', priority: 'High', timestamp: '2026-11-02 09:45 AM', notes: 'Speeding reported on Ring Road curve.' }
+];
+
+db.lostFound = Array.isArray(db.lostFound) && db.lostFound.length ? db.lostFound : [
     {
         id: 'LF-2026-114',
         type: 'lost',
@@ -202,18 +185,169 @@ const defaultLostFoundSeed = [
     }
 ];
 
-if (!Array.isArray(db.lostFound) || !db.lostFound.length || !db.lostFound[0].type) {
-    db.lostFound = defaultLostFoundSeed;
-}
+db.maintenance = Array.isArray(db.maintenance) && db.maintenance.length ? db.maintenance : [
+    {
+        busId: 'KA-01-F-2024',
+        route: 'Route 500A (Bengaluru)',
+        city: 'Bangalore',
+        propulsion: '100% Electric',
+        wear: 14,
+        battery: '88% SoC (Good)',
+        tirePressure: '34 PSI (Normal)',
+        status: 'Optimal Health',
+        lastService: '2026-11-02',
+        nextService: 'In 28 days'
+    },
+    {
+        busId: 'DL-01-A-4412',
+        route: 'Route 507 (Delhi)',
+        city: 'Delhi',
+        propulsion: 'CNG Hybrid',
+        wear: 48,
+        battery: '92°C (Engine Coolant)',
+        tirePressure: '33 PSI (Normal)',
+        status: 'Review at 400km',
+        lastService: '2026-10-25',
+        nextService: 'In 4 days'
+    },
+    {
+        busId: 'MH-02-B-9910',
+        route: 'BEST-301 (Mumbai)',
+        city: 'Mumbai',
+        propulsion: '100% Electric',
+        wear: 72,
+        battery: '64% SoC',
+        tirePressure: '29 PSI (Low)',
+        status: 'Inspection Due',
+        lastService: '2026-10-12',
+        nextService: 'Immediate'
+    }
+];
+
+db.subscribers = Array.isArray(db.subscribers) && db.subscribers.length ? db.subscribers : [
+    {
+        id: 'SUB-1001',
+        email: 'shreya.f@example.com',
+        city: 'Bengaluru',
+        status: 'Active',
+        subscribedAt: '2026-11-05 10:30 AM',
+        preferences: { delays: true, diversions: true, newRoutes: true, weather: true },
+        notificationsCount: 3
+    },
+    {
+        id: 'SUB-1002',
+        email: 'commuter.delhi@example.com',
+        city: 'Delhi',
+        status: 'Active',
+        subscribedAt: '2026-11-06 02:15 PM',
+        preferences: { delays: true, diversions: true, newRoutes: true, weather: false },
+        notificationsCount: 2
+    }
+];
+
+db.alerts = Array.isArray(db.alerts) && db.alerts.length ? db.alerts : [
+    {
+        id: 'ALT-901',
+        type: 'diversion',
+        title: 'Route Diversion: Outer Ring Road Flyover',
+        message: 'Route 500D diverted via Silk Board service lane due to metro expansion work.',
+        city: 'Bangalore',
+        route: '500D',
+        time: '10 min ago',
+        reportedAt: new Date().toISOString()
+    },
+    {
+        id: 'ALT-902',
+        type: 'traffic',
+        title: 'Peak Hour Delay on Ring Road',
+        message: 'Corridor 507 experiencing 12-minute traffic slow-down near Moolchand underpass.',
+        city: 'Delhi',
+        route: '507',
+        time: '25 min ago',
+        reportedAt: new Date().toISOString()
+    },
+    {
+        id: 'ALT-903',
+        type: 'weather',
+        title: 'Monsoon Road Visibility Alert',
+        message: 'Passing coastal rain showers on Western Express Highway; bus speeds capped at 40 km/h.',
+        city: 'Mumbai',
+        route: 'BEST-301',
+        time: '1 hour ago',
+        reportedAt: new Date().toISOString()
+    }
+];
+
+db.notifications = Array.isArray(db.notifications) ? db.notifications : [
+    {
+        id: 'NOTIF-1',
+        subscriberEmail: 'shreya.f@example.com',
+        city: 'Bengaluru',
+        type: 'info',
+        title: 'Welcome to Transit.IN Service Alerts!',
+        message: 'You are now subscribed to real-time delay warnings, route diversions, and transit advisories for Bengaluru.',
+        time: 'Just now',
+        timestamp: new Date().toISOString(),
+        route: 'All Corridors',
+        delivered: true
+    }
+];
+
+db.sos = Array.isArray(db.sos) ? db.sos : [];
+db.tickets = Array.isArray(db.tickets) ? db.tickets : [];
+db.sentEmails = Array.isArray(db.sentEmails) ? db.sentEmails : [];
+
+// Save to disk helper
+const save = () => {
+    try {
+        fs.writeFileSync(FILE, JSON.stringify(db, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Error saving db.json:', err);
+    }
+};
 save();
 
-// Response Helpers
-const ok = (res, d = { ok: true }) => { save(); res.json(d); };
-const bad = (res, m, c = 400) => res.status(c).json({ error: m });
+// Helpers
+const rid = p => p + '-' + crypto.randomInt(1000, 9999);
+const hash = (pw, salt = crypto.randomBytes(16).toString('hex')) => ({
+    salt,
+    h: crypto.scryptSync(pw, salt, 32).toString('hex')
+});
 
-// Commuter Authentication & Context Middleware
-const commuterContext = (req, res, next) => {
-    let email = (req.header('x-user-email') || req.query.email || '').trim().toLowerCase();
+const newUser = email => ({
+    profile: {
+        name: email.split('@')[0],
+        email,
+        phone: '+91 98765 43210',
+        city: 'Bengaluru',
+        location: 'Bengaluru, India',
+        userType: 'Daily Commuter',
+        emergencyName: 'Emergency Contact',
+        emergencyPhone: '+91 91234 56789',
+        bio: 'Transit.IN regular commuter exploring sustainable and electric public transport.',
+        avatar: null,
+        emailVerified: true
+    },
+    wallet: { balance: 480, upiId: 'shreya@okhdfcbank', methods: ['•••• 4242'], transactions: [] },
+    trips: [],
+    tickets: [],
+    password: null,
+    otherSessions: 1,
+    settings: {
+        notifications: { delays: true, arrival: true, offers: true, email: true, emergency: true },
+        security: { twoFactor: true, highGps: true, anonymize: true }
+    }
+});
+
+// Seed default user
+if (!db.users['shreya.f@example.com']) {
+    db.users['shreya.f@example.com'] = newUser('shreya.f@example.com');
+    save();
+}
+
+// Commuter Context Resolver
+function resolveCommuter(req) {
+    let email = (req.headers['x-user-email'] || req.query.email || '').trim().toLowerCase();
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
         email = 'shreya.f@example.com';
     }
@@ -221,18 +355,732 @@ const commuterContext = (req, res, next) => {
         db.users[email] = newUser(email);
         save();
     }
-    req.u = db.users[email];
-    next();
+    return db.users[email];
+}
+
+// Lightweight HTTP Router Implementation
+function createRouter() {
+    const routes = [];
+    const methods = ['get', 'post', 'put', 'patch', 'delete'];
+
+    const app = function(req, res) {
+        // Enhance response
+        res.status = function(code) {
+            this.statusCode = code;
+            return this;
+        };
+        res.json = function(data) {
+            this.setHeader('Content-Type', 'application/json; charset=utf-8');
+            this.end(JSON.stringify(data));
+        };
+        res.header = function(name, val) {
+            this.setHeader(name, val);
+            return this;
+        };
+
+        // Enable CORS
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-user-email');
+
+        if (req.method === 'OPTIONS') {
+            res.statusCode = 204;
+            res.end();
+            return;
+        }
+
+        const parsedUrl = url.parse(req.url, true);
+        const reqPath = parsedUrl.pathname;
+        const method = req.method.toLowerCase();
+        req.query = parsedUrl.query || {};
+
+        // Body parser for POST / PUT / PATCH
+        const handleMatch = () => {
+            for (const r of routes) {
+                if (r.method !== method && r.method !== 'all') continue;
+                const match = reqPath.match(r.regex);
+                if (match) {
+                    req.params = {};
+                    r.paramNames.forEach((name, i) => {
+                        req.params[name] = decodeURIComponent(match[i + 1]);
+                    });
+                    try {
+                        const result = r.handler(req, res);
+                        if (result && typeof result.then === 'function') {
+                            result.catch(err => {
+                                console.error(`[Router Async Error] in ${req.method} ${reqPath}:`, err);
+                                if (!res.headersSent) {
+                                    res.statusCode = 500;
+                                    res.json({ success: false, error: err.message || 'Internal Server Error' });
+                                }
+                            });
+                        }
+                        return result;
+                    } catch (syncErr) {
+                        console.error(`[Router Sync Error] in ${req.method} ${reqPath}:`, syncErr);
+                        if (!res.headersSent) {
+                            res.statusCode = 500;
+                            res.json({ success: false, error: syncErr.message || 'Internal Server Error' });
+                        }
+                    }
+                    return;
+                }
+            }
+
+            // Static File Serving fallback
+            let safePath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
+            if (safePath === '/' || safePath === '\\') safePath = 'index.html';
+            const filePath = path.join(PUBLIC_DIR, safePath);
+
+            fs.stat(filePath, (err, stats) => {
+                if (!err && stats.isFile()) {
+                    const ext = path.extname(filePath).toLowerCase();
+                    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+                    res.setHeader('Content-Type', contentType);
+                    fs.createReadStream(filePath).pipe(res);
+                } else if (!reqPath.startsWith('/api/')) {
+                    // SPA fallback for non-API routes
+                    const indexPath = path.join(PUBLIC_DIR, 'index.html');
+                    if (fs.existsSync(indexPath)) {
+                        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                        fs.createReadStream(indexPath).pipe(res);
+                    } else {
+                        res.statusCode = 404;
+                        res.end('404 Not Found');
+                    }
+                } else {
+                    res.statusCode = 404;
+                    res.json({ success: false, error: `Endpoint ${req.method} ${reqPath} not found` });
+                }
+            });
+        };
+
+        if (method === 'post' || method === 'put' || method === 'patch') {
+            let bodyData = '';
+            req.on('data', chunk => {
+                bodyData += chunk;
+                if (bodyData.length > 10 * 1024 * 1024) req.destroy();
+            });
+            req.on('end', () => {
+                try {
+                    req.body = bodyData ? JSON.parse(bodyData) : {};
+                } catch (e) {
+                    req.body = {};
+                }
+                handleMatch();
+            });
+        } else {
+            req.body = {};
+            handleMatch();
+        }
+    };
+
+    methods.forEach(m => {
+        app[m] = (pattern, handler) => {
+            const paramNames = [];
+            const regexStr = '^' + pattern.replace(/:([a-zA-Z0-9_]+)/g, (_, name) => {
+                paramNames.push(name);
+                return '([^/]+)';
+            }) + '$';
+            routes.push({ method: m, regex: new RegExp(regexStr), paramNames, handler });
+        };
+    });
+
+    app.all = (pattern, handler) => {
+        const paramNames = [];
+        const regexStr = '^' + pattern.replace(/:([a-zA-Z0-9_]+)/g, (_, name) => {
+            paramNames.push(name);
+            return '([^/]+)';
+        }) + '$';
+        routes.push({ method: 'all', regex: new RegExp(regexStr), paramNames, handler });
+    };
+
+    app.use = () => {}; // Middleware shim
+
+    app.listen = function(port, cb) {
+        const srv = http.createServer(app);
+        return srv.listen(port, cb);
+    };
+
+    return app;
+}
+
+const app = createRouter();
+
+// Response shortcuts
+const ok = (res, d = { ok: true }) => { save(); res.json(d); };
+const bad = (res, m, c = 400) => res.status(c).json({ success: false, error: m });
+
+// ============================================================================
+// SYSTEM & HEALTH API
+// ============================================================================
+app.get('/api/health', (req, res) => {
+    let allRoutesCount = 0;
+    for (const rList of Object.values(db.routes || {})) {
+        if (Array.isArray(rList)) allRoutesCount += rList.length;
+    }
+    res.json({
+        ok: true,
+        status: "online",
+        connected: true,
+        server: "Transit.IN Enterprise Mobility Backend API",
+        version: "3.6.0",
+        uptimeSeconds: Math.round(process.uptime()),
+        timestamp: new Date().toISOString(),
+        port: PORT,
+        activeCities: Object.keys(db.routes || cityRoutesCatalog),
+        totalUsersRegistered: Object.keys(db.users || {}).length,
+        totalRoutes: allRoutesCount,
+        totalDrivers: (db.drivers || []).length,
+        totalSubscribers: (db.subscribers || []).length,
+        totalAlerts: (db.alerts || []).length
+    });
+});
+
+// Admin Live Metrics
+app.get('/api/admin/stats', (req, res) => {
+    let allRoutesCount = 0;
+    for (const rList of Object.values(db.routes || {})) {
+        if (Array.isArray(rList)) allRoutesCount += rList.length;
+    }
+    const complaints = Array.isArray(db.complaints) ? db.complaints : [];
+    const pendingComplaints = complaints.filter(c => (c.status || '').toLowerCase() !== 'resolved').length;
+    const subscribers = Array.isArray(db.subscribers) ? db.subscribers : [];
+    const activeSubs = subscribers.filter(s => (s.status || '').toLowerCase() === 'active').length;
+
+    res.json({
+        success: true,
+        stats: {
+            totalPassengers: Object.keys(db.users || {}).length,
+            activeBuses: `${Math.min(allRoutesCount * 4, 90)} / 90`,
+            fleetCount: allRoutesCount,
+            totalDrivers: (db.drivers || []).length,
+            totalRoutes: allRoutesCount,
+            activeEmergencies: (db.sos || []).length,
+            pendingComplaints: pendingComplaints,
+            totalSubscribers: subscribers.length,
+            activeSubscribers: activeSubs
+        }
+    });
+});
+
+// ============================================================================
+// NEWSLETTER & INBOX SERVICE ALERTS SUBSCRIBERS (USER FEATURE)
+// ============================================================================
+
+// Subscribe to Service Alerts (Called from "Get service alerts in your inbox")
+const handleSubscribe = async (req, res) => {
+    const { email, city, preferences } = req.body || {};
+    if (!email || !String(email).trim()) {
+        return bad(res, 'Email address is required to subscribe to service alerts');
+    }
+    const em = String(email).trim().toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(em)) {
+        return bad(res, 'Please provide a valid email address');
+    }
+
+    const subCity = city || 'Delhi';
+    if (!Array.isArray(db.subscribers)) db.subscribers = [];
+
+    let existing = db.subscribers.find(s => s.email.toLowerCase() === em);
+    let subscriberRecord;
+
+    if (existing) {
+        existing.status = 'Active';
+        existing.city = subCity;
+        if (preferences) existing.preferences = { ...existing.preferences, ...preferences };
+        subscriberRecord = existing;
+    } else {
+        subscriberRecord = {
+            id: 'SUB-' + Date.now().toString().slice(-4),
+            email: em,
+            city: subCity,
+            status: 'Active',
+            subscribedAt: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            preferences: preferences || { delays: true, diversions: true, newRoutes: true, weather: true },
+            notificationsCount: 1
+        };
+        db.subscribers.unshift(subscriberRecord);
+    }
+
+    // Generate Welcome Service Alert Notification for this email
+    if (!Array.isArray(db.notifications)) db.notifications = [];
+    const welcomeNotif = {
+        id: 'NOTIF-' + Date.now().toString().slice(-5),
+        subscriberEmail: em,
+        city: subCity,
+        type: 'info',
+        title: 'Service Alerts Activated',
+        message: `Welcome! Real-time alerts for delays, route diversions, and transit updates in ${subCity} are now active.`,
+        time: 'Just now',
+        timestamp: new Date().toISOString(),
+        route: 'All Corridors',
+        delivered: true
+    };
+    db.notifications.unshift(welcomeNotif);
+
+    // If matching user exists in db.users, ensure notification settings are enabled and trip alert noted
+    if (db.users[em]) {
+        db.users[em].settings = db.users[em].settings || {};
+        db.users[em].settings.notifications = db.users[em].settings.notifications || {};
+        db.users[em].settings.notifications.email = true;
+        db.users[em].settings.notifications.delays = true;
+    }
+
+    // Generate & Dispatch HTML Welcome Email
+    const liveAlerts = Array.isArray(db.alerts) ? db.alerts.filter(a => !a.city || a.city.toLowerCase() === subCity.toLowerCase() || a.city.toLowerCase() === 'all cities') : [];
+    const emailSubject = `🚦 Transit.IN Service Alerts Activated - ${subCity}`;
+    const emailHtml = emailService.generateWelcomeEmailHtml({ email: em, city: subCity, liveAlerts });
+
+    let dispatchResult = { emailSent: false, status: 'Staged in Outbox', outboxRecord: {} };
+    try {
+        dispatchResult = await emailService.dispatchEmail({
+            to: em,
+            subject: emailSubject,
+            html: emailHtml,
+            city: subCity,
+            type: 'welcome_subscription',
+            db,
+            saveDb: save
+        });
+    } catch (err) {
+        console.error('[Subscribe] Email dispatch error:', err.message);
+    }
+
+    save();
+    res.status(201).json({
+        success: true,
+        message: `Service alerts successfully activated for ${em}!`,
+        data: subscriberRecord,
+        welcomeNotification: welcomeNotif,
+        emailSent: dispatchResult.emailSent,
+        emailStatus: dispatchResult.status,
+        emailError: dispatchResult.error,
+        emailPreview: {
+            id: dispatchResult.outboxRecord ? dispatchResult.outboxRecord.id : 'EML-' + Date.now(),
+            to: em,
+            subject: emailSubject,
+            html: emailHtml,
+            time: 'Just now',
+            status: dispatchResult.status,
+            delivered: dispatchResult.emailSent
+        }
+    });
 };
 
+app.post('/api/newsletter/subscribe', handleSubscribe);
+app.post('/api/subscribers', handleSubscribe);
+
+// List All Subscribers (For Admin Page)
+app.get('/api/subscribers', (req, res) => {
+    if (!Array.isArray(db.subscribers)) db.subscribers = [];
+    res.json({
+        success: true,
+        count: db.subscribers.length,
+        data: db.subscribers
+    });
+});
+
+// Update Subscriber (Change City, Status: Active/Paused/Unsubscribed, Preferences)
+app.patch('/api/subscribers/:id', (req, res) => {
+    const target = decodeURIComponent(req.params.id).trim().toLowerCase();
+    if (!Array.isArray(db.subscribers)) db.subscribers = [];
+
+    const sub = db.subscribers.find(s => s.id.toLowerCase() === target || s.email.toLowerCase() === target);
+    if (!sub) return bad(res, 'Subscriber record not found', 404);
+
+    if (req.body.status) sub.status = req.body.status;
+    if (req.body.city) sub.city = req.body.city;
+    if (req.body.preferences) sub.preferences = { ...sub.preferences, ...req.body.preferences };
+
+    save();
+    res.json({ success: true, message: 'Subscriber settings updated', data: sub });
+});
+
+// Delete Subscriber
+app.delete('/api/subscribers/:id', (req, res) => {
+    const target = decodeURIComponent(req.params.id).trim().toLowerCase();
+    if (!Array.isArray(db.subscribers)) db.subscribers = [];
+
+    const idx = db.subscribers.findIndex(s => s.id.toLowerCase() === target || s.email.toLowerCase() === target);
+    if (idx >= 0) {
+        const removed = db.subscribers.splice(idx, 1)[0];
+        save();
+        return res.json({ success: true, message: `Subscriber ${removed.email} removed`, data: removed });
+    }
+    bad(res, 'Subscriber not found', 404);
+});
+
+// Get Notifications for specific Subscriber or Commuter
+app.get('/api/subscribers/notifications', (req, res) => {
+    const email = (req.query.email || '').trim().toLowerCase();
+    const city = (req.query.city || '').trim().toLowerCase();
+
+    let notifs = Array.isArray(db.notifications) ? [...db.notifications] : [];
+    if (email) {
+        notifs = notifs.filter(n => !n.subscriberEmail || n.subscriberEmail.toLowerCase() === email);
+    }
+    if (city && city !== 'all') {
+        notifs = notifs.filter(n => !n.city || n.city.toLowerCase() === city);
+    }
+
+    res.json({
+        success: true,
+        count: notifs.length,
+        data: notifs
+    });
+});
+
+// Dispatch / Broadcast Service Alert to Subscribers (From Admin Page)
+app.post('/api/subscribers/notify', async (req, res) => {
+    const { title, message, type, city, route, sendEmail } = req.body || {};
+    if (!title || !message) return bad(res, 'Alert Title and Message are required');
+
+    const targetCity = city || 'All Cities';
+    const alertType = type || 'warning';
+    const alertId = 'ALT-' + Date.now().toString().slice(-4);
+
+    const alertRecord = {
+        id: alertId,
+        type: alertType,
+        title: title,
+        message: message,
+        city: targetCity,
+        route: route || 'General Network',
+        time: 'Just now',
+        reportedAt: new Date().toISOString()
+    };
+
+    if (!Array.isArray(db.alerts)) db.alerts = [];
+    db.alerts.unshift(alertRecord);
+
+    // Deliver to matching active subscribers
+    if (!Array.isArray(db.subscribers)) db.subscribers = [];
+    if (!Array.isArray(db.notifications)) db.notifications = [];
+
+    let deliveredCount = 0;
+    let emailsDispatched = 0;
+    const matchingSubs = [];
+
+    db.subscribers.forEach(sub => {
+        if (sub.status === 'Active') {
+            if (targetCity === 'All Cities' || !sub.city || sub.city.toLowerCase() === targetCity.toLowerCase()) {
+                db.notifications.unshift({
+                    id: 'NOTIF-' + Date.now().toString().slice(-4) + '-' + Math.floor(Math.random() * 100),
+                    subscriberEmail: sub.email,
+                    city: sub.city || targetCity,
+                    type: alertType,
+                    title: title,
+                    message: message,
+                    route: route || 'Network',
+                    time: 'Just now',
+                    timestamp: new Date().toISOString(),
+                    delivered: true
+                });
+                sub.notificationsCount = (sub.notificationsCount || 0) + 1;
+                deliveredCount++;
+                matchingSubs.push(sub.email);
+            }
+        }
+    });
+
+    const shouldSendEmail = (sendEmail !== false);
+    if (shouldSendEmail && matchingSubs.length > 0) {
+        const broadcastSubject = `⚠️ [Transit.IN Alert] ${title} - ${targetCity}`;
+        const broadcastHtml = emailService.generateBroadcastEmailHtml({
+            title,
+            message,
+            type: alertType,
+            city: targetCity,
+            route: route || 'General Network',
+            alertId
+        });
+
+        for (const recipientEmail of matchingSubs) {
+            try {
+                await emailService.dispatchEmail({
+                    to: recipientEmail,
+                    subject: broadcastSubject,
+                    html: broadcastHtml,
+                    city: targetCity,
+                    type: 'broadcast_alert',
+                    db,
+                    saveDb: save
+                });
+                emailsDispatched++;
+            } catch (e) {
+                console.error('[Notify] Broadcast email dispatch error to', recipientEmail, e.message);
+            }
+        }
+    }
+
+    save();
+    res.status(201).json({
+        success: true,
+        message: `Service alert dispatched to ${deliveredCount} subscriber(s)! (${emailsDispatched} emails processed)`,
+        alert: alertRecord,
+        deliveredCount,
+        emailsDispatched
+    });
+});
+
 // ============================================================================
-// PROFILE & ACCOUNT ENDPOINTS (from profile-backend.js / extracted server.js)
+// EMAIL CONFIGURATION & OUTBOX SYSTEM
 // ============================================================================
 
-app.get('/api/profile', commuterContext, (req, res) => res.json(req.u.profile));
+// Get Current Email / SMTP Configuration
+app.get('/api/email/config', (req, res) => {
+    const config = emailService.loadEmailConfig();
+    const maskedUser = config.smtp.user ? config.smtp.user.replace(/^(.)(.*)(@.*)$/, (_, a, b, c) => a + '***' + c) : '';
+    res.json({
+        success: true,
+        smtp: {
+            enabled: !!config.smtp.enabled,
+            service: config.smtp.service || 'gmail',
+            host: config.smtp.host || 'smtp.gmail.com',
+            port: config.smtp.port || 465,
+            secure: config.smtp.secure !== false,
+            user: maskedUser,
+            configured: !!(config.smtp.user && config.smtp.pass),
+            fromName: config.smtp.fromName || 'Transit.IN Service Alerts',
+            fromEmail: config.smtp.fromEmail || 'alerts@transit.in'
+        },
+        emailjs: config.emailjs || {}
+    });
+});
 
-app.put('/api/profile', commuterContext, (req, res) => {
-    const b = req.body, p = req.u.profile;
+// Update Email / SMTP Configuration
+app.post('/api/email/config', (req, res) => {
+    const current = emailService.loadEmailConfig();
+    const { enabled, service, host, port, secure, user, pass, fromName, fromEmail, emailjs } = req.body || {};
+
+    if (host) current.smtp.host = host;
+    if (port) current.smtp.port = parseInt(port, 10);
+    if (secure !== undefined) current.smtp.secure = !!secure;
+    if (user !== undefined) current.smtp.user = user.trim();
+    if (pass !== undefined && pass !== '') current.smtp.pass = pass.trim();
+    if (fromName) current.smtp.fromName = fromName;
+    if (fromEmail) current.smtp.fromEmail = fromEmail.trim();
+    if (service) current.smtp.service = service;
+    if (enabled !== undefined) current.smtp.enabled = !!enabled;
+
+    if (emailjs && typeof emailjs === 'object') {
+        current.emailjs = { ...current.emailjs, ...emailjs };
+    }
+
+    if (current.smtp.user && current.smtp.pass && enabled === undefined) {
+        current.smtp.enabled = true;
+    }
+
+    emailService.saveEmailConfig(current);
+    res.json({
+        success: true,
+        message: 'Email configuration updated successfully',
+        configured: !!(current.smtp.user && current.smtp.pass),
+        enabled: current.smtp.enabled
+    });
+});
+
+// Send Test Email via SMTP
+app.post('/api/email/test', async (req, res) => {
+    const { to, host, port, user, pass, secure } = req.body || {};
+    const config = emailService.loadEmailConfig();
+    const testTo = to || config.smtp.user || (db.subscribers && db.subscribers[0] ? db.subscribers[0].email : null);
+
+    if (!testTo) {
+        return bad(res, 'Please provide a recipient email address ("to")');
+    }
+
+    const smtpHost = host || config.smtp.host;
+    const smtpPort = port ? parseInt(port, 10) : config.smtp.port;
+    const smtpUser = user || config.smtp.user;
+    const smtpPass = pass || config.smtp.pass;
+    const smtpSecure = secure !== undefined ? !!secure : config.smtp.secure;
+
+    if (!smtpHost || !smtpUser || !smtpPass) {
+        return bad(res, 'SMTP credentials missing. Please configure host, user email, and app password.');
+    }
+
+    const testSubject = '🧪 Transit.IN Live SMTP Test Notification';
+    const testHtml = `
+        <div style="font-family: -apple-system, sans-serif; padding: 24px; background: #0f172a; color: #f8fafc; border-radius: 12px; max-width: 550px;">
+            <div style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; display: inline-block; padding: 4px 12px; border-radius: 999px; margin-bottom: 12px;">
+                <span style="color: #38bdf8; font-weight: 700; font-size: 12px;">LIVE SMTP VERIFICATION</span>
+            </div>
+            <h2 style="color: #ffffff; margin-top: 0; font-size: 20px;">Transit.IN Email Notification Active</h2>
+            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5;">Congratulations! Your SMTP email delivery connection is fully operational and authenticated.</p>
+            <div style="background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 13px; line-height: 1.6;">
+                <div><strong>Recipient:</strong> ${testTo}</div>
+                <div><strong>SMTP Host:</strong> ${smtpHost}:${smtpPort}</div>
+                <div><strong>Timestamp:</strong> ${new Date().toLocaleString('en-IN')}</div>
+            </div>
+            <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0;">Passengers subscribing to service alerts on the homepage will now receive instant live bulletins in their inboxes.</p>
+        </div>
+    `;
+
+    try {
+        await emailService.sendSmtpEmail({
+            host: smtpHost,
+            port: smtpPort,
+            secure: smtpSecure,
+            user: smtpUser,
+            pass: smtpPass,
+            fromName: config.smtp.fromName,
+            fromEmail: config.smtp.fromEmail || smtpUser,
+            to: testTo,
+            subject: testSubject,
+            text: 'Transit.IN Live SMTP Test Notification: System is operational.',
+            html: testHtml
+        });
+
+        if (!Array.isArray(db.sentEmails)) db.sentEmails = [];
+        db.sentEmails.unshift({
+            id: 'EML-TEST-' + Date.now().toString().slice(-5),
+            to: testTo,
+            from: config.smtp.fromEmail || smtpUser,
+            subject: testSubject,
+            html: testHtml,
+            sentAt: new Date().toISOString(),
+            status: 'Delivered (SMTP Test)',
+            delivered: true
+        });
+        save();
+
+        res.json({
+            success: true,
+            message: `Test email successfully delivered to ${testTo}! Check your inbox.`,
+            recipient: testTo
+        });
+    } catch (err) {
+        console.error('[EmailTest] Failed:', err.message);
+        res.status(500).json({
+            success: false,
+            error: err.message,
+            suggestion: 'For Gmail, use a 16-character Google App Password (not your normal password) with 2-Step Verification enabled.'
+        });
+    }
+});
+
+// List Sent Emails (Outbox)
+app.get('/api/email/outbox', (req, res) => {
+    if (!Array.isArray(db.sentEmails)) db.sentEmails = [];
+    const limit = parseInt(req.query.limit, 10) || 50;
+    const recipient = (req.query.email || '').trim().toLowerCase();
+    
+    let list = [...db.sentEmails];
+    if (recipient) {
+        list = list.filter(e => e.to && e.to.toLowerCase() === recipient);
+    }
+
+    res.json({
+        success: true,
+        count: list.length,
+        data: list.slice(0, limit)
+    });
+});
+
+// Get Specific Sent Email
+app.get('/api/email/outbox/:id', (req, res) => {
+    if (!Array.isArray(db.sentEmails)) db.sentEmails = [];
+    const emailItem = db.sentEmails.find(e => e.id === req.params.id);
+    if (!emailItem) return bad(res, 'Email record not found', 404);
+    res.json({ success: true, data: emailItem });
+});
+
+// ============================================================================
+// TRANSIT ALERTS & WEATHER
+// ============================================================================
+app.get('/api/alerts', (req, res) => {
+    const city = (req.query.city || 'Delhi').toLowerCase();
+    let list = Array.isArray(db.alerts) ? [...db.alerts] : [];
+    if (city !== 'all') {
+        list = list.filter(a => !a.city || a.city.toLowerCase() === 'all cities' || a.city.toLowerCase() === city);
+    }
+    res.json({ success: true, count: list.length, alerts: list });
+});
+
+app.post('/api/alerts/report', (req, res) => {
+    const report = {
+        id: 'REP-' + Date.now().toString().slice(-4),
+        route: req.body.route || 'General Line',
+        type: req.body.type || 'traffic',
+        title: req.body.title || (req.body.type ? `${req.body.type.toUpperCase()} Report` : 'Commuter Incident'),
+        message: req.body.notes || req.body.message || 'Reported delay',
+        location: req.body.location || 'Roadway',
+        city: req.body.city || 'Delhi',
+        time: 'Just now',
+        isCrowdsourced: true,
+        reportedAt: new Date().toISOString()
+    };
+    if (!Array.isArray(db.alerts)) db.alerts = [];
+    db.alerts.unshift(report);
+    save();
+    res.status(201).json({ success: true, message: "Report broadcasted to commuters", report: report });
+});
+
+app.post('/api/alerts/broadcast', (req, res) => {
+    const alertItem = {
+        id: 'FLASH-' + Date.now().toString().slice(-4),
+        title: req.body.title || 'Transit Emergency Flash',
+        message: req.body.message || 'Traffic diversion announced by Transit Control Desk',
+        city: req.body.city || 'All Cities',
+        severity: req.body.severity || 'warning',
+        time: 'Just now',
+        reportedAt: new Date().toISOString()
+    };
+    if (!Array.isArray(db.alerts)) db.alerts = [];
+    db.alerts.unshift(alertItem);
+    save();
+    res.status(201).json({ success: true, message: 'Flash alert dispatched network-wide', alert: alertItem });
+});
+
+app.get('/api/weather', (req, res) => {
+    const city = req.query.city || 'Delhi';
+    res.json({
+        success: true,
+        city: city,
+        temperature: '28°C',
+        condition: 'Clear to Partly Cloudy',
+        delayRisk: 'Low (0-4 min)',
+        roadVisibility: '8.5 km',
+        waterlogging: 'None Reported'
+    });
+});
+
+// Emergency SOS
+app.get('/api/safety/sos', (req, res) => {
+    res.json({ success: true, count: (db.sos || []).length, data: db.sos || [] });
+});
+
+app.post('/api/safety/sos', (req, res) => {
+    const distressLog = {
+        id: 'SOS-' + Date.now(),
+        city: req.body.city || 'Delhi',
+        route: req.body.route || 'Transit Line',
+        timestamp: new Date().toISOString(),
+        status: 'DISPATCHED_TO_CONTROL_ROOM'
+    };
+    if (!Array.isArray(db.sos)) db.sos = [];
+    db.sos.unshift(distressLog);
+    save();
+    res.json({
+        success: true,
+        message: `🚨 Emergency Beacon Transmitted. Transit Police Control Room Alerted.`,
+        dispatchId: distressLog.id
+    });
+});
+
+// ============================================================================
+// PROFILE & ACCOUNT REST ENDPOINTS
+// ============================================================================
+app.get('/api/profile', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.profile);
+});
+
+app.put('/api/profile', (req, res) => {
+    const u = resolveCommuter(req);
+    const b = req.body, p = u.profile;
     if (!b.name || !String(b.name).trim()) return bad(res, 'Name is required');
     if (!/^\S+@\S+\.\S+$/.test(b.email || '')) return bad(res, 'Enter a valid email');
     for (const k of ['name', 'email', 'phone', 'city', 'userType', 'location', 'emergencyName', 'emergencyPhone', 'bio']) {
@@ -241,35 +1089,43 @@ app.put('/api/profile', commuterContext, (req, res) => {
     ok(res, p);
 });
 
-app.put('/api/profile/avatar', commuterContext, (req, res) => {
+app.put('/api/profile/avatar', (req, res) => {
+    const u = resolveCommuter(req);
     const a = req.body.avatar;
     if (!/^data:image\/(png|jpe?g|webp|gif);base64,/.test(a || '')) return bad(res, 'Invalid image');
-    req.u.profile.avatar = a;
-    ok(res, req.u.profile);
+    u.profile.avatar = a;
+    ok(res, u.profile);
 });
 
-app.delete('/api/profile/avatar', commuterContext, (req, res) => {
-    req.u.profile.avatar = null;
-    ok(res, req.u.profile);
+app.delete('/api/profile/avatar', (req, res) => {
+    const u = resolveCommuter(req);
+    u.profile.avatar = null;
+    ok(res, u.profile);
 });
 
-// Trips
-app.get('/api/trips', commuterContext, (req, res) => res.json(req.u.trips));
+app.get('/api/trips', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.trips || []);
+});
 
-app.post('/api/trips/seed', commuterContext, (req, res) => {
-    if (!req.u.trips.length && Array.isArray(req.body)) {
-        req.u.trips = req.body.slice(0, 50);
+app.post('/api/trips/seed', (req, res) => {
+    const u = resolveCommuter(req);
+    if (!u.trips.length && Array.isArray(req.body)) {
+        u.trips = req.body.slice(0, 50);
     }
-    ok(res, req.u.trips);
+    ok(res, u.trips);
 });
 
-// Wallet
-app.get('/api/wallet', commuterContext, (req, res) => res.json(req.u.wallet));
+app.get('/api/wallet', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.wallet);
+});
 
-app.post('/api/wallet/recharge', commuterContext, (req, res) => {
+app.post('/api/wallet/recharge', (req, res) => {
+    const u = resolveCommuter(req);
     const a = Number(req.body.amount);
     if (!(a > 0) || a > 10000) return bad(res, 'Enter an amount between ₹1 and ₹10,000');
-    const w = req.u.wallet;
+    const w = u.wallet;
     w.balance = +(w.balance + a).toFixed(2);
     w.transactions.unshift({
         id: rid('TXN'),
@@ -282,10 +1138,11 @@ app.post('/api/wallet/recharge', commuterContext, (req, res) => {
     ok(res, w);
 });
 
-app.post('/api/wallet/methods', commuterContext, (req, res) => {
+app.post('/api/wallet/methods', (req, res) => {
+    const u = resolveCommuter(req);
     const v = String(req.body.value || '').trim();
     if (!v) return bad(res, 'Enter a UPI ID or card number');
-    const w = req.u.wallet;
+    const w = u.wallet;
     if (v.includes('@')) {
         w.upiId = v;
     } else if (/^\d{12,19}$/.test(v.replace(/\s/g, ''))) {
@@ -296,19 +1153,35 @@ app.post('/api/wallet/methods', commuterContext, (req, res) => {
     ok(res, w);
 });
 
-// Settings (Notifications & Security)
-for (const k of ['notifications', 'security']) {
-    app.get('/api/settings/' + k, commuterContext, (req, res) => res.json(req.u.settings[k]));
-    app.put('/api/settings/' + k, commuterContext, (req, res) => {
-        for (const f of Object.keys(req.u.settings[k])) {
-            if (typeof req.body[f] === 'boolean') req.u.settings[k][f] = req.body[f];
-        }
-        ok(res, req.u.settings[k]);
-    });
-}
+app.get('/api/settings/notifications', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.settings.notifications);
+});
 
-app.post('/api/security/password', commuterContext, (req, res) => {
-    const { current, next } = req.body, u = req.u;
+app.put('/api/settings/notifications', (req, res) => {
+    const u = resolveCommuter(req);
+    for (const f of Object.keys(u.settings.notifications)) {
+        if (typeof req.body[f] === 'boolean') u.settings.notifications[f] = req.body[f];
+    }
+    ok(res, u.settings.notifications);
+});
+
+app.get('/api/settings/security', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.settings.security);
+});
+
+app.put('/api/settings/security', (req, res) => {
+    const u = resolveCommuter(req);
+    for (const f of Object.keys(u.settings.security)) {
+        if (typeof req.body[f] === 'boolean') u.settings.security[f] = req.body[f];
+    }
+    ok(res, u.settings.security);
+});
+
+app.post('/api/security/password', (req, res) => {
+    const u = resolveCommuter(req);
+    const { current, next } = req.body;
     if (!next || next.length < 6) return bad(res, 'Password must be at least 6 characters');
     if (u.password && hash(current || '', u.password.salt).h !== u.password.h) {
         return bad(res, 'Current password is incorrect', 401);
@@ -317,29 +1190,86 @@ app.post('/api/security/password', commuterContext, (req, res) => {
     ok(res);
 });
 
-app.post('/api/security/sessions/terminate', commuterContext, (req, res) => {
-    req.u.otherSessions = 0;
+app.post('/api/security/sessions/terminate', (req, res) => {
+    const u = resolveCommuter(req);
+    u.otherSessions = 0;
     ok(res);
 });
 
-app.delete('/api/history', commuterContext, (req, res) => ok(res));
+app.delete('/api/history', (req, res) => ok(res));
 
-// Support Tickets & Community Feedback
-app.get('/api/tickets', commuterContext, (req, res) => res.json(req.u.tickets));
+// Tickets & Booking
+app.get('/api/tickets', (req, res) => {
+    const u = resolveCommuter(req);
+    res.json(u.tickets || []);
+});
 
-app.post('/api/tickets', commuterContext, (req, res) => {
-    const { category, route, description } = req.body;
-    if (!category || !route || !description) return bad(res, 'All fields are required');
-    const t = {
-        id: rid('TKT'),
-        category,
-        route,
-        description: String(description).slice(0, 1000),
-        status: 'Under Review',
-        createdAt: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+app.post('/api/tickets/book', (req, res) => {
+    const u = resolveCommuter(req);
+    const payload = req.body;
+    const ticketId = 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    const newTicket = {
+        id: ticketId,
+        city: payload.city || 'Delhi',
+        route: payload.route || '507',
+        passType: payload.passType || 'single',
+        boarding: payload.boarding || 'Origin',
+        drop: payload.drop || 'Destination',
+        seat: payload.seat || '1A',
+        passengers: payload.passengers || 1,
+        name: payload.name || u.profile.name,
+        email: payload.email || u.profile.email,
+        total: payload.total || '₹45.00',
+        status: 'Confirmed',
+        bookedAt: new Date().toISOString()
     };
-    req.u.tickets.unshift(t);
-    ok(res, t);
+    if (!Array.isArray(db.tickets)) db.tickets = [];
+    db.tickets.unshift(newTicket);
+    u.trips.unshift({
+        id: newTicket.id,
+        route: newTicket.route,
+        city: newTicket.city,
+        date: 'Today',
+        fare: newTicket.total,
+        status: 'Completed',
+        from: newTicket.boarding,
+        to: newTicket.drop
+    });
+
+    if (newTicket.email) {
+        const ticketSubject = `🎫 Transit.IN E-Ticket Pass Confirmed - #${newTicket.id}`;
+        const ticketHtml = `
+            <div style="font-family: -apple-system, sans-serif; max-width: 550px; background: #0f172a; color: #f8fafc; padding: 24px; border-radius: 16px;">
+                <h2 style="color: #38bdf8; margin: 0 0 10px 0;">Transit.IN Digital Pass Confirmed</h2>
+                <div style="background: rgba(255,255,255,0.06); padding: 16px; border-radius: 10px; margin-bottom: 16px; font-size: 14px; line-height: 1.6;">
+                    <div><strong>Booking ID:</strong> <span style="color: #38bdf8;">${newTicket.id}</span></div>
+                    <div><strong>Route / Corridor:</strong> ${newTicket.route} (${newTicket.city})</div>
+                    <div><strong>Seat(s):</strong> ${newTicket.seat}</div>
+                    <div><strong>Boarding:</strong> ${newTicket.boarding} ➔ ${newTicket.drop}</div>
+                    <div><strong>Total Fare Paid:</strong> <span style="color: #34d399;">${newTicket.total}</span></div>
+                    <div><strong>Status:</strong> Active &bull; Confirmed</div>
+                </div>
+                <p style="font-size: 12px; color: #94a3b8;">Show your digital ticket or QR code to the conductor or validator upon boarding.</p>
+            </div>
+        `;
+        emailService.dispatchEmail({
+            to: newTicket.email,
+            subject: ticketSubject,
+            html: ticketHtml,
+            city: newTicket.city,
+            type: 'ticket_confirmation',
+            db,
+            saveDb: save
+        }).catch(() => {});
+    }
+
+    save();
+
+    res.status(201).json({
+        success: true,
+        message: "E-Ticket created and confirmed",
+        ticket: newTicket
+    });
 });
 
 app.get('/api/feedback', (req, res) => res.json(db.feedback.slice(0, 20)));
@@ -359,34 +1289,75 @@ app.post('/api/feedback', (req, res) => {
     ok(res, f);
 });
 
-app.post('/api/auth/logout', (req, res) => ok(res));
+// Auth Endpoints
+app.post('/api/auth/login', (req, res) => {
+    const { email, password, role } = req.body;
+    const em = (email || '').trim().toLowerCase();
+    const user = db.users[em];
 
-// ============================================================================
-// CORE TRANSIT PLATFORM REST API ENDPOINTS
-// ============================================================================
+    if (user && user.password && user.password.h) {
+        if (hash(password, user.password.salt).h === user.password.h) {
+            return res.json({
+                success: true,
+                message: "Authentication successful",
+                token: "JWT-TOKEN-" + Math.random().toString(36).substr(2, 10).toUpperCase(),
+                user: user.profile
+            });
+        }
+    }
 
-// Health Check
-app.get('/api/health', (req, res) => {
-    res.json({
-        ok: true,
-        status: "online",
-        connected: true,
-        server: "Transit.IN Enterprise Mobility Backend API",
-        version: "3.5.0",
-        uptimeSeconds: Math.round(process.uptime()),
-        timestamp: new Date().toISOString(),
-        port: PORT,
-        activeCities: Object.keys(cityRoutesCatalog),
-        totalUsersRegistered: Object.keys(db.users).length,
-        totalFeedbackReviews: db.feedback.length
+    if (role !== 'admin' && em) {
+        if (!db.users[em]) {
+            db.users[em] = newUser(em);
+            save();
+        }
+        return res.json({
+            success: true,
+            message: "Welcome commuter (demo verified)",
+            token: "JWT-COMMUTER-DEMO",
+            user: db.users[em].profile
+        });
+    }
+
+    res.status(401).json({ success: false, error: "Invalid credentials. Please verify your email and password." });
+});
+
+app.post('/api/auth/signup', (req, res) => {
+    const { name, email, password, phone, city } = req.body;
+    if (!email || !name) return bad(res, "Name and email are required");
+    const em = email.trim().toLowerCase();
+    if (db.users[em]) return res.status(409).json({ success: false, error: "An account with this email already exists" });
+
+    const u = newUser(em);
+    u.profile.name = name;
+    if (phone) u.profile.phone = phone;
+    if (city) u.profile.city = city;
+    if (password) u.password = hash(password);
+    db.users[em] = u;
+    save();
+
+    res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        user: u.profile
     });
 });
 
-// ============================================================================
-// TRANSIT NETWORK MANAGEMENT: ROUTES, DRIVERS & CITIES
-// ============================================================================
+app.post('/api/auth/send-otp', (req, res) => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    res.json({
+        success: true,
+        message: `OTP dispatched to ${req.body.email || 'user'}`,
+        otp: otp,
+        validitySeconds: 300
+    });
+});
 
-// Routes Catalog & Management
+app.post('/api/auth/logout', (req, res) => ok(res));
+
+// ============================================================================
+// ROUTES MANAGEMENT (ADMIN + COMMUTER)
+// ============================================================================
 app.get('/api/routes', (req, res) => {
     const cityQuery = req.query.city;
     if (cityQuery && cityQuery.toLowerCase() !== 'all') {
@@ -400,7 +1371,6 @@ app.get('/api/routes', (req, res) => {
         });
     }
 
-    // Return all routes aggregated across all operating cities
     const allRoutes = [];
     for (const [cityName, rList] of Object.entries(db.routes || {})) {
         if (Array.isArray(rList)) {
@@ -437,7 +1407,7 @@ app.get('/api/routes/:id', (req, res) => {
 app.post('/api/routes', (req, res) => {
     const { id, name, city, type, category, fare, frequency, stops, status, firstBus, lastBus } = req.body || {};
     if (!id || !name) {
-        return res.status(400).json({ success: false, error: 'Route ID and Route Name/Path are required' });
+        return bad(res, 'Route ID and Route Name/Path are required');
     }
     const targetCity = (city || 'Delhi').trim();
     if (!db.routes) db.routes = {};
@@ -476,7 +1446,6 @@ app.post('/api/routes', (req, res) => {
         db.routes[targetCity].push(newRoute);
     }
 
-    // Update routesCount for the city if registered in db.cities
     if (Array.isArray(db.cities)) {
         const cityRecord = db.cities.find(c => c.name.toLowerCase() === targetCity.toLowerCase());
         if (cityRecord) {
@@ -517,19 +1486,40 @@ app.delete('/api/routes/:id', (req, res) => {
         save();
         return res.json({ success: true, message: `Route ${req.params.id} removed successfully` });
     }
-    return res.status(404).json({ success: false, error: `Route ${req.params.id} not found` });
+    bad(res, `Route ${req.params.id} not found`, 404);
 });
 
-// Drivers Management Endpoints
+// Live GPS Telemetry
+app.get('/api/track/:id', (req, res) => {
+    const routeId = req.params.id;
+    const hashVal = Math.abs(routeId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
+    const occupancy = 35 + (hashVal % 50);
+    res.json({
+        success: true,
+        routeId: routeId,
+        telemetry: {
+            vehicleReg: `IN-01-EB-${1000 + (hashVal % 8999)}`,
+            pilot: "Vikram Singh (Rating: 4.95 ⭐)",
+            speedKmH: 38 + (hashVal % 8),
+            crowdOccupancy: occupancy,
+            crowdStatus: occupancy > 75 ? 'Crowded' : occupancy > 45 ? 'Moderate' : 'Seats Available',
+            seatsAvailable: Math.max(2, Math.round(48 * (1 - occupancy / 100))),
+            gpsSignal: "Active Real-Time Stream",
+            lastPing: new Date().toISOString()
+        }
+    });
+});
+
+// ============================================================================
+// DRIVERS MANAGEMENT
+// ============================================================================
 app.get('/api/drivers', (req, res) => {
     res.json({ success: true, count: (db.drivers || []).length, data: db.drivers || [] });
 });
 
 app.post('/api/drivers', (req, res) => {
     const { name, license, phone, assignedBus, route, city, shift, rating, status } = req.body || {};
-    if (!name || !String(name).trim()) {
-        return res.status(400).json({ success: false, error: 'Driver full name is required' });
-    }
+    if (!name || !String(name).trim()) return bad(res, 'Driver full name is required');
     const driverCity = city || 'Delhi';
     const newDriver = {
         id: req.body.id || ('DRV-' + Math.floor(100 + Math.random() * 900)),
@@ -545,7 +1535,12 @@ app.post('/api/drivers', (req, res) => {
     };
 
     if (!Array.isArray(db.drivers)) db.drivers = [];
-    db.drivers.unshift(newDriver);
+    const existIdx = db.drivers.findIndex(d => String(d.id).toLowerCase() === String(newDriver.id).toLowerCase());
+    if (existIdx >= 0) {
+        db.drivers[existIdx] = { ...db.drivers[existIdx], ...newDriver };
+    } else {
+        db.drivers.unshift(newDriver);
+    }
     save();
     res.status(201).json({ success: true, message: 'Driver onboarded successfully', data: newDriver });
 });
@@ -553,7 +1548,7 @@ app.post('/api/drivers', (req, res) => {
 app.patch('/api/drivers/:id', (req, res) => {
     if (!Array.isArray(db.drivers)) db.drivers = [];
     const driver = db.drivers.find(d => String(d.id).toLowerCase() === String(req.params.id).toLowerCase());
-    if (!driver) return res.status(404).json({ success: false, error: 'Driver record not found' });
+    if (!driver) return bad(res, 'Driver record not found', 404);
     for (const field of ['name', 'license', 'phone', 'assignedBus', 'route', 'city', 'shift', 'rating', 'status']) {
         if (req.body[field] !== undefined) driver[field] = req.body[field];
     }
@@ -567,27 +1562,25 @@ app.delete('/api/drivers/:id', (req, res) => {
     if (idx >= 0) {
         const removed = db.drivers.splice(idx, 1)[0];
         save();
-        return res.json({ success: true, message: `Driver ${removed.name} deleted successfully`, data: removed });
+        return res.json({ success: true, message: `Driver ${removed.name} removed`, data: removed });
     }
-    res.status(404).json({ success: false, error: 'Driver not found' });
+    bad(res, 'Driver not found', 404);
 });
 
-// Operating Cities Endpoints
+// ============================================================================
+// OPERATING CITIES MANAGEMENT
+// ============================================================================
 app.get('/api/cities', (req, res) => {
     res.json({ success: true, count: (db.cities || []).length, data: db.cities || [] });
 });
 
 app.post('/api/cities', (req, res) => {
     const { name, state, activeFleet, routesCount, status, authority, fareBase } = req.body || {};
-    if (!name || !String(name).trim()) {
-        return res.status(400).json({ success: false, error: 'City name is required' });
-    }
+    if (!name || !String(name).trim()) return bad(res, 'City name is required');
     const cityName = String(name).trim();
     if (!Array.isArray(db.cities)) db.cities = [];
     if (!db.routes) db.routes = {};
-    if (!db.routes[cityName]) {
-        db.routes[cityName] = [];
-    }
+    if (!db.routes[cityName]) db.routes[cityName] = [];
 
     const existingIdx = db.cities.findIndex(c => c.name.toLowerCase() === cityName.toLowerCase());
     const cityRecord = {
@@ -615,235 +1608,60 @@ app.delete('/api/cities/:name', (req, res) => {
     const idx = db.cities.findIndex(c => c.name.toLowerCase() === cityName);
     if (idx >= 0) {
         const removed = db.cities.splice(idx, 1)[0];
-        // Also remove city routes if present
-        if (db.routes && db.routes[removed.name]) {
-            delete db.routes[removed.name];
-        }
+        if (db.routes && db.routes[removed.name]) delete db.routes[removed.name];
         save();
         return res.json({ success: true, message: `City ${removed.name} removed from operating network`, data: removed });
     }
-    res.status(404).json({ success: false, error: 'City not found' });
+    bad(res, 'City not found', 404);
 });
-
-// Live GPS Telemetry
-app.get('/api/track/:id', (req, res) => {
-    const routeId = req.params.id;
-    const hashVal = Math.abs(routeId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0));
-    const occupancy = 35 + (hashVal % 50);
-    res.json({
-        success: true,
-        routeId: routeId,
-        telemetry: {
-            vehicleReg: `IN-01-EB-${1000 + (hashVal % 8999)}`,
-            pilot: "Vikram Singh (Rating: 4.95 ⭐)",
-            speedKmH: 38 + (hashVal % 8),
-            crowdOccupancy: occupancy,
-            crowdStatus: occupancy > 75 ? 'Crowded' : occupancy > 45 ? 'Moderate' : 'Seats Available',
-            seatsAvailable: Math.max(2, Math.round(48 * (1 - occupancy / 100))),
-            gpsSignal: "Active Real-Time Stream",
-            lastPing: new Date().toISOString()
-        }
-    });
-});
-
-// Auth Login
-app.post('/api/auth/login', (req, res) => {
-    const { email, password, role } = req.body;
-    const em = (email || '').trim().toLowerCase();
-    const user = db.users[em];
-
-    if (user && user.password && user.password.h) {
-        if (hash(password, user.password.salt).h === user.password.h) {
-            return res.json({
-                success: true,
-                message: "Authentication successful",
-                token: "JWT-TOKEN-" + Math.random().toString(36).substr(2, 10).toUpperCase(),
-                user: user.profile
-            });
-        }
-    }
-
-    // Permissive demo login for commuters
-    if (role !== 'admin' && em) {
-        if (!db.users[em]) {
-            db.users[em] = newUser(em);
-            save();
-        }
-        return res.json({
-            success: true,
-            message: "Welcome commuter (demo verified)",
-            token: "JWT-COMMUTER-DEMO",
-            user: db.users[em].profile
-        });
-    }
-
-    res.status(401).json({ success: false, error: "Invalid credentials. Please verify your email and password." });
-});
-
-// Auth Signup
-app.post('/api/auth/signup', (req, res) => {
-    const { name, email, password, phone, city } = req.body;
-    if (!email || !name) return bad(res, "Name and email are required");
-    const em = email.trim().toLowerCase();
-    if (db.users[em]) return res.status(409).json({ success: false, error: "An account with this email already exists" });
-
-    const u = newUser(em);
-    u.profile.name = name;
-    if (phone) u.profile.phone = phone;
-    if (city) u.profile.city = city;
-    if (password) u.password = hash(password);
-    db.users[em] = u;
-    save();
-
-    res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-        user: u.profile
-    });
-});
-
-// Auth OTP
-app.post('/api/auth/send-otp', (req, res) => {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    res.json({
-        success: true,
-        message: `OTP dispatched to ${req.body.email || 'user'}`,
-        otp: otp,
-        validitySeconds: 300
-    });
-});
-
-// Book Ticket
-app.post('/api/tickets/book', commuterContext, (req, res) => {
-    const payload = req.body;
-    const ticketId = 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-    const newTicket = {
-        id: ticketId,
-        city: payload.city || 'Delhi',
-        route: payload.route || '507',
-        passType: payload.passType || 'single',
-        boarding: payload.boarding || 'Origin',
-        drop: payload.drop || 'Destination',
-        seat: payload.seat || '1A',
-        passengers: payload.passengers || 1,
-        name: payload.name || req.u.profile.name,
-        email: payload.email || req.u.profile.email,
-        total: payload.total || '₹45.00',
-        status: 'Confirmed',
-        bookedAt: new Date().toISOString()
-    };
-    globalTickets.push(newTicket);
-    req.u.trips.unshift({
-        id: newTicket.id,
-        route: newTicket.route,
-        city: newTicket.city,
-        date: 'Today',
-        fare: newTicket.total,
-        status: 'Completed',
-        from: newTicket.boarding,
-        to: newTicket.drop
-    });
-    save();
-
-    res.status(201).json({
-        success: true,
-        message: "E-Ticket created and confirmed",
-        ticket: newTicket
-    });
-});
-
-// Alerts
-app.get('/api/alerts', (req, res) => {
-    const city = req.query.city || 'Delhi';
-    const sampleAlerts = [
-        { type: 'info', title: 'Normal Operations', message: `All scheduled bus fleets are operating normally in ${city}.`, time: 'Just now', route: 'All Network' },
-        { type: 'warning', title: 'Peak Rush Congestion', message: 'Moderate traffic delay (+8m) on main arterial corridors.', time: '12 min ago', route: 'Primary Lines' }
-    ];
-    const crowdsourced = incidentReports.filter(r => (r.city || 'Delhi').toLowerCase() === city.toLowerCase());
-    res.json({ success: true, city: city, alerts: [...crowdsourced, ...sampleAlerts] });
-});
-
-app.post('/api/alerts/report', (req, res) => {
-    const report = {
-        id: 'REP-' + Date.now().toString().slice(-4),
-        route: req.body.route || 'Line',
-        type: req.body.type || 'traffic',
-        title: req.body.title || 'Commuter Incident',
-        message: req.body.message || 'Reported delay',
-        location: req.body.location || 'Roadway',
-        city: req.body.city || 'Delhi',
-        time: 'Just now',
-        isCrowdsourced: true,
-        reportedAt: new Date().toISOString()
-    };
-    incidentReports.unshift(report);
-    res.status(201).json({ success: true, message: "Report broadcasted to commuters", report: report });
-});
-
-// Emergency SOS
-app.post('/api/safety/sos', (req, res) => {
-    const distressLog = {
-        id: 'SOS-' + Date.now(),
-        city: req.body.city || 'Delhi',
-        route: req.body.route || 'Transit',
-        timestamp: new Date().toISOString(),
-        status: 'DISPATCHED_TO_CONTROL_ROOM'
-    };
-    sosDistressLogs.push(distressLog);
-    res.json({
-        success: true,
-        message: `🚨 Emergency Beacon Transmitted. ${req.body.city || 'Delhi'} Transit Police Control Room Alerted.`,
-        dispatchId: distressLog.id
-    });
-});
-
-// Weather
-app.get('/api/weather', (req, res) => {
-    const city = req.query.city || 'Delhi';
-    res.json({
-        success: true,
-        city: city,
-        temperature: '28°C',
-        condition: 'Clear to Partly Cloudy',
-        delayRisk: 'Low (0-4 min)',
-        roadVisibility: '8.5 km',
-        waterlogging: 'None Reported'
-    });
-});
-
-// ============================================================================
 
 // ============================================================================
 // COMPLAINTS & GRIEVANCE ENDPOINTS
 // ============================================================================
 app.get('/api/complaints', (req, res) => {
+    if (!Array.isArray(db.complaints)) db.complaints = [];
     res.json({ success: true, count: db.complaints.length, data: db.complaints });
 });
 
 app.post('/api/complaints', (req, res) => {
-    const { category, busNumber, notes, commuter } = req.body || {};
+    const b = req.body || {};
     const newComplaint = {
-        id: 'CMP-' + Date.now().toString().slice(-4),
-        commuter: commuter || 'Commuter',
-        category: category || 'General Grievance',
-        busNumber: busNumber || 'Unspecified',
-        status: 'Submitted',
-        priority: 'Normal',
-        timestamp: new Date().toLocaleString(),
-        notes: notes || 'No details provided'
+        id: b.id || ('CMP-' + Date.now().toString().slice(-4)),
+        commuter: b.commuter || 'Commuter',
+        category: b.category || 'General Grievance',
+        busNumber: b.busNumber || b.route || 'Unspecified',
+        route: b.route || b.busNumber || 'City Transit',
+        status: b.status || 'In Review',
+        priority: b.priority || 'Medium',
+        timestamp: b.timestamp || new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        notes: b.notes || b.description || 'No details provided'
     };
+    if (!Array.isArray(db.complaints)) db.complaints = [];
     db.complaints.unshift(newComplaint);
     save();
     res.status(201).json({ success: true, message: 'Complaint filed successfully', data: newComplaint });
 });
 
 app.patch('/api/complaints/:id', (req, res) => {
-    const item = db.complaints.find(c => c.id === req.params.id);
-    if (!item) return res.status(404).json({ success: false, error: 'Complaint not found' });
+    if (!Array.isArray(db.complaints)) db.complaints = [];
+    const item = db.complaints.find(c => String(c.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (!item) return bad(res, 'Complaint not found', 404);
     if (req.body.status) item.status = req.body.status;
     if (req.body.priority) item.priority = req.body.priority;
+    if (req.body.notes) item.notes = req.body.notes;
     save();
-    res.json({ success: true, message: 'Complaint updated', data: item });
+    res.json({ success: true, message: 'Complaint status updated', data: item });
+});
+
+app.delete('/api/complaints/:id', (req, res) => {
+    if (!Array.isArray(db.complaints)) db.complaints = [];
+    const idx = db.complaints.findIndex(c => String(c.id).toLowerCase() === String(req.params.id).toLowerCase());
+    if (idx >= 0) {
+        const removed = db.complaints.splice(idx, 1)[0];
+        save();
+        return res.json({ success: true, message: `Complaint ${removed.id} deleted`, data: removed });
+    }
+    bad(res, 'Complaint not found', 404);
 });
 
 // ============================================================================
@@ -865,9 +1683,7 @@ app.get('/api/lost-found', (req, res) => {
 app.post('/api/lost-found', (req, res) => {
     const b = req.body || {};
     const itemTitle = (b.item || b.title || '').trim();
-    if (!itemTitle) {
-        return res.status(400).json({ success: false, error: 'Item description/title is required' });
-    }
+    if (!itemTitle) return bad(res, 'Item description/title is required');
     const type = (b.type || 'lost').toLowerCase();
     const newLF = {
         id: b.id || ('LF-' + Date.now().toString().slice(-4)),
@@ -899,7 +1715,7 @@ app.post('/api/lost-found', (req, res) => {
 app.patch('/api/lost-found/:id', (req, res) => {
     if (!Array.isArray(db.lostFound)) db.lostFound = [];
     const item = db.lostFound.find(l => String(l.id).toLowerCase() === String(req.params.id).toLowerCase());
-    if (!item) return res.status(404).json({ success: false, error: 'Item record not found' });
+    if (!item) return bad(res, 'Item record not found', 404);
     if (req.body.claimed !== undefined) item.claimed = req.body.claimed;
     if (req.body.status) item.status = req.body.status;
     if (req.body.holdingDepot) item.holdingDepot = req.body.holdingDepot;
@@ -916,19 +1732,21 @@ app.delete('/api/lost-found/:id', (req, res) => {
         save();
         return res.json({ success: true, message: `Item ${removed.item} removed from repository`, data: removed });
     }
-    res.status(404).json({ success: false, error: 'Item not found' });
+    bad(res, 'Item not found', 404);
 });
 
 // ============================================================================
 // PREDICTIVE FLEET MAINTENANCE ENDPOINTS
 // ============================================================================
 app.get('/api/maintenance', (req, res) => {
+    if (!Array.isArray(db.maintenance)) db.maintenance = [];
     res.json({ success: true, count: db.maintenance.length, data: db.maintenance });
 });
 
 app.post('/api/maintenance', (req, res) => {
     const record = req.body;
-    if (!record || !record.busId) return res.status(400).json({ success: false, error: 'busId required' });
+    if (!record || !record.busId) return bad(res, 'busId required');
+    if (!Array.isArray(db.maintenance)) db.maintenance = [];
     const existing = db.maintenance.findIndex(m => m.busId === record.busId);
     if (existing >= 0) {
         db.maintenance[existing] = { ...db.maintenance[existing], ...record };
@@ -939,20 +1757,95 @@ app.post('/api/maintenance', (req, res) => {
     res.json({ success: true, message: 'Maintenance record saved', data: record });
 });
 
-// STATIC FILE SERVING
-// ============================================================================
-
-app.use(express.static(PUBLIC_DIR, {
-    maxAge: 0,
-    etag: false
-}));
-
-app.use((req, res) => {
-    const target = path.join(PUBLIC_DIR, req.path);
-    if (fs.existsSync(target) && fs.statSync(target).isFile()) {
-        return res.sendFile(target);
+app.post('/api/maintenance/service', (req, res) => {
+    const { busId, serviceType } = req.body || {};
+    if (!busId) return bad(res, 'busId required');
+    if (!Array.isArray(db.maintenance)) db.maintenance = [];
+    let item = db.maintenance.find(m => m.busId === busId);
+    if (!item) {
+        item = {
+            busId,
+            route: 'Corridor Route',
+            wear: 10,
+            status: 'Optimal Health',
+            propulsion: 'Electric AC',
+            battery: '100% Diagnostic Passed',
+            tirePressure: '34 PSI (Normal)',
+            lastService: new Date().toISOString().split('T')[0],
+            nextService: 'In 30 days'
+        };
+        db.maintenance.unshift(item);
+    } else {
+        item.wear = Math.max(5, (item.wear || 20) - 30);
+        item.status = 'Optimal Health';
+        item.lastService = new Date().toISOString().split('T')[0];
+        item.nextService = 'In 30 days';
+        if (serviceType === 'Schedule Oil') item.battery = 'Engine Serviced (Coolant Checked)';
+        else if (serviceType === 'Dispatch Bay') {
+            item.tirePressure = '34 PSI (Inspected)';
+            item.battery = '95% SoC Verified';
+        } else {
+            item.battery = '100% Diagnostics Cleared';
+        }
     }
-    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+    save();
+    res.json({ success: true, message: `Maintenance service recorded for vehicle ${busId}`, data: item });
+});
+
+// ============================================================================
+// ADMIN PASSENGERS MANAGEMENT
+// ============================================================================
+app.get('/api/admin/passengers', (req, res) => {
+    const list = Object.values(db.users || {}).map(u => ({
+        name: u.profile.name || 'Commuter',
+        email: u.profile.email,
+        phone: u.profile.phone || '+91 98765 43210',
+        city: u.profile.city || 'Delhi',
+        userType: u.profile.userType || 'Daily Commuter'
+    }));
+    res.json({ success: true, count: list.length, data: list });
+});
+
+app.post('/api/admin/passengers', (req, res) => {
+    const { name, email, phone, city, userType } = req.body || {};
+    if (!email || !name) return bad(res, 'Passenger name and email are required');
+    const em = email.trim().toLowerCase();
+    if (db.users[em]) {
+        db.users[em].profile.name = name;
+        if (phone) db.users[em].profile.phone = phone;
+        if (city) db.users[em].profile.city = city;
+        if (userType) db.users[em].profile.userType = userType;
+    } else {
+        const u = newUser(em);
+        u.profile.name = name;
+        if (phone) u.profile.phone = phone;
+        if (city) u.profile.city = city;
+        if (userType) u.profile.userType = userType;
+        db.users[em] = u;
+    }
+    save();
+    res.status(201).json({ success: true, message: `Passenger [${name}] registered`, data: db.users[em].profile });
+});
+
+app.patch('/api/admin/passengers/:email', (req, res) => {
+    const em = decodeURIComponent(req.params.email).trim().toLowerCase();
+    if (!db.users[em]) return bad(res, 'Passenger account not found', 404);
+    const p = db.users[em].profile;
+    for (const k of ['name', 'phone', 'city', 'userType', 'bio']) {
+        if (req.body[k] !== undefined) p[k] = req.body[k];
+    }
+    save();
+    res.json({ success: true, message: 'Passenger updated', data: p });
+});
+
+app.delete('/api/admin/passengers/:email', (req, res) => {
+    const em = decodeURIComponent(req.params.email).trim().toLowerCase();
+    if (db.users[em]) {
+        delete db.users[em];
+        save();
+        return res.json({ success: true, message: `Passenger [${em}] removed` });
+    }
+    bad(res, 'Passenger account not found', 404);
 });
 
 // Start Server
@@ -961,9 +1854,10 @@ if (require.main === module) {
         console.log(`=======================================================`);
         console.log(`🚆 Transit.IN Enterprise Mobility Server is RUNNING!`);
         console.log(`🔗 Local Web App:     http://localhost:${PORT}/index.html`);
+        console.log(`🔗 Admin Dashboard:   http://localhost:${PORT}/admin.html`);
+        console.log(`🔗 Alerts Feed:       http://localhost:${PORT}/notifications.html`);
         console.log(`🔗 Profile Dashboard: http://localhost:${PORT}/profile.html`);
         console.log(`🔗 Backend Health:    http://localhost:${PORT}/api/health`);
-        console.log(`🔗 Profile REST API:  http://localhost:${PORT}/api/profile`);
         console.log(`📡 Backend Status:    CONNECTED & PERSISTING TO db.json`);
         console.log(`=======================================================`);
     });

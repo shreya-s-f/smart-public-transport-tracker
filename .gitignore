@@ -1,3 +1,11 @@
 node_modules/
 .DS_Store
 *.log
+smart-public-transport-tracker-main/
+
+scripts/*
+!scripts/emailService.js
+!scripts/test_full_suite.js
+!scripts/inject_assistant.js
+!scripts/inject_tour.js
+!scripts/sync_to_root.js
